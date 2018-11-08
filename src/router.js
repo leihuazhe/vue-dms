@@ -37,5 +37,32 @@ export default new Router({
         pageName: '添加项目'
       }
     },
+    {
+      path: '/s-list',
+      name: 'SList',
+      component: () => import(/* webpackChunkName: "group-foo" */ '@/components/serve/s-list'),
+      meta: {
+        keepAlive: true,
+        pageName: '服务管理'
+      }
+    },
+    {
+      path: '/s-add',
+      name: 'SAdd',
+      component: () => import(/* webpackChunkName: "group-foo" */ '@/components/serve/s-add'),
+      meta: {
+        keepAlive: true,
+        pageName: '新增服务'
+      }
+    },
+    {
+      path: '/s-modify',
+      name: 'SModify',
+      component: () => import(/* webpackChunkName: "group-foo" */ '@/components/serve/s-modify'),
+      meta: {
+        keepAlive: true,
+        pageName: '修改服务'
+      }
+    },
   ],
 });

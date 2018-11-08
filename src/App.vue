@@ -22,7 +22,7 @@
               <span>服务单元</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="1-1">服务管理</el-menu-item>
+              <el-menu-item index="/s-list">服务管理</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="2">
