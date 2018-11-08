@@ -136,7 +136,7 @@ export default {
       width: 160px;
       height: 50px;
       display: inline-block;
-      background-image: url(./assets/nav_today.png);
+      background-image: url(./assets/image/nav_today.png);
       background-size: 100%;
     }
   }
