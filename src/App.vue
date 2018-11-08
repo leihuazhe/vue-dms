@@ -7,6 +7,11 @@
           class="el-menu-vertical-demo"
           @open="handleOpen"
           @close="handleClose">
+          <el-menu-item index="0" class="bglogo">
+            <template slot="title">
+              <span></span>
+            </template>
+          </el-menu-item >
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-date"></i>
@@ -119,6 +124,17 @@ export default {
     .active{
       font-weight: 100;
       font-size: 20px;
+    }
+  }
+
+  .bglogo {
+    background-color: #000;
+    span {
+      width: 160px;
+      height: 50px;
+      display: inline-block;
+      background-image: url(./assets/nav_today.png);
+      background-size: 100%;
     }
   }
 
