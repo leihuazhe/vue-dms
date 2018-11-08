@@ -6,50 +6,44 @@
           default-active="2"
           class="el-menu-vertical-demo"
           @open="handleOpen"
-          @close="handleClose">
-          <el-menu-item index="0" class="bglogo">
+          @close="handleClose" :collapse="isCollapse">
+          <el-menu-item index="/" class="bglogo" @click="isCollapse=!isCollapse">
+            <i v-if="isCollapse" class="el-icon-d-arrow-right"></i>
             <template slot="title">
-              <span></span>
+              <span>
+                {{isCollapse ? '今天DMS系统' : ''}}
+              </span>
             </template>
           </el-menu-item >
           <el-submenu index="1">
             <template slot="title">
-              <i class="el-icon-date"></i>
-              <span>项目管理</span>
+              <i class="el-icon-menu"></i>
+              <span>服务单元</span>
             </template>
             <el-menu-item-group>
               <el-menu-item index="1-1">
-                <router-link to="/p-list">项目列表</router-link>
+                <router-link to="/p-list">服务列表</router-link>
               </el-menu-item>
-              <el-menu-item index="1-2">添加项目</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="2">
             <template slot="title">
-              <i class="el-icon-date"></i>
-              <span>接口管理</span>
+              <i class="el-icon-document"></i>
+              <span>接口单元</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="2-1">接口管理</el-menu-item>
+              <el-menu-item index="2-1">接口列表</el-menu-item>
               <el-menu-item index="2-2">添加接口</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="3">
             <template slot="title">
               <i class="el-icon-date"></i>
-              <span>Swagger管理</span>
+              <span>元数据管理</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="3-1">Swagger</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-          <el-submenu index="4">
-            <template slot="title">
-              <i class="el-icon-date"></i>
-              <span>系统管理</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item index="4-1">系统参数设置</el-menu-item>
+              <el-menu-item index="3-1">元数据列表</el-menu-item>
+              <el-menu-item index="3-2">添加thrift</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
@@ -65,6 +59,11 @@
 <script>
 export default {
   name: 'app',
+  data() {
+    return {
+      isCollapse: true
+    }
+  },
   methods: {
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
