@@ -1,0 +1,360 @@
+// 定义变量
+$tableTdHeight: 50px;
+
+// 公共样式
+.el-header .el-col .el-menu-item,
+.el-header .el-menu .el-submenu,
+.el-header .el-menu .el-submenu .el-submenu__title {
+  height: 80px;
+  line-height: 80px;
+  font-weight: 100;
+  font-size: 20px;
+  border: 0px;
+}
+
+// label 样式
+.el-form-item {
+  margin-bottom: 0;
+}
+
+.el-form--label-top .el-form-item__label {
+  padding: 0;
+}
+
+// el-row 样式
+.el-form {
+  .el-row {
+    margin: 0;
+    padding: 0;
+    margin-top: 0;
+
+    .el-col {
+      margin: 0;
+      padding: 0;
+    }
+  }
+}
+
+.el-button {
+  min-width: 128px;
+}
+
+.el-button.el-button--text {
+  min-width: 0;
+}
+
+.el-dialog__headerbtn {
+  button {
+    min-width: 0px;
+  }
+}
+
+//vue router transition css
+.fade-enter-active,
+.fade-leave-active {
+  transition: all .2s ease
+}
+
+.fade-enter,
+.fade-leave-active {
+  opacity: 0;
+}
+
+// 表格样式
+.el-table thead {
+  color: #2c323e;
+  font-weight: 700;
+  height: 50px !important;
+}
+
+.el-table__footer {
+  color: #2c323e;
+  font-weight: 700;
+}
+
+.el-table th {
+  height: $tableTdHeight;
+}
+
+.el-table td {
+  padding: 0;
+  height: $tableTdHeight;
+}
+
+.el-table .cell {
+  white-space: nowrap
+}
+
+// 表格合计行
+.el-table__footer-wrapper tbody td {
+  background: #fff;
+}
+
+// input 搜索提示
+.el-autocomplete-suggestion.el-popper.my-autocomplete {
+  min-width: 200px;
+  width: 500px !important
+}
+
+// 输入框
+.el-input__inner {
+  height: 36px;
+}
+
+// 弹窗button宽度更改
+.el-picker-panel,
+.el-message-box {
+  button {
+    min-width: 0px;
+  }
+}
+
+// 左边导航houver
+.el-submenu__title {
+  padding: 0 24px;
+}
+
+.el-submenu__title:hover {
+  background-color: #effde8;
+}
+
+.el-menu-item.is-active {
+  background-color: #fff;
+}
+
+// 分页 布局修改
+.block {
+  .el-pagination {
+    width: 100%;
+    text-align: right;
+
+    .el-pagination__sizes {
+      float: left;
+
+      .el-input {
+        border-radius: 4px;
+        overflow: hidden;
+
+        &:hover {
+          input {
+            border-color: #19bf4f;
+          }
+
+          .el-input__suffix {
+            background: #19bf4f;
+          }
+        }
+
+        .el-input__suffix {
+          background: #c4ccd6;
+          height: 28px;
+          transform: scale(1);
+          display: block;
+
+          .el-select__caret {
+            color: #f1f6fa;
+          }
+        }
+      }
+
+      .is-focus {
+        .el-input__suffix {
+          background: #19bf4f;
+        }
+      }
+    }
+
+    .el-pagination__total {
+      float: left;
+    }
+  }
+}
+
+.el-pagination__total {
+  margin-right: 20px;
+  background: #f1f6fa;
+}
+
+.el-pagination__jump {
+  margin-left: 20px;
+}
+
+.c-container .c-content .block .el-pagination__editor.is-in-pagination {
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.el-pagination.is-background .el-pager li {
+  padding: 0 10px;
+  min-width: 0px;
+  margin: 0 1px;
+  background: #f1f6fa;
+}
+
+.el-pagination.is-background .btn-prev.disabled {
+  background: #f1f6fa;
+}
+
+.el-pagination.is-background .btn-prev,
+.el-pagination.is-background .btn-next {
+  background: #f1f6fa;
+}
+
+.el-button--primary.is-disabled,
+.el-button--primary.is-disabled:hover,
+.el-button--primary.is-disabled:focus,
+.el-button--primary.is-disabled:active {
+  color: #fff;
+  background-color: #c4ccd6;
+  border-color: #c4ccd6;
+}
+
+.el-pagination {
+  .el-input {
+    min-width: 42px;
+  }
+
+  // .el-select .el-input {
+  //   min-width: 128px;
+  // }
+
+  .el-pagination__editor.el-input .el-input__inner {
+    width: 42px;
+  }
+}
+
+//弹窗
+.el-message--info {
+  top: 240px;
+  background: #fff;
+  width: 540px;
+  border: 0px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 20px 10px #eee;
+  padding: 0 16px;
+
+  .el-message__content {
+    line-height: inherit;
+    width: 100%;
+    padding: 24px 0 40px 0;
+    margin-top: 0;
+
+    p {
+      word-wrap: break-word
+    }
+  }
+
+  .el-message__icon {
+    display: none;
+  }
+
+  .el-message__icon:before {
+    width: 100px;
+    height: 100px;
+    background: red;
+  }
+
+  .icon-hint_icon- {
+    color: #ff494a;
+    font-size: 48px;
+    transform: translateX(-50%);
+  }
+
+  .icon-hin_suc {
+    color: #19bf4f;
+    font-size: 48px; // top: 24px;
+    // position: absolute;
+    // left: 50%;
+    transform: translateX(-50%);
+  }
+
+  p {
+    text-align: center;
+    color: #000 !important;
+    margin-top: 30px;
+    font-size: 16px;
+  }
+
+  .el-message__closeBtn {
+    top: 21px;
+    right: 13px;
+  }
+}
+
+//弹框
+.el-icon-warning {
+  display: none;
+}
+
+.el-message-box__btns button:nth-child(2) {
+  margin-left: 20px;
+}
+
+.el-dialog {
+  max-height: 90%;
+  overflow: auto;
+}
+
+.el-message-box__message .icon-hint_icon- {
+  color: #fce000;
+  font-size: 48px;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+// 模态框关闭按钮宽度
+.el-dialog__header {
+  button {
+    min-width: 0px;
+  }
+}
+
+.el-message-box {
+  width: 540px;
+  padding-bottom: 24px;
+
+  .el-message-box__header {
+    height: 24px;
+    padding: 0 16px;
+
+    .el-message-box__headerbtn {
+      top: 11px;
+      right: 14px;
+    }
+  }
+
+  .el-message-box__content {
+    padding-bottom: 40px;
+
+    .el-message-box__message {
+      p {
+        p {
+          padding-top: 40px;
+        }
+      }
+    }
+  }
+
+  .el-message-box__btns {
+    padding-top: 0px;
+  }
+}
+
+.link_messageBox.el-message-box {
+  .el-message-box__content {
+    text-align: center;
+  }
+}
+
+// 日期时间选择器中的'至'完全显示
+.el-date-editor {
+  .el-range-separator {
+    width: 30px;
+  }
+}
+
+// 覆盖element-ui样式
+.el-autocomplete-suggestion.el-popper {
+  width: auto !important;
+}
