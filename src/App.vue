@@ -6,7 +6,8 @@
           default-active="2"
           class="el-menu-vertical-demo"
           @open="handleOpen"
-          @close="handleClose" :collapse="isCollapse">
+          @close="handleClose" :collapse="isCollapse"
+          router>
           <el-menu-item index="/" class="bglogo" @click="isCollapse=!isCollapse">
             <i v-if="isCollapse" class="el-icon-d-arrow-right"></i>
             <template slot="title">
@@ -21,9 +22,7 @@
               <span>服务单元</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="1-1">
-                <router-link to="/p-list">服务列表</router-link>
-              </el-menu-item>
+              <el-menu-item index="1-1">服务管理</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="2">
@@ -32,8 +31,7 @@
               <span>接口单元</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="2-1">接口列表</el-menu-item>
-              <el-menu-item index="2-2">添加接口</el-menu-item>
+              <el-menu-item index="/p-list">接口管理</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="3">
@@ -42,8 +40,8 @@
               <span>元数据管理</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="3-1">元数据列表</el-menu-item>
-              <el-menu-item index="3-2">添加thrift</el-menu-item>
+              <el-menu-item index="3-1">元数据管理</el-menu-item>
+              <!-- <el-menu-item index="3-2">添加thrift</el-menu-item> -->
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
@@ -65,7 +63,7 @@ export default {
   name: 'app',
   data() {
     return {
-      isCollapse: true
+      isCollapse: false
     }
   },
   components: {coPageTabs},
