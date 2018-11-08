@@ -4,6 +4,9 @@ import Home from './views/Home.vue';
 
 Vue.use(Router);
 
+const PList = resolve => require.ensure([], () => resolve(require('@/components/project/p-list')), 'project')
+const PAdd = resolve => require.ensure([], () => resolve(require('@/components/project/p-add')), 'project')
+
 export default new Router({
   routes: [
     {
@@ -22,12 +25,14 @@ export default new Router({
     {
       path: '/p-list',
       name: 'PList',
-      component: () => import(/* webpackChunkName: "group-foo" */ '@/components/project/p-list'),
+      // component: () => import(/* webpackChunkName: "group-foo" */ '@/components/project/p-list'),
+      component: PList
     },
     {
       path: '/p-add',
       name: 'PAdd',
-      component: () => import(/* webpackChunkName: "group-foo" */ '@/components/project/p-add'),
+      // component: () => import(/* webpackChunkName: "group-foo" */ '@/components/project/p-add'),
+      component: PAdd
     },
   ],
 });

@@ -6,7 +6,8 @@
           default-active="2"
           class="el-menu-vertical-demo"
           @open="handleOpen"
-          @close="handleClose">
+          @close="handleClose"
+          router>
           <el-menu-item index="0" class="bglogo">
             <template slot="title">
               <span></span>
@@ -18,11 +19,11 @@
               <span>项目管理</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="1-1">
-                <router-link to="/p-list">项目列表</router-link>
+              <el-menu-item index="/p-list">
+                <span>项目列表</span>
               </el-menu-item>
-              <el-menu-item index="1-2">
-                <router-link to="/p-add">添加项目</router-link>
+              <el-menu-item index="/p-add">
+                <span>添加项目</span>
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
