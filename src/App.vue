@@ -8,7 +8,7 @@
           @open="handleOpen"
           @close="handleClose"
           router>
-          <el-menu-item index="0" class="bglogo">
+          <el-menu-item index="/" class="bglogo">
             <template slot="title">
               <span></span>
             </template>
@@ -16,14 +16,14 @@
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-date"></i>
-              <span>项目管理</span>
+              <span slot="title">项目管理</span>
             </template>
             <el-menu-item-group>
               <el-menu-item index="/p-list">
-                <span>项目列表</span>
+                <span slot="title">项目列表</span>
               </el-menu-item>
               <el-menu-item index="/p-add">
-                <span>添加项目</span>
+                <span slot="title">添加项目</span>
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
@@ -58,7 +58,10 @@
         </el-menu>
       </el-aside>
       <el-main ref="main">
-        <router-view></router-view>
+        <co-page-tabs ref="tab">
+          <router-view></router-view>
+        </co-page-tabs>
+        <!-- <router-view></router-view> -->
         <!-- <slot></slot> -->
       </el-main>
     </el-container>
@@ -66,8 +69,10 @@
 </template>
 
 <script>
+import coPageTabs from './components/common/co-page-tabs'
 export default {
   name: "app",
+  components: {coPageTabs},
   methods: {
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
@@ -80,6 +85,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '../static/css/common/icon/iconfont.css';
 @import "../static/css/common/index.scss";
 
 #app {
@@ -134,7 +140,7 @@ export default {
       width: 160px;
       height: 50px;
       display: inline-block;
-      background-image: url(./assets/nav_today.png);
+      background-image: url('./assets/image/nav_today.png');
       background-size: 100%;
     }
   }
