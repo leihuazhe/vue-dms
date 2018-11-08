@@ -128,7 +128,7 @@ export default {
   }
 
   .bglogo {
-    background-color: #000;
+    background-color: #19bf4f;
     span {
       width: 160px;
       height: 50px;
