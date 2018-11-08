@@ -1,13 +1,13 @@
 <template>
-  <div class="p-add">
+  <div class="s-add">
     新增项目
   </div>
 </template>
 
 <script>
 export default {
-  created() {
-    console.log('p-add')
-  },
-}
+  created () {
+    console.log("p-add");
+  }
+};
 </script>

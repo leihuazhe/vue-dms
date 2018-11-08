@@ -1,5 +1,7 @@
 // 初始化样式
 @import './init.scss';
+// 覆盖element-ui 样式
+@import './element-ui.scss';
 
 // 侧边栏样式
 .el-menu.el-menu-vertical-demo {

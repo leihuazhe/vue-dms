@@ -20,21 +20,30 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/About.vue'),
     },
     {
-      path: '/p-list',
-      name: 'PList',
-      component: () => import(/* webpackChunkName: "group-foo" */ '@/components/project/p-list'),
+      path: '/s-list',
+      name: 's-list',
+      component: () => import( /* webpackChunkName: "group-foo" */ '@/components/service/s-list'),
       meta: {
         keepAlive: true,
-        pageName: '项目列表'
+        pageName: '接口管理'
       }
     },
     {
-      path: '/p-add',
-      name: 'PAdd',
-      component: () => import(/* webpackChunkName: "group-foo" */ '@/components/project/p-add'),
+      path: '/s-add',
+      name: 's-add',
+      component: () => import( /* webpackChunkName: "group-foo" */ '@/components/service/s-add'),
       meta: {
         keepAlive: true,
-        pageName: '添加项目'
+        pageName: '新增接口'
+      }
+    },
+    {
+      path: '/s-mock-rule',
+      name: 's-mock-rule',
+      component: () => import( /* webpackChunkName: "group-foo" */ '@/components/service/s-mock-rule'),
+      meta: {
+        keepAlive: true,
+        pageName: 'mock查询'
       }
     },
     {
