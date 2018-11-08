@@ -16,7 +16,9 @@
               <el-menu-item index="1-1">
                 <router-link to="/p-list">项目列表</router-link>
               </el-menu-item>
-              <el-menu-item index="1-2">添加项目</el-menu-item>
+              <el-menu-item index="1-2">
+                <router-link to="/p-add">添加项目</router-link>
+              </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="2">

@@ -24,5 +24,10 @@ export default new Router({
       name: 'PList',
       component: () => import(/* webpackChunkName: "group-foo" */ '@/components/project/p-list'),
     },
+    {
+      path: '/p-add',
+      name: 'PAdd',
+      component: () => import(/* webpackChunkName: "group-foo" */ '@/components/project/p-add'),
+    },
   ],
 });

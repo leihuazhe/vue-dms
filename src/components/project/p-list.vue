@@ -1,5 +1,5 @@
 <template>
   <div class="p-list">
-    测试
+    项目列表
   </div>
 </template>
