@@ -6,53 +6,44 @@
           default-active="2"
           class="el-menu-vertical-demo"
           @open="handleOpen"
-          @close="handleClose"
-          router>
-          <el-menu-item index="/" class="bglogo">
+          @close="handleClose" :collapse="isCollapse">
+          <el-menu-item index="/" class="bglogo" @click="isCollapse=!isCollapse">
+            <i v-if="isCollapse" class="el-icon-d-arrow-right"></i>
             <template slot="title">
-              <span></span>
+              <span>
+                {{isCollapse ? '今天DMS系统' : ''}}
+              </span>
             </template>
           </el-menu-item >
           <el-submenu index="1">
             <template slot="title">
-              <i class="el-icon-date"></i>
-              <span slot="title">项目管理</span>
+              <i class="el-icon-menu"></i>
+              <span>服务单元</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="/p-list">
-                <span slot="title">项目列表</span>
-              </el-menu-item>
-              <el-menu-item index="/p-add">
-                <span slot="title">添加项目</span>
+              <el-menu-item index="1-1">
+                <router-link to="/p-list">服务列表</router-link>
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="2">
             <template slot="title">
-              <i class="el-icon-date"></i>
-              <span>接口管理</span>
+              <i class="el-icon-document"></i>
+              <span>接口单元</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="2-1">接口管理</el-menu-item>
+              <el-menu-item index="2-1">接口列表</el-menu-item>
               <el-menu-item index="2-2">添加接口</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="3">
             <template slot="title">
               <i class="el-icon-date"></i>
-              <span>Swagger管理</span>
+              <span>元数据管理</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="3-1">Swagger</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-          <el-submenu index="4">
-            <template slot="title">
-              <i class="el-icon-date"></i>
-              <span>系统管理</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item index="4-1">系统参数设置</el-menu-item>
+              <el-menu-item index="3-1">元数据列表</el-menu-item>
+              <el-menu-item index="3-2">添加thrift</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
@@ -71,7 +62,12 @@
 <script>
 import coPageTabs from './components/common/co-page-tabs'
 export default {
-  name: "app",
+  name: 'app',
+  data() {
+    return {
+      isCollapse: true
+    }
+  },
   components: {coPageTabs},
   methods: {
     handleOpen(key, keyPath) {
@@ -128,7 +124,7 @@ export default {
   .el-menu-item {
     height: 60px;
     line-height: 60px;
-    .active {
+    .active{
       font-weight: 100;
       font-size: 20px;
     }
@@ -140,12 +136,12 @@ export default {
       width: 160px;
       height: 50px;
       display: inline-block;
-      background-image: url('./assets/image/nav_today.png');
+      background-image: url(./assets/image/nav_today.png);
       background-size: 100%;
     }
   }
 
-  .el-submenu .el-menu-item {
+  .el-submenu .el-menu-item{
     background: #f1f6fa;
   }
 
@@ -228,7 +224,7 @@ export default {
     overflow: hidden;
     background: #fff;
     box-shadow: 1px 1px 2px 0px #c4ccd6;
-    opacity: 0.5;
+    opacity: .5;
     cursor: pointer;
     i {
       font-size: 40px;
@@ -248,21 +244,20 @@ export default {
     }
     &:hover {
       // background: #effde8;
-      opacity: 0.8;
+      opacity: .8;
       i {
         color: #19bf4f;
       }
     }
   }
 
-  .top-enter-active,
-  .top-leave-active {
-    transition: opacity 0.8s;
+  .top-enter-active, .top-leave-active {
+    transition: opacity .8s;
   }
 
-  .top-enter,
-  .top-leave-to {
+  .top-enter, .top-leave-to {
     opacity: 0;
   }
+
 }
 </style>
