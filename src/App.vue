@@ -49,7 +49,10 @@
         </el-menu>
       </el-aside>
       <el-main ref="main">
-        <router-view></router-view>
+        <co-page-tabs ref="tab">
+          <router-view></router-view>
+        </co-page-tabs>
+        <!-- <router-view></router-view> -->
         <!-- <slot></slot> -->
       </el-main>
     </el-container>
@@ -57,6 +60,7 @@
 </template>
 
 <script>
+import coPageTabs from './components/common/co-page-tabs'
 export default {
   name: 'app',
   data() {
@@ -64,18 +68,20 @@ export default {
       isCollapse: true
     }
   },
+  components: {coPageTabs},
   methods: {
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
     handleClose(key, keyPath) {
       console.log(key, keyPath);
-    },
-  },
+    }
+  }
 };
 </script>
 
 <style lang="scss">
+@import '../static/css/common/icon/iconfont.css';
 @import "../static/css/common/index.scss";
 
 #app {

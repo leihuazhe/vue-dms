@@ -23,6 +23,19 @@ export default new Router({
       path: '/p-list',
       name: 'PList',
       component: () => import(/* webpackChunkName: "group-foo" */ '@/components/project/p-list'),
+      meta: {
+        keepAlive: true,
+        pageName: '项目列表'
+      }
+    },
+    {
+      path: '/p-add',
+      name: 'PAdd',
+      component: () => import(/* webpackChunkName: "group-foo" */ '@/components/project/p-add'),
+      meta: {
+        keepAlive: true,
+        pageName: '添加项目'
+      }
     },
   ],
 });
