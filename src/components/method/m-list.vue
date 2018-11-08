@@ -1,5 +1,5 @@
 <template>
-  <div class="s-list c-container">
+  <div class="m-list c-container">
     <div class="c-header">
       <el-collapse @change="collapseHandler" v-model="expandName">
         <el-collapse-item :title="searchArr" name="1">
@@ -53,7 +53,7 @@
 import ListMixin from "../mixin/m-list";
 export default {
   mixins: [ListMixin],
-  name: "s-list",
+  name: "m-list",
   data () {
     return {
       tableData: [
@@ -70,7 +70,7 @@ export default {
   },
   methods: {
     queryMockRule () {
-      this.$router.push({ name: "i-mock-rule" });
+      this.$router.push({ name: "m-mock-rule" });
     },
     searchClick () {
       this.search();
@@ -83,7 +83,7 @@ export default {
 </script>
 
 <style lang="scss">
-.s-list {
+.m-list {
   .f-right {
     float: right;
   }

@@ -62,6 +62,7 @@
 </template>
 
 <script>
+  import util from '../../assets/js/co-util'
   export default {
     name: "s-list",
     data() {
@@ -75,14 +76,14 @@
       }
     },
     methods: {
-      addServe() {
+      addServe () {
         this.$router.push({name: 'SAdd'})
       },
-      modify() {
+      modify () {
         this.$router.push({name: 'SModify'})
       },
-      remove() {
-
+      remove () {
+        util.confirm('是否确定删除该服务？', _ => {})
       }
     }
   }

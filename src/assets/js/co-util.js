@@ -1,6 +1,4 @@
-import {
-  Message
-} from 'element-ui'
+import { Message, MessageBox } from 'element-ui'
 
 // 通过字体图标导入
 const fontIcons = {
@@ -38,4 +36,35 @@ export default {
       center: true
     })
   },
+  /**
+   * confirm消息提示
+   * @param obj 只支持传输 字符串 和 对象
+   */
+  confirm: (obj, callback, event, cancel) => {
+    if (!(obj && (typeof obj === 'string' || Object.prototype.toString.call(obj) === '[object Object]'))) throw Error('请传入正确的参数')
+    if (typeof obj === 'string') {
+      obj = {message: obj}
+    }
+    const message = obj.message || ''
+    const icon = obj.type ? fontIcons[obj.type] : fontIcons['confirm']
+    const content = `<i class="iconfont ${icon}"></i><p>${message}</p>`
+    // todo 需要对不同的 type 提供不同的 icon
+    MessageBox.confirm(content, '', {
+      cancelButtonText: '取消',
+      confirmButtonText: '确定',
+      dangerouslyUseHTMLString: true,
+      type: 'warning',
+      center: true,
+      beforeClose: (action, instance, done) => {
+        done()
+        if (action === 'confirm') {
+          callback && callback(event)
+        } else {
+          cancel && cancel()
+        }
+      }
+    }).then(() => {
+    }).catch(() => {
+    })
+  }
 }
