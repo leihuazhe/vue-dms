@@ -6,7 +6,8 @@
           default-active="2"
           class="el-menu-vertical-demo"
           @open="handleOpen"
-          @close="handleClose">
+          @close="handleClose"
+          router>
           <el-menu-item index="0" class="bglogo">
             <template slot="title">
               <span></span>
@@ -18,10 +19,12 @@
               <span>项目管理</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="1-1">
-                <router-link to="/p-list">项目列表</router-link>
+              <el-menu-item index="/p-list">
+                <span>项目列表</span>
               </el-menu-item>
-              <el-menu-item index="1-2">添加项目</el-menu-item>
+              <el-menu-item index="/p-add">
+                <span>添加项目</span>
+              </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="2">
@@ -64,15 +67,15 @@
 
 <script>
 export default {
-  name: 'app',
+  name: "app",
   methods: {
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
     handleClose(key, keyPath) {
       console.log(key, keyPath);
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -119,7 +122,7 @@ export default {
   .el-menu-item {
     height: 60px;
     line-height: 60px;
-    .active{
+    .active {
       font-weight: 100;
       font-size: 20px;
     }
@@ -136,7 +139,7 @@ export default {
     }
   }
 
-  .el-submenu .el-menu-item{
+  .el-submenu .el-menu-item {
     background: #f1f6fa;
   }
 
@@ -219,7 +222,7 @@ export default {
     overflow: hidden;
     background: #fff;
     box-shadow: 1px 1px 2px 0px #c4ccd6;
-    opacity: .5;
+    opacity: 0.5;
     cursor: pointer;
     i {
       font-size: 40px;
@@ -239,20 +242,21 @@ export default {
     }
     &:hover {
       // background: #effde8;
-      opacity: .8;
+      opacity: 0.8;
       i {
         color: #19bf4f;
       }
     }
   }
 
-  .top-enter-active, .top-leave-active {
-    transition: opacity .8s;
+  .top-enter-active,
+  .top-leave-active {
+    transition: opacity 0.8s;
   }
 
-  .top-enter, .top-leave-to {
+  .top-enter,
+  .top-leave-to {
     opacity: 0;
   }
-
 }
 </style>
