@@ -70,7 +70,7 @@ export default {
   },
   methods: {
     queryMockRule () {
-      this.$router.push({ name: "i-mock-rule" });
+      this.$router.push({ name: "s-mock-rule" });
     },
     searchClick () {
       this.search();
