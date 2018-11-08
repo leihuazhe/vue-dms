@@ -19,7 +19,7 @@
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-menu"></i>
-              <span>服务单元</span>
+              <span>服务管理</span>
             </template>
             <el-menu-item-group>
               <el-menu-item index="1-1">服务管理</el-menu-item>
@@ -28,10 +28,10 @@
           <el-submenu index="2">
             <template slot="title">
               <i class="el-icon-document"></i>
-              <span>接口单元</span>
+              <span>接口管理</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="/p-list">接口管理</el-menu-item>
+              <el-menu-item index="/s-list">接口管理</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="3">
@@ -47,31 +47,29 @@
         </el-menu>
       </el-aside>
       <el-main ref="main">
-        <co-page-tabs ref="tab">
+        <coPageTabs ref="tab">
           <router-view></router-view>
-        </co-page-tabs>
-        <!-- <router-view></router-view> -->
-        <!-- <slot></slot> -->
+        </coPageTabs>
       </el-main>
     </el-container>
   </div>
 </template>
 
 <script>
-import coPageTabs from './components/common/co-page-tabs'
+import coPageTabs from "./components/common/co-page-tabs";
 export default {
-  name: 'app',
-  data() {
+  name: "app",
+  data () {
     return {
       isCollapse: false
-    }
+    };
   },
-  components: {coPageTabs},
+  components: { coPageTabs },
   methods: {
-    handleOpen(key, keyPath) {
+    handleOpen (key, keyPath) {
       console.log(key, keyPath);
     },
-    handleClose(key, keyPath) {
+    handleClose (key, keyPath) {
       console.log(key, keyPath);
     }
   }
@@ -79,7 +77,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../static/css/common/icon/iconfont.css';
+@import "../static/css/common/icon/iconfont.css";
 @import "../static/css/common/index.scss";
 
 #app {
@@ -122,7 +120,7 @@ export default {
   .el-menu-item {
     height: 60px;
     line-height: 60px;
-    .active{
+    .active {
       font-weight: 100;
       font-size: 20px;
     }
@@ -139,7 +137,7 @@ export default {
     }
   }
 
-  .el-submenu .el-menu-item{
+  .el-submenu .el-menu-item {
     background: #f1f6fa;
   }
 
@@ -222,7 +220,7 @@ export default {
     overflow: hidden;
     background: #fff;
     box-shadow: 1px 1px 2px 0px #c4ccd6;
-    opacity: .5;
+    opacity: 0.5;
     cursor: pointer;
     i {
       font-size: 40px;
@@ -242,20 +240,21 @@ export default {
     }
     &:hover {
       // background: #effde8;
-      opacity: .8;
+      opacity: 0.8;
       i {
         color: #19bf4f;
       }
     }
   }
 
-  .top-enter-active, .top-leave-active {
-    transition: opacity .8s;
+  .top-enter-active,
+  .top-leave-active {
+    transition: opacity 0.8s;
   }
 
-  .top-enter, .top-leave-to {
+  .top-enter,
+  .top-leave-to {
     opacity: 0;
   }
-
 }
 </style>

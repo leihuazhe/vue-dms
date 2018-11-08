@@ -14,7 +14,7 @@ module.exports = {
     // consider switching to `plugin:vue/strongly-recommended` or `plugin:vue/recommended` for stricter rules.
     'plugin:vue/essential',
     // https://github.com/standard/standard/blob/master/docs/RULES-en.md
-    'standard'
+    // 'standard'
   ],
   // required to lint *.vue files
   plugins: [
@@ -29,6 +29,8 @@ module.exports = {
     "no-tabs": "off",
     "indent": "off",
     "no-mixed-spaces-and-tabs": "off",
-    "no-useless-escape": "off"
+    "no-useless-escape": "off",
+    "space-before-function-paren": ["error", "always"],
+    "comma-dangle": ["error", "never"],
   }
 }
