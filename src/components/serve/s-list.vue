@@ -64,6 +64,7 @@
 
 <script>
   import util from '../../assets/js/co-util'
+  import { post } from '../../api/api'
   export default {
     name: "s-list",
     data () {
@@ -93,6 +94,11 @@
       remove () {
         util.confirm('是否确定删除该服务？', _ => {})
       }
+    },
+    created () {
+      post({service: 'admin/listServices', data: {}}).then(res => {
+        console.log(res)
+      })
     }
   }
 </script>
