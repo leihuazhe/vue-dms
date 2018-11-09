@@ -28,14 +28,13 @@
     </div>
     <div class="c-content">
       <div class="f-right">
-        <el-button type="primary">添加接口信息</el-button>
+        <el-button type="primary" @click="dialogVisible = true">添加接口信息</el-button>
       </div>
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column align='center' label="ID" min-width="120" prop="aaaa"></el-table-column>
-        <el-table-column align='center' label="项目名称" min-width="120" prop="bbbb"></el-table-column>
-        <el-table-column align='center' label="请求类型" min-width="120" prop="cccc"></el-table-column>
+        <el-table-column align='center' label="ID" min-width="80" prop="aaaa"></el-table-column>
+        <el-table-column align='center' label="服务名称" min-width="120" prop="bbbb"></el-table-column>
         <el-table-column align='center' label="接口名称" min-width="120" prop="dddd"></el-table-column>
-        <el-table-column align='center' label="所属服务简介" min-width="120" prop="eeee"></el-table-column>
+        <el-table-column align='center' label="请求类型" min-width="120" prop="cccc"></el-table-column>
         <el-table-column align='center' label="接口地址" min-width="120" prop="ffff"></el-table-column>
         <el-table-column align='center' label="操作" width="250">
           <template slot-scope="scope">
@@ -46,6 +45,47 @@
         </el-table-column>
       </el-table>
     </div>
+    <el-dialog
+      title="新增接口"
+      :visible.sync="dialogVisible"
+      width="30%"
+      custom-class="method-dialog">
+      <el-form :inline="true" class="demo-form-inline" label-width="80px" label-position="right" :rules="rules" ref="methodForm" :model="methodForm">
+        <el-row type="flex" align="middle" justify="start">
+          <el-col :span="24">
+            <el-form-item label="服务名称" class="dialog-form-item" prop="serviceName">
+              <el-input v-model.trim="methodForm.serviceName" placeholder="请输入内容"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row type="flex" align="middle" justify="start">
+          <el-col :span="24">
+            <el-form-item label="接口名称" class="dialog-form-item" prop="methodName">
+              <el-input v-model.trim="methodForm.methodName" placeholder="请输入内容"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row type="flex" align="middle" justify="start">
+          <el-col :span="24">
+            <el-form-item label="请求类型" class="dialog-form-item" prop="type">
+              <el-select v-model="methodForm.type">
+                <el-option v-for="item in record.typeList" :value="item.value" :label="item.label" :key="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row type="flex" align="middle" justify="start">
+          <el-col :span="24">
+            <el-form-item label="接口地址" class="dialog-form-item" prop="address">
+              <el-input v-model.trim="methodForm.address" placeholder="请输入内容"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="saveClick">保存</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -65,7 +105,10 @@ export default {
           eeee: "1111111",
           ffff: "1111111"
         }
-      ]
+      ],
+      dialogVisible: false,
+      methodForm: {},
+      rules: {}
     };
   },
   methods: {
@@ -77,6 +120,16 @@ export default {
     },
     search () {
       let { service, method } = this.queryCondition;
+    },
+    saveClick () {
+      let { serviceName, methodName, type, address } = this.methodForm;
+      let request = {
+        serviceName,
+        methodName,
+        type,
+        address
+      };
+      console.log(request);
     }
   }
 };
@@ -86,6 +139,24 @@ export default {
 .m-list {
   .f-right {
     float: right;
+  }
+  .method-dialog {
+    .el-row {
+      margin-bottom: 20px;
+      .dialog-form-item {
+        width: 100%;
+        .el-form-item__content {
+          width: calc(100% - 80px);
+          .el-date-editor.el-input,
+          .el-select {
+            width: 100%;
+          }
+        }
+      }
+      .el-form-item {
+        margin-bottom: 0;
+      }
+    }
   }
 }
 </style>

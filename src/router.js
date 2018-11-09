@@ -9,7 +9,7 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: Home,
+      component: Home
     },
     {
       path: '/about',
@@ -17,7 +17,7 @@ export default new Router({
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue'),
+      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
     },
     {
       path: '/m-list',
@@ -26,15 +26,6 @@ export default new Router({
       meta: {
         keepAlive: true,
         pageName: '接口管理'
-      }
-    },
-    {
-      path: '/m-add',
-      name: 'm-add',
-      component: () => import( /* webpackChunkName: "group-foo" */ '@/components/method/m-add'),
-      meta: {
-        keepAlive: true,
-        pageName: '新增接口'
       }
     },
     {
@@ -72,6 +63,6 @@ export default new Router({
         keepAlive: true,
         pageName: '修改服务'
       }
-    },
-  ],
+    }
+  ]
 });

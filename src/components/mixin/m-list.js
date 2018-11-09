@@ -3,8 +3,15 @@ const ListMixin = {
     return {
       searchArr: '收起搜索',
       expandName: '1',
-      queryCondition: {
-
+      queryCondition: {},
+      record: {
+        typeList: [{
+          value:'get',
+          label: 'GET'
+        }, {
+          value: 'post',
+          label: 'POST'
+        }]
       }
     }
   },

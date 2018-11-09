@@ -65,7 +65,7 @@
   import util from '../../assets/js/co-util'
   export default {
     name: "s-list",
-    data() {
+    data () {
       return {
         tableData: [{
           simpleName:'108',
