@@ -45,14 +45,14 @@
         <el-table-column align='center' label="服务全称" min-width="120" prop="service"></el-table-column>
         <el-table-column align='center' label="元数据信息" min-width="120">
           <template slot-scope="scope">
-            <el-button type="text">点击查看</el-button>
+            <el-button type="text">点击查看{{scope.row.id}}</el-button>
           </template>
         </el-table-column>
         <el-table-column align='center' label="Mock接口数量" min-width="120" prop="MockVoListNum"></el-table-column>
         <el-table-column align='center' label="操作" width="250">
           <template slot-scope="scope">
             <el-button type="text" size="small">查看接口</el-button>
-            <el-button type="text" size="small" @click="modify">修改</el-button>
+            <el-button type="text" size="small" @click="modify(scope.row.id)">修改</el-button>
             <el-button type="text" size="small" @click="remove">删除</el-button>
           </template>
         </el-table-column>
@@ -65,7 +65,7 @@
   import util from '../../assets/js/co-util'
   export default {
     name: "s-list",
-    data() {
+    data () {
       return {
         tableData: [{
           simpleName:'108',
