@@ -8,7 +8,7 @@ export default new Router({
     {
       path: '/m-list',
       name: 'm-list',
-      component: () => import( /* webpackChunkName: "group-foo" */ '@/components/method/m-list'),
+      component: () => import('@/components/method/m-list'),
       meta: {
         keepAlive: true,
         pageName: '接口管理'
@@ -17,7 +17,7 @@ export default new Router({
     {
       path: '/m-mock-rule',
       name: 'm-mock-rule',
-      component: () => import( /* webpackChunkName: "group-foo" */ '@/components/method/m-mock-rule'),
+      component: () => import('@/components/method/m-mock-rule'),
       meta: {
         keepAlive: true,
         pageName: 'mock查询'
@@ -26,7 +26,7 @@ export default new Router({
     {
       path: '/s-list',
       name: 'SList',
-      component: () => import(/* webpackChunkName: "group-foo" */ '@/components/serve/s-list'),
+      component: () => import('@/components/serve/s-list'),
       meta: {
         keepAlive: true,
         pageName: '服务管理'
@@ -35,7 +35,7 @@ export default new Router({
     {
       path: '/s-add',
       name: 'SAdd',
-      component: () => import(/* webpackChunkName: "group-foo" */ '@/components/serve/s-add'),
+      component: () => import('@/components/serve/s-add'),
       meta: {
         keepAlive: true,
         pageName: '新增服务'
@@ -44,7 +44,7 @@ export default new Router({
     {
       path: '/s-modify',
       name: 'SModify',
-      component: () => import(/* webpackChunkName: "group-foo" */ '@/components/serve/s-modify'),
+      component: () => import('@/components/serve/s-modify'),
       meta: {
         keepAlive: true,
         pageName: '修改服务'

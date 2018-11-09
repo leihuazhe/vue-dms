@@ -3,7 +3,9 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import './plugins/element.js';
+import VJsoneditor from 'v-jsoneditor/src/index'
 
+Vue.use(VJsoneditor)
 Vue.config.productionTip = false;
 
 new Vue({

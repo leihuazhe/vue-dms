@@ -9,7 +9,9 @@
   },
   "dependencies": {
     "element-ui": "^2.4.5",
+    "v-jsoneditor": "^1.1.2",
     "vue": "^2.5.17",
+    "vue-codemirror": "^4.0.5",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
