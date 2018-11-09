@@ -12,14 +12,14 @@
           </el-col>
           <el-col :span="8">
             <div class="grid-content bg-purple">
-              <el-form-item class="c-query-select" label="服务全称">
-                <el-input v-model="queryCondition.service" placeholder="请输入完整货号"></el-input>
+              <el-form-item class="c-query-select" label="服务版本">
+                <el-input v-model="queryCondition.version" placeholder="1.0.0"></el-input>
               </el-form-item>
             </div>
           </el-col>
           <el-col :span="8">
             <el-form-item class="c-query-select" label="服务ID">
-              <el-input v-model.trim="queryCondition.serviceId" placeholder="请输入完整商品条码"></el-input>
+              <el-input v-model.trim="queryCondition.serviceId" placeholder="请输入服务ID"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -43,6 +43,7 @@
       <el-table :data="tableData" style="width: 100%">
         <el-table-column align='center' label="服务简称" min-width="120" prop="simpleName"></el-table-column>
         <el-table-column align='center' label="服务全称" min-width="120" prop="service"></el-table-column>
+        <el-table-column align='center' label="版本信息" min-width="60" prop="version"></el-table-column>
         <el-table-column align='center' label="元数据信息" min-width="120">
           <template slot-scope="scope">
             <el-button type="text">点击查看{{scope.row.id}}</el-button>
@@ -68,10 +69,17 @@
     data () {
       return {
         tableData: [{
-          simpleName:'108',
-          service: '1111111',
-          MockVoListNum: '1111111'
-        }],
+          simpleName: 'IDService',
+          service: 'com.today.soa.idgen.service.IDService',
+          version: '1.0.0',
+          MockVoListNum: '3'
+        },
+          {
+            simpleName: 'OrderService',
+            service: 'com.today.soa.idgen.service.OrderService',
+            version: '1.0.0',
+            MockVoListNum: '4'
+          }],
         queryCondition: {}
       }
     },
