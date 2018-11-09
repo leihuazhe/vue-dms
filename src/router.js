@@ -15,15 +15,6 @@ export default new Router({
       }
     },
     {
-      path: '/m-add',
-      name: 'm-add',
-      component: () => import( /* webpackChunkName: "group-foo" */ '@/components/method/m-add'),
-      meta: {
-        keepAlive: true,
-        pageName: '新增接口'
-      }
-    },
-    {
       path: '/m-mock-rule',
       name: 'm-mock-rule',
       component: () => import( /* webpackChunkName: "group-foo" */ '@/components/method/m-mock-rule'),
