@@ -2,8 +2,12 @@ import axios from 'axios'
 
 const service = axios.create({
   baseURL: '',
-  timeout: 10000,
-  headers: {'X-Custom-Header': 'foobar'}
+  timeout: 30000,
+  headers: {
+    'X-Custom-Header': 'foobar',
+    // 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+    'Content-Type': 'application/json;charset=UTF-8'
+  }
 })
 
 // 添加一个请求拦截器 后面加全局loading
@@ -16,6 +20,7 @@ axios.interceptors.request.use(function (config) {
 
 // 添加一个响应拦截器 后面加全局loading
 axios.interceptors.response.use(function (response) {
+  console.log("response=>",response)
   return response;
 }, error => {
   dealError(error.response ? error.response.status : '')
@@ -75,5 +80,31 @@ export const post = (obj) => {
     data: obj.type === 'post' || !obj.type ? obj.data : '',
     params: obj.type === 'get' ? obj.data : ''
   })
+}
+
+export const getQueryCondition = (obj) => {
+  obj = obj || {}
+  const page = {
+    start: obj.start || 0,
+    limit: obj.limit || 10,
+    results: obj.results || 0
+  }
+  page.pageIndex = obj.pageIndex || Math.floor(page.start / page.limit) + 1
+  const start = (page.pageIndex - 1) * page.limit
+  page.start = start
+  return page
+}
+
+export const getCurrentPage = (pageResponse) => {
+  const currentPage = {
+    start: pageResponse.start || 0,
+    limit: pageResponse.limit || 10,
+    results: pageResponse.results || 0
+  }
+  const pageIndex = Number(currentPage.start / currentPage.limit) + 1
+  currentPage.pageIndex = pageIndex
+  const start = currentPage.pageIndex * currentPage.limit
+  currentPage.start = start
+  return currentPage
 }
 
