@@ -41,6 +41,7 @@
         <el-button type="primary" @click="addServe">新增服务</el-button>
       </div>
       <el-table :data="tableData" style="width: 100%">
+        <el-table-column align='center' label="ID" min-width="60" prop="serviceId"></el-table-column>
         <el-table-column align='center' label="服务简称" min-width="120" prop="simpleName"></el-table-column>
         <el-table-column align='center' label="服务全称" min-width="120" prop="service"></el-table-column>
         <el-table-column align='center' label="版本信息" min-width="60" prop="version"></el-table-column>
@@ -49,7 +50,7 @@
             <el-button type="text">点击查看{{scope.row.id}}</el-button>
           </template>
         </el-table-column>
-        <el-table-column align='center' label="Mock接口数量" min-width="120" prop="MockVoListNum"></el-table-column>
+        <el-table-column align='center' label="Mock接口数量" min-width="120" prop="mockVoList"></el-table-column>
         <el-table-column align='center' label="操作" width="250">
           <template slot-scope="scope">
             <el-button type="text" size="small">查看接口</el-button>
@@ -69,19 +70,16 @@
     name: "s-list",
     data () {
       return {
-        tableData: [{
-          simpleName: 'IDService',
-          service: 'com.today.soa.idgen.service.IDService',
-          version: '1.0.0',
-          MockVoListNum: '3'
-        },
-          {
-            simpleName: 'OrderService',
-            service: 'com.today.soa.idgen.service.OrderService',
-            version: '1.0.0',
-            MockVoListNum: '4'
-          }],
-        queryCondition: {}
+        tableData: [],
+        queryCondition: {
+         /* time: [],
+          startTime: null,
+          endTime: null,
+          orderStatus: null,
+          tradeType: null,
+          paymentType: null,
+          pageRequest: api.crud.getQueryCondition()*/
+        }
       }
     },
     methods: {
@@ -98,6 +96,10 @@
     created () {
       post({service: 'admin/listServices', data: {}}).then(res => {
         console.log(res)
+          if (res.status === 1 && JSON.stringify(res.success.orders) !== 'undefined') {
+            self.tableData = res.success.serviceList
+            // self.queryCondition.pageRequest = api.crud.getCurrentPage(res.success.pageResponse)
+          }
       })
     }
   }
