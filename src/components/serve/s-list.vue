@@ -115,20 +115,28 @@
         crud.post({
           service: 'admin/listServices',
           dealException: true,
-          data: data,
-          success: function (res) {
-            console.log("res=>",res)
-            const data = res.data;
-            if (data.status === 1 && JSON.stringify(data.success.serviceList) !== 'undefined') {
-              self.tableData = data.success.serviceList;
-              self.queryCondition.pageRequest = crud.getCurrentPage(res.success.pageResponse)
-            }
-          },
-          catch: function (ex){
-            console.log(ex)
+          data: data
+        }).then(res => {
+          console.log("res=>",res)
+          const data = res.data;
+          if (data.status === 1 && JSON.stringify(data.success.serviceList) !== 'undefined') {
+            self.tableData = data.success.serviceList;
+            self.queryCondition.pageRequest = crud.getCurrentPage(data.success.pageResponse)
           }
+        }).catch( error => {
+          console.log("error:",error)
         })
       },
+      /**
+       * .then(function (response) {
+    console.log(response);
+  })
+       .catch(function (error) {
+    console.log(error);
+  });
+       *
+       *
+       */
       searchForm () {
         this.queryCondition.pageRequest = crud.getQueryCondition()
         let flag = this.queryCondition.simpleName || this.queryCondition.version || this.queryCondition.serviceId
