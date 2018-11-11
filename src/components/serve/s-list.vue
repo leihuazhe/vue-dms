@@ -50,7 +50,7 @@
             <el-button type="text">点击查看{{scope.row.id}}</el-button>
           </template>
         </el-table-column>
-        <el-table-column align='center' label="Mock接口数量" min-width="120" prop="mockVoList.length"></el-table-column>
+        <el-table-column align='center' label="Mock接口数量" min-width="120" prop="mockMethodSize"></el-table-column>
         <el-table-column align='center' label="操作" width="250">
           <template slot-scope="scope">
             <el-button type="text" size="small">查看接口</el-button>
@@ -117,14 +117,13 @@
           dealException: true,
           data: data
         }).then(res => {
-          console.log("res=>",res)
           const data = res.data;
           if (data.status === 1 && JSON.stringify(data.success.serviceList) !== 'undefined') {
             self.tableData = data.success.serviceList;
             self.queryCondition.pageRequest = crud.getCurrentPage(data.success.pageResponse)
           }
         }).catch( error => {
-          console.log("error:",error)
+          console.log("request admin/listServices error:",error)
         })
       },
       /**
