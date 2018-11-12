@@ -6,19 +6,19 @@
           <el-form :inline="true" class="demo-form-inline">
             <el-row type="flex" align="middle" justify="start">
               <el-col :span="8">
-                <el-form-item label="接口名" class="c-query-input">
-                  <el-input v-model="queryCondition.service"></el-input>
+                <el-form-item label="服务名称" class="c-query-input">
+                  <el-input v-model="queryCondition.serviceName" placeholder="支持模糊搜索"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label="方法名" class="c-query-input">
-                  <el-input v-model="queryCondition.method"></el-input>
+                <el-form-item label="接口名称" class="c-query-input">
+                  <el-input v-model="queryCondition.methodName" placeholder="请输入服务方法名称"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <div class="f-right">
-                  <el-button type="primary" @click="searchClick">搜索</el-button>
-                  <el-button class="c-button__default">重置</el-button>
+                  <el-button type="primary" @click="searchForm('queryCondition')">搜索</el-button>
+                  <el-button class="c-button__default" @click="resetForm('queryCondition')">重置</el-button>
                 </div>
               </el-col>
             </el-row>
@@ -115,7 +115,7 @@
         tableData: [],
         queryCondition: {
           simpleName: null,
-          methodName: null,
+          method: null,
           pageRequest: crud.getQueryCondition()
         },
         dialogVisible: false,
@@ -155,6 +155,21 @@
       queryMockRule () {
         this.$router.push({ name: 'm-mock-rule' });
       },
+
+      searchForm () {
+        this.queryCondition.pageRequest = crud.getQueryCondition();
+        this.getMethodList();
+      },
+      resetForm () {
+        this.tableData = [];
+        this.queryCondition = {
+          simpleName: null,
+          methodName: null,
+          pageRequest: crud.getQueryCondition()
+        };
+        this.searchForm();
+      },
+
       searchClick () {
         this.search();
       },
