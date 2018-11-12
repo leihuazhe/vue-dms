@@ -55,7 +55,7 @@
   </div>
 </template>
 
-<script>
+<script type="text/ecmascript-6">
 import coPageTabs from "./components/common/co-page-tabs";
 export default {
   name: "app",
