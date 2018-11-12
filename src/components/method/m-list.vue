@@ -1,30 +1,26 @@
 <template>
   <div class="m-list c-container">
     <div class="c-header">
-      <el-collapse @change="collapseHandler" v-model="expandName">
-        <el-collapse-item :title="searchArr" name="1">
-          <el-form :inline="true" class="demo-form-inline">
-            <el-row type="flex" align="middle" justify="start">
-              <el-col :span="8">
-                <el-form-item label="服务名称" class="c-query-input">
-                  <el-input v-model="queryCondition.serviceName" placeholder="支持模糊搜索"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="接口名称" class="c-query-input">
-                  <el-input v-model="queryCondition.methodName" placeholder="请输入服务方法名称"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <div class="f-right">
-                  <el-button type="primary" @click="searchForm('queryCondition')">搜索</el-button>
-                  <el-button class="c-button__default" @click="resetForm('queryCondition')">重置</el-button>
-                </div>
-              </el-col>
-            </el-row>
-          </el-form>
-        </el-collapse-item>
-      </el-collapse>
+      <el-form :inline="true" class="demo-form-inline">
+        <el-row type="flex" align="middle" justify="start">
+          <el-col :span="8">
+            <el-form-item label="服务名称" class="c-query-input">
+              <el-input v-model="queryCondition.serviceName" placeholder="支持模糊搜索"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="接口名称" class="c-query-input">
+              <el-input v-model="queryCondition.methodName" placeholder="请输入服务方法名称"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <div class="f-right">
+              <el-button type="primary" @click="searchForm('queryCondition')">搜索</el-button>
+              <el-button class="c-button__default" @click="resetForm('queryCondition')">重置</el-button>
+            </div>
+          </el-col>
+        </el-row>
+      </el-form>
     </div>
     <div class="c-content">
       <div class="f-right">
@@ -32,15 +28,15 @@
       </div>
       <el-table :data="tableData" style="width: 100%">
         <el-table-column align='center' label="ID" min-width="80" prop="id"></el-table-column>
-        <el-table-column align='center' label="服务名称" min-width="120" prop="simpleService"></el-table-column>
-        <el-table-column align='center' label="接口名称" min-width="120" prop="method"></el-table-column>
-        <el-table-column align='center' label="请求类型" min-width="120" prop="requestType"></el-table-column>
+        <el-table-column align='center' label="服务名称" min-width="80" prop="simpleService"></el-table-column>
+        <el-table-column align='center' label="接口名称" min-width="80" prop="method"></el-table-column>
+        <el-table-column align='center' label="请求类型" min-width="80" prop="requestType"></el-table-column>
         <el-table-column align='center' label="接口地址" min-width="120" prop="url"></el-table-column>
         <el-table-column align='center' label="操作" width="250">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="queryMockRule(scope.row)">查看Mock规则</el-button>
-            <el-button type="text" size="small" @click="modifyMockRule(scope.row)">修改</el-button>
-            <el-button type="text" size="small">删除</el-button>
+            <el-button type="text" size="small" @click="modifyMethod(scope.row)">修改</el-button>
+            <el-button type="text" size="small" @click="deleteMethod(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -60,7 +56,7 @@
     <el-dialog
       title="新增接口"
       :visible.sync="dialogVisible"
-      width="30%"
+      width="40%"
       custom-class="method-dialog">
       <el-form :inline="true" class="demo-form-inline" label-width="80px" label-position="right" :rules="rules"
                ref="methodForm" :model="methodForm">
@@ -104,20 +100,28 @@
 </template>
 
 <script>
-  import ListMixin from '../mixin/m-list';
   import * as crud from '../../api/api';
+  import util from '../../assets/js/co-util'
 
   export default {
-    mixins: [ListMixin],
     name: 'm-list',
     data () {
       return {
-        tableData: [],
         queryCondition: {
-          simpleName: null,
-          method: null,
+          serviceName: null,
+          methodName: null,
           pageRequest: crud.getQueryCondition()
         },
+        record: {
+          typeList: [{
+            value:'get',
+            label: 'GET'
+          }, {
+            value: 'post',
+            label: 'POST'
+          }]
+        },
+        tableData: [],
         dialogVisible: false,
         methodForm: {},
         rules: {}
@@ -125,35 +129,32 @@
     },
     methods: {
       getMethodList () {
-        const self = this;
-        const queryCondition = JSON.parse(JSON.stringify(this.queryCondition));
-        for (let key in queryCondition) {
-          if (!queryCondition[key]) {
-            delete queryCondition[key];
-          }
+        let {serviceName, methodName, pageRequest} = this.queryCondition
+        let request = {
+          serviceName,
+          methodName,
+          pageRequest
         }
-        queryCondition.pageRequest.sortFields = 'created_at desc';
-        const data = JSON.stringify(this.queryCondition);
+        util.dealNullQueryCondition(request)
         crud.post({
           service: 'admin/listInterfaces',
           dealException: true,
-          data: data
+          data: request
         })
           .then(res => {
             const data = res.data;
             if (data.status === 1 && JSON.stringify(data.success.methodList) !== 'undefined') {
-              self.tableData = data.success.methodList;
-              self.queryCondition.pageRequest = crud.getCurrentPage(data.success.pageResponse);
+              this.tableData = data.success.methodList;
+              this.queryCondition.pageRequest = crud.getCurrentPage(data.success.pageResponse);
             }
           })
           .catch(error => {
             console.error('request admin/listInterfaces error:', error);
           });
       },
-
-
-      queryMockRule () {
-        this.$router.push({ name: 'm-mock-rule' });
+      queryMockRule (row) {
+        const id = row.id
+        this.$router.push({name: 'm-mock-rule',params: {id}});
       },
 
       searchForm () {
@@ -169,15 +170,8 @@
         };
         this.searchForm();
       },
-
-      searchClick () {
-        this.search();
-      },
-      search () {
-        let { service, method } = this.queryCondition;
-      },
       saveClick () {
-        let { serviceName, methodName, type, address } = this.methodForm;
+        let {serviceName, methodName, type, address} = this.methodForm;
         let request = {
           serviceName,
           methodName,
@@ -189,10 +183,9 @@
       addMethod () {
         this.dialogVisible = true;
       },
-      modifyMockRule (row) {
+      modifyMethod (row) {
 
       },
-
       handleSizeChange (limit) {
         this.queryCondition.pageRequest.limit = limit;
         this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest);
@@ -202,9 +195,31 @@
         this.queryCondition.pageRequest.pageIndex = pageIndex;
         this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest);
         this.getMethodList();
+      },
+      deleteMethod (row) {
+        util.confirm("是否删除该接口？", this.del, row.id)
+      },
+      del (id) {
+        console.log(id)
+        crud.post({
+          service: 'admin/deleteInterface',
+          dealException: true,
+          data: {id}
+        })
+          .then(res => {
+            let {status} = res
+            if (status === 1) {
+              util.message({
+                message: '删除成功',
+                type: 'success'
+              })
+            }
+          })
+          .catch(error => {
+            console.error('request admin/deleteInterface error:', error);
+          });
       }
     },
-
     created () {
       this.getMethodList();
     }

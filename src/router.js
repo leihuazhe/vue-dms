@@ -15,7 +15,7 @@ export default new Router({
       }
     },
     {
-      path: '/m-mock-rule',
+      path: '/m-mock-rule/:id',
       name: 'm-mock-rule',
       component: () => import('@/components/method/m-mock-rule'),
       meta: {
