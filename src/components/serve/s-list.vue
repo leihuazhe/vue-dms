@@ -13,7 +13,7 @@
           <el-col :span="8">
             <div class="grid-content bg-purple">
               <el-form-item class="c-query-select" label="服务版本">
-                <el-input v-model="queryCondition.version" placeholder="1.0.0"></el-input>
+                <el-input v-model="queryCondition.version" placeholder="请输入版本信息"></el-input>
               </el-form-item>
             </div>
           </el-col>
@@ -26,8 +26,8 @@
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="24" class="c-query-input">
             <div class="f-right">
-              <el-button type="primary">搜索</el-button>
-              <el-button class="c-button__default">重置</el-button>
+              <el-button type="primary" @click="searchForm('queryCondition')">搜索</el-button>
+              <el-button class="c-button__default" @click="resetForm('queryCondition')">重置</el-button>
             </div>
           </el-col>
         </el-row>
@@ -63,7 +63,7 @@
       <div class="block">
         <el-pagination background
                        @size-change="handleSizeChange"
-                       @current-change="handleCurrentChange2"
+                       @current-change="handleCurrentChange"
                        :current-page="queryCondition.pageRequest.pageIndex"
                        :page-sizes="[10, 20, 30, 40]"
                        :page-size="queryCondition.pageRequest.limit"
@@ -77,10 +77,11 @@
 </template>
 
 <script>
-  import util from '../../assets/js/co-util'
-  import * as crud from '../../api/api'
+  import util from '../../assets/js/co-util';
+  import * as crud from '../../api/api';
+
   export default {
-    name: "s-list",
+    name: 's-list',
     data () {
       return {
         tableData: [],
@@ -90,41 +91,44 @@
           serviceId: null,
           pageRequest: crud.getQueryCondition()
         }
-      }
+      };
     },
     methods: {
       addServe () {
-        this.$router.push({name: 'SAdd'})
+        this.$router.push({ name: 'SAdd' });
       },
       modify () {
-        this.$router.push({name: 'SModify'})
+        this.$router.push({ name: 'SModify' });
       },
       remove () {
-        util.confirm('是否确定删除该服务？', _ => {})
+        util.confirm('是否确定删除该服务？', _ => {
+        });
       },
       getServiceList () {
-        const self = this
-        const queryCondition = JSON.parse(JSON.stringify(this.queryCondition))
+        const self = this;
+        const queryCondition = JSON.parse(JSON.stringify(this.queryCondition));
         for (let key in queryCondition) {
           if (!queryCondition[key]) {
-            delete queryCondition[key]
+            delete queryCondition[key];
           }
         }
-        queryCondition.pageRequest.sortFields = 'created_at desc'
-       const data = JSON.stringify(this.queryCondition)
+        queryCondition.pageRequest.sortFields = 'created_at desc';
+        const data = JSON.stringify(this.queryCondition);
         crud.post({
           service: 'admin/listServices',
           dealException: true,
           data: data
-        }).then(res => {
-          const data = res.data;
-          if (data.status === 1 && JSON.stringify(data.success.serviceList) !== 'undefined') {
-            self.tableData = data.success.serviceList;
-            self.queryCondition.pageRequest = crud.getCurrentPage(data.success.pageResponse)
-          }
-        }).catch( error => {
-          console.log("request admin/listServices error:",error)
         })
+          .then(res => {
+            const data = res.data;
+            if (data.status === 1 && JSON.stringify(data.success.serviceList) !== 'undefined') {
+              self.tableData = data.success.serviceList;
+              self.queryCondition.pageRequest = crud.getCurrentPage(data.success.pageResponse);
+            }
+          })
+          .catch(error => {
+            console.log('request admin/listServices error:', error);
+          });
       },
       /**
        * .then(function (response) {
@@ -137,37 +141,49 @@
        *
        */
       searchForm () {
-        this.queryCondition.pageRequest = crud.getQueryCondition()
-        let flag = this.queryCondition.simpleName || this.queryCondition.version || this.queryCondition.serviceId
+        this.queryCondition.pageRequest = crud.getQueryCondition();
+       /* let flag = this.queryCondition.simpleName || this.queryCondition.version || this.queryCondition.serviceId;
         if (flag) {
-          this.getServiceList()
+          this.getServiceList();
         } else {
-          util.message('查询输入项至少填写一个查询条件', 2500)
-        }
+          util.message('查询输入项至少填写一个查询条件', 2500);
+        }*/
+        this.getServiceList();
       },
+      resetForm () {
+        this.tableData = [];
+        this.queryCondition = {
+          simpleName: null,
+          version: null,
+          serviceId: null,
+          pageRequest: crud.getQueryCondition()
+        };
+        this.searchForm();
+      },
+
       handleSizeChange (limit) {
-        this.queryCondition.pageRequest.limit = limit
-        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest)
-        this.getServiceList()
+        this.queryCondition.pageRequest.limit = limit;
+        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest);
+        this.getServiceList();
       },
-      handleCurrentChange2 (pageIndex) {
-        this.queryCondition.pageRequest.pageIndex = pageIndex
-        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest)
-        this.getServiceList()
+      handleCurrentChange (pageIndex) {
+        this.queryCondition.pageRequest.pageIndex = pageIndex;
+        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest);
+        this.getServiceList();
       },
       formatterCreatedAt (row, column, cellValue, index) {
-        return util.formatDate(cellValue, 'YYYY-MM-DD hh:mm:ss')
+        return util.formatDate(cellValue, 'YYYY-MM-DD hh:mm:ss');
       },
       formatterMoney (row, column, cellValue, index) {
-        return util.formatNum(cellValue, 4)
+        return util.formatNum(cellValue, 4);
       },
       formatterStatusLabel (row, column, cellValue, index) {
-        return util.getEnumLabel(orderEnums.OrderStatusEnum, cellValue)
+        return util.getEnumLabel(orderEnums.OrderStatusEnum, cellValue);
       }
     },
 
     created () {
-      this.getServiceList()
+      this.getServiceList();
       /*const self = this;
       crud.post({
         service: 'admin/listServices',
@@ -187,17 +203,17 @@
 </script>
 
 <style lang="scss">
-.s-list{
-  .f-left {
-    float: left;
-  .table-title-text {
-    height: 40px;
-    line-height: 40px;
-    font-size: 20px;
+  .s-list {
+    .f-left {
+      float: left;
+      .table-title-text {
+        height: 40px;
+        line-height: 40px;
+        font-size: 20px;
+      }
+    }
+    .f-right {
+      float: right;
+    }
   }
-  }
-  .f-right{
-    float: right;
-  }
-}
 </style>
