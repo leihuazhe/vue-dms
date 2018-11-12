@@ -100,7 +100,7 @@
 </template>
 
 <script>
-  import * as crud from '../../api/api';
+  import * as crud from '../../api/api'
   import util from '../../assets/js/co-util'
 
   export default {
@@ -125,7 +125,7 @@
         dialogVisible: false,
         methodForm: {},
         rules: {}
-      };
+      }
     },
     methods: {
       getMethodList () {
@@ -142,88 +142,94 @@
           data: request
         })
           .then(res => {
-            const data = res.data;
+            const data = res.data
             if (data.status === 1 && JSON.stringify(data.success.methodList) !== 'undefined') {
-              this.tableData = data.success.methodList;
-              this.queryCondition.pageRequest = crud.getCurrentPage(data.success.pageResponse);
+              this.tableData = data.success.methodList
+              this.queryCondition.pageRequest = crud.getCurrentPage(data.success.pageResponse)
             }
           })
           .catch(error => {
-            console.error('request admin/listInterfaces error:', error);
-          });
+            console.error('request admin/listInterfaces error:', error)
+          })
       },
       queryMockRule (row) {
         const id = row.id
-        this.$router.push({name: 'm-mock-rule',params: {id}});
+        this.$router.push({name: 'm-mock-rule',params: {id}})
       },
 
       searchForm () {
-        this.queryCondition.pageRequest = crud.getQueryCondition();
-        this.getMethodList();
+        this.queryCondition.pageRequest = crud.getQueryCondition()
+        this.getMethodList()
       },
       resetForm () {
-        this.tableData = [];
+        this.tableData = []
         this.queryCondition = {
           simpleName: null,
           methodName: null,
           pageRequest: crud.getQueryCondition()
-        };
-        this.searchForm();
+        }
+        this.searchForm()
       },
       saveClick () {
-        let {serviceName, methodName, type, address} = this.methodForm;
+        let {serviceName, methodName, type, address} = this.methodForm
         let request = {
           serviceName,
           methodName,
           type,
           address
-        };
-        console.log(request);
+        }
+        console.log(request)
       },
       addMethod () {
-        this.dialogVisible = true;
+        this.dialogVisible = true
       },
       modifyMethod (row) {
-
+        this.methodForm = JSON.parse(JSON.stringify(row))
+        this.dialogVisible = true
       },
       handleSizeChange (limit) {
-        this.queryCondition.pageRequest.limit = limit;
-        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest);
-        this.getMethodList();
+        this.queryCondition.pageRequest.limit = limit
+        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest)
+        this.getMethodList()
       },
       handleCurrentChange (pageIndex) {
-        this.queryCondition.pageRequest.pageIndex = pageIndex;
-        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest);
-        this.getMethodList();
+        this.queryCondition.pageRequest.pageIndex = pageIndex
+        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest)
+        this.getMethodList()
       },
       deleteMethod (row) {
         util.confirm("是否删除该接口？", this.del, row.id)
       },
       del (id) {
-        console.log(id)
         crud.post({
           service: 'admin/deleteInterface',
           dealException: true,
           data: {id}
         })
           .then(res => {
-            let {status} = res
+            let {status, responseMsg} = res.data
             if (status === 1) {
               util.message({
                 message: '删除成功',
                 type: 'success'
               })
+              this.getMethodList()
+            } else {
+              util.message({
+                message: responseMsg,
+                type: 'error'
+              })
             }
           })
           .catch(error => {
-            console.error('request admin/deleteInterface error:', error);
-          });
+            console.error('request admin/deleteInterface error:', error)
+          })
       }
     },
     created () {
-      this.getMethodList();
+      this.getMethodList()
     }
-  };
+  }
 </script>
 
 <style lang="scss">

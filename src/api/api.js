@@ -12,20 +12,20 @@ const service = axios.create({
 
 // 添加一个请求拦截器 后面加全局loading
 axios.interceptors.request.use(function (config) {
-  return config;
+  return config
 }, error => {
   console.log(error)
-  return Promise.reject(error);
-});
+  return Promise.reject(error)
+})
 
 // 添加一个响应拦截器 后面加全局loading
 axios.interceptors.response.use(function (response) {
   console.log("response=>",response)
-  return response;
+  return response
 }, error => {
   dealError(error.response ? error.response.status : '')
-  return Promise.reject(error);
-});
+  return Promise.reject(error)
+})
 
 // 处理错误
 const dealError = (errorStatus) => {
@@ -103,8 +103,6 @@ export const getCurrentPage = (pageResponse) => {
   }
   const pageIndex = Number(currentPage.start / currentPage.limit) + 1
   currentPage.pageIndex = pageIndex
-  const start = currentPage.pageIndex * currentPage.limit
-  currentPage.start = start
   return currentPage
 }
 

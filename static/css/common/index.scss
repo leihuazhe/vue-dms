@@ -476,8 +476,24 @@
   }
 }
 
+// 弹窗图标设置
+.icon-success {
+  color: #19BF4F;
+  font-size: 48px;
+}
+
 .icon-warning,
 .icon-confirm {
   color: #FFBD25;
+  font-size: 48px;
+}
+
+.icon-error {
+  color: #FF493A;
+  font-size: 48px;
+}
+
+.icon-info {
+  color: #1D96FF;
   font-size: 48px;
 }
