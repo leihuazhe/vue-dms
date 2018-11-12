@@ -28,10 +28,10 @@
       </div>
       <el-table :data="tableData" style="width: 100%">
         <el-table-column align='center' label="ID" min-width="80" prop="id"></el-table-column>
-        <el-table-column align='center' label="服务名称" min-width="80" prop="simpleService"></el-table-column>
-        <el-table-column align='center' label="接口名称" min-width="80" prop="method"></el-table-column>
-        <el-table-column align='center' label="请求类型" min-width="80" prop="requestType"></el-table-column>
-        <el-table-column align='center' label="接口地址" min-width="120" prop="url"></el-table-column>
+        <el-table-column align='center' label="服务名称" min-width="100" prop="simpleService"></el-table-column>
+        <el-table-column align='center' label="接口名称" min-width="100" prop="method"></el-table-column>
+        <el-table-column align='center' label="请求类型" min-width="100" prop="requestType"></el-table-column>
+        <el-table-column align='center' label="接口地址" min-width="300" prop="url" show-overflow-tooltip></el-table-column>
         <el-table-column align='center' label="操作" width="250">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="queryMockRule(scope.row)">查看Mock规则</el-button>
@@ -62,22 +62,22 @@
                ref="methodForm" :model="methodForm">
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="24">
-            <el-form-item label="服务名称" class="dialog-form-item" prop="serviceName">
-              <el-input v-model.trim="methodForm.serviceName" placeholder="请输入内容"></el-input>
+            <el-form-item label="服务名称" class="dialog-form-item" prop="simpleService">
+              <el-input v-model.trim="methodForm.simpleService" placeholder="请输入内容"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="24">
-            <el-form-item label="接口名称" class="dialog-form-item" prop="methodName">
-              <el-input v-model.trim="methodForm.methodName" placeholder="请输入内容"></el-input>
+            <el-form-item label="接口名称" class="dialog-form-item" prop="method">
+              <el-input v-model.trim="methodForm.method" placeholder="请输入内容"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="24">
-            <el-form-item label="请求类型" class="dialog-form-item" prop="type">
-              <el-select v-model="methodForm.type">
+            <el-form-item label="请求类型" class="dialog-form-item" prop="requestType">
+              <el-select v-model="methodForm.requestType">
                 <el-option v-for="item in record.typeList" :value="item.value" :label="item.label"
                            :key="item.value"></el-option>
               </el-select>
@@ -86,8 +86,8 @@
         </el-row>
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="24">
-            <el-form-item label="接口地址" class="dialog-form-item" prop="address">
-              <el-input v-model.trim="methodForm.address" placeholder="请输入内容"></el-input>
+            <el-form-item label="接口地址" class="dialog-form-item" prop="url">
+              <el-input v-model.trim="methodForm.url" placeholder="请输入内容"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -100,7 +100,7 @@
 </template>
 
 <script>
-  import * as crud from '../../api/api';
+  import * as crud from '../../api/api'
   import util from '../../assets/js/co-util'
 
   export default {
@@ -125,7 +125,7 @@
         dialogVisible: false,
         methodForm: {},
         rules: {}
-      };
+      }
     },
     methods: {
       getMethodList () {
@@ -142,88 +142,94 @@
           data: request
         })
           .then(res => {
-            const data = res.data;
+            const data = res.data
             if (data.status === 1 && JSON.stringify(data.success.methodList) !== 'undefined') {
-              this.tableData = data.success.methodList;
-              this.queryCondition.pageRequest = crud.getCurrentPage(data.success.pageResponse);
+              this.tableData = data.success.methodList
+              this.queryCondition.pageRequest = crud.getCurrentPage(data.success.pageResponse)
             }
           })
           .catch(error => {
-            console.error('request admin/listInterfaces error:', error);
-          });
+            console.error('request admin/listInterfaces error:', error)
+          })
       },
       queryMockRule (row) {
         const id = row.id
-        this.$router.push({name: 'm-mock-rule',params: {id}});
+        this.$router.push({name: 'm-mock-rule',params: {id}})
       },
 
       searchForm () {
-        this.queryCondition.pageRequest = crud.getQueryCondition();
-        this.getMethodList();
+        this.queryCondition.pageRequest = crud.getQueryCondition()
+        this.getMethodList()
       },
       resetForm () {
-        this.tableData = [];
+        this.tableData = []
         this.queryCondition = {
           simpleName: null,
           methodName: null,
           pageRequest: crud.getQueryCondition()
-        };
-        this.searchForm();
+        }
+        this.searchForm()
       },
       saveClick () {
-        let {serviceName, methodName, type, address} = this.methodForm;
+        let {simpleService, method, requestType, url} = this.methodForm
         let request = {
-          serviceName,
-          methodName,
-          type,
-          address
-        };
-        console.log(request);
+          simpleService,
+          method,
+          requestType,
+          url
+        }
+        console.log(request)
       },
       addMethod () {
-        this.dialogVisible = true;
+        this.dialogVisible = true
       },
       modifyMethod (row) {
-
+        this.methodForm = JSON.parse(JSON.stringify(row))
+        this.dialogVisible = true
       },
       handleSizeChange (limit) {
-        this.queryCondition.pageRequest.limit = limit;
-        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest);
-        this.getMethodList();
+        this.queryCondition.pageRequest.limit = limit
+        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest)
+        this.getMethodList()
       },
       handleCurrentChange (pageIndex) {
-        this.queryCondition.pageRequest.pageIndex = pageIndex;
-        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest);
-        this.getMethodList();
+        this.queryCondition.pageRequest.pageIndex = pageIndex
+        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest)
+        this.getMethodList()
       },
       deleteMethod (row) {
         util.confirm("是否删除该接口？", this.del, row.id)
       },
       del (id) {
-        console.log(id)
         crud.post({
           service: 'admin/deleteInterface',
           dealException: true,
           data: {id}
         })
           .then(res => {
-            let {status} = res
+            let {status, responseMsg} = res.data
             if (status === 1) {
               util.message({
                 message: '删除成功',
                 type: 'success'
               })
+              this.getMethodList()
+            } else {
+              util.message({
+                message: responseMsg,
+                type: 'error'
+              })
             }
           })
           .catch(error => {
-            console.error('request admin/deleteInterface error:', error);
-          });
+            console.error('request admin/deleteInterface error:', error)
+          })
       }
     },
     created () {
-      this.getMethodList();
+      this.getMethodList()
     }
-  };
+  }
 </script>
 
 <style lang="scss">

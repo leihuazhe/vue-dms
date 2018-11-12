@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import VJsoneditor from "v-jsoneditor/src/index";
+import VJsoneditor from "v-jsoneditor/src/index"
 export default {
   components: {
     VJsoneditor
@@ -211,12 +211,12 @@ export default {
       mockType: "",
       MockDialogVisible: false,
       editMockForm: {}
-    };
+    }
   },
   methods: {
     onError () {},
     saveClick () {
-      console.log(this.json);
+      console.log(this.json)
       let {MockJson,dataJson} = this.editMockForm
       let request = {
         MockJson: JSON.stringify(MockJson),
@@ -225,22 +225,22 @@ export default {
       console.log(request)
     },
     viewClick (row) {
-      this.editMockForm = JSON.parse(JSON.stringify(row));
-      this.MockDialogVisible = true;
-      this.mockType = "view";
+      this.editMockForm = JSON.parse(JSON.stringify(row))
+      this.MockDialogVisible = true
+      this.mockType = "view"
     },
     editClick (row) {
-      this.editMockForm = JSON.parse(JSON.stringify(row));
-      this.MockDialogVisible = true;
-      this.mockType = "edit";
+      this.editMockForm = JSON.parse(JSON.stringify(row))
+      this.MockDialogVisible = true
+      this.mockType = "edit"
     },
     addMock () {
-      this.editMockForm = {};
-      this.MockDialogVisible = true;
-      this.mockType = "edit";
+      this.editMockForm = {}
+      this.MockDialogVisible = true
+      this.mockType = "edit"
     }
   }
-};
+}
 </script>
 
 <style lang="scss">

@@ -32,5 +32,6 @@ module.exports = {
     "no-useless-escape": "off",
     "space-before-function-paren": ["error", "always"],
     "comma-dangle": ["error", "never"],
+    "semi": ["error", "never"]
   }
 }
