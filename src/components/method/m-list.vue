@@ -31,11 +31,11 @@
         <el-button type="primary" @click="addMethod">添加接口信息</el-button>
       </div>
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column align='center' label="ID" min-width="80" prop="aaaa"></el-table-column>
-        <el-table-column align='center' label="服务名称" min-width="120" prop="bbbb"></el-table-column>
-        <el-table-column align='center' label="接口名称" min-width="120" prop="dddd"></el-table-column>
-        <el-table-column align='center' label="请求类型" min-width="120" prop="cccc"></el-table-column>
-        <el-table-column align='center' label="接口地址" min-width="120" prop="ffff"></el-table-column>
+        <el-table-column align='center' label="ID" min-width="80" prop="id"></el-table-column>
+        <el-table-column align='center' label="服务名称" min-width="120" prop="simpleService"></el-table-column>
+        <el-table-column align='center' label="接口名称" min-width="120" prop="method"></el-table-column>
+        <el-table-column align='center' label="请求类型" min-width="120" prop="requestType"></el-table-column>
+        <el-table-column align='center' label="接口地址" min-width="120" prop="url"></el-table-column>
         <el-table-column align='center' label="操作" width="250">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="queryMockRule(scope.row)">查看Mock规则</el-button>
@@ -44,13 +44,26 @@
           </template>
         </el-table-column>
       </el-table>
+      <!-- 分页 -->
+      <div class="block">
+        <el-pagination background
+                       @size-change="handleSizeChange"
+                       @current-change="handleCurrentChange"
+                       :current-page="queryCondition.pageRequest.pageIndex"
+                       :page-sizes="[10, 20, 30, 40]"
+                       :page-size="queryCondition.pageRequest.limit"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="queryCondition.pageRequest.results">
+        </el-pagination>
+      </div>
     </div>
     <el-dialog
       title="新增接口"
       :visible.sync="dialogVisible"
       width="30%"
       custom-class="method-dialog">
-      <el-form :inline="true" class="demo-form-inline" label-width="80px" label-position="right" :rules="rules" ref="methodForm" :model="methodForm">
+      <el-form :inline="true" class="demo-form-inline" label-width="80px" label-position="right" :rules="rules"
+               ref="methodForm" :model="methodForm">
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="24">
             <el-form-item label="服务名称" class="dialog-form-item" prop="serviceName">
@@ -69,7 +82,8 @@
           <el-col :span="24">
             <el-form-item label="请求类型" class="dialog-form-item" prop="type">
               <el-select v-model="methodForm.type">
-                <el-option v-for="item in record.typeList" :value="item.value" :label="item.label" :key="item.value"></el-option>
+                <el-option v-for="item in record.typeList" :value="item.value" :label="item.label"
+                           :key="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -90,79 +104,120 @@
 </template>
 
 <script>
-import ListMixin from "../mixin/m-list";
-export default {
-  mixins: [ListMixin],
-  name: "m-list",
-  data () {
-    return {
-      tableData: [
-        {
-          aaaa: "108",
-          bbbb: "1111111",
-          cccc: "1111111",
-          dddd: "1111111",
-          eeee: "1111111",
-          ffff: "1111111"
-        }
-      ],
-      dialogVisible: false,
-      methodForm: {},
-      rules: {}
-    };
-  },
-  methods: {
-    queryMockRule () {
-      this.$router.push({ name: "m-mock-rule" });
-    },
-    searchClick () {
-      this.search();
-    },
-    search () {
-      let { service, method } = this.queryCondition;
-    },
-    saveClick () {
-      let { serviceName, methodName, type, address } = this.methodForm;
-      let request = {
-        serviceName,
-        methodName,
-        type,
-        address
+  import ListMixin from '../mixin/m-list';
+  import * as crud from '../../api/api';
+
+  export default {
+    mixins: [ListMixin],
+    name: 'm-list',
+    data () {
+      return {
+        tableData: [],
+        queryCondition: {
+          simpleName: null,
+          methodName: null,
+          pageRequest: crud.getQueryCondition()
+        },
+        dialogVisible: false,
+        methodForm: {},
+        rules: {}
       };
-      console.log(request);
     },
-    addMethod () {
-      this.dialogVisible = true
-    },  
-    modifyMockRule (row) {
-      
+    methods: {
+      getMethodList () {
+        const self = this;
+        const queryCondition = JSON.parse(JSON.stringify(this.queryCondition));
+        for (let key in queryCondition) {
+          if (!queryCondition[key]) {
+            delete queryCondition[key];
+          }
+        }
+        queryCondition.pageRequest.sortFields = 'created_at desc';
+        const data = JSON.stringify(this.queryCondition);
+        crud.post({
+          service: 'admin/listInterfaces',
+          dealException: true,
+          data: data
+        })
+          .then(res => {
+            const data = res.data;
+            if (data.status === 1 && JSON.stringify(data.success.methodList) !== 'undefined') {
+              self.tableData = data.success.methodList;
+              self.queryCondition.pageRequest = crud.getCurrentPage(data.success.pageResponse);
+            }
+          })
+          .catch(error => {
+            console.error('request admin/listInterfaces error:', error);
+          });
+      },
+
+
+      queryMockRule () {
+        this.$router.push({ name: 'm-mock-rule' });
+      },
+      searchClick () {
+        this.search();
+      },
+      search () {
+        let { service, method } = this.queryCondition;
+      },
+      saveClick () {
+        let { serviceName, methodName, type, address } = this.methodForm;
+        let request = {
+          serviceName,
+          methodName,
+          type,
+          address
+        };
+        console.log(request);
+      },
+      addMethod () {
+        this.dialogVisible = true;
+      },
+      modifyMockRule (row) {
+
+      },
+
+      handleSizeChange (limit) {
+        this.queryCondition.pageRequest.limit = limit;
+        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest);
+        this.getMethodList();
+      },
+      handleCurrentChange (pageIndex) {
+        this.queryCondition.pageRequest.pageIndex = pageIndex;
+        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest);
+        this.getMethodList();
+      }
+    },
+
+    created () {
+      this.getMethodList();
     }
-  }
-};
+  };
 </script>
 
 <style lang="scss">
-.m-list {
-  .f-right {
-    float: right;
-  }
-  .method-dialog {
-    .el-row {
-      margin-bottom: 20px;
-      .dialog-form-item {
-        width: 100%;
-        .el-form-item__content {
-          width: calc(100% - 80px);
-          .el-date-editor.el-input,
-          .el-select {
-            width: 100%;
+  .m-list {
+    .f-right {
+      float: right;
+    }
+    .method-dialog {
+      .el-row {
+        margin-bottom: 20px;
+        .dialog-form-item {
+          width: 100%;
+          .el-form-item__content {
+            width: calc(100% - 80px);
+            .el-date-editor.el-input,
+            .el-select {
+              width: 100%;
+            }
           }
         }
-      }
-      .el-form-item {
-        margin-bottom: 0;
+        .el-form-item {
+          margin-bottom: 0;
+        }
       }
     }
   }
-}
 </style>

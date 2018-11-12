@@ -47,7 +47,7 @@
         <el-table-column align='center' label="版本信息" min-width="60" prop="version"></el-table-column>
         <el-table-column align='center' label="元数据信息" min-width="120">
           <template slot-scope="scope">
-            <el-button type="text">点击查看{{scope.row.id}}</el-button>
+            <el-button type="text" @click="lookMetadata(scope.row.id)">点击查看{{scope.row.id}}</el-button>
           </template>
         </el-table-column>
         <el-table-column align='center' label="Mock接口数量" min-width="120" prop="mockMethodSize"></el-table-column>
@@ -97,6 +97,9 @@
       addServe () {
         this.$router.push({ name: 'SAdd' });
       },
+      lookMetadata () {
+        this.$router.push({ name: 'SMetadata' });
+      },
       modify () {
         this.$router.push({ name: 'SModify' });
       },
@@ -130,16 +133,7 @@
             console.log('request admin/listServices error:', error);
           });
       },
-      /**
-       * .then(function (response) {
-    console.log(response);
-  })
-       .catch(function (error) {
-    console.log(error);
-  });
-       *
-       *
-       */
+
       searchForm () {
         this.queryCondition.pageRequest = crud.getQueryCondition();
        /* let flag = this.queryCondition.simpleName || this.queryCondition.version || this.queryCondition.serviceId;
@@ -171,6 +165,7 @@
         this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest);
         this.getServiceList();
       },
+
       formatterCreatedAt (row, column, cellValue, index) {
         return util.formatDate(cellValue, 'YYYY-MM-DD hh:mm:ss');
       },
@@ -184,20 +179,6 @@
 
     created () {
       this.getServiceList();
-      /*const self = this;
-      crud.post({
-        service: 'admin/listServices',
-        data: {}
-      })
-        .then(res => {
-          console.log(res);
-          const data = res.data;
-          if (data.status === 1 && JSON.stringify(data.success.serviceList) !== 'undefined') {
-            self.tableData = data.success.serviceList;
-
-            // self.queryCondition.pageRequest = api.crud.getCurrentPage(res.success.pageResponse)
-          }
-        });*/
     }
   };
 </script>
