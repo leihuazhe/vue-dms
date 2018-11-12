@@ -70,6 +70,7 @@
         <el-button type="primary" @click="saveClick">保存</el-button>
       </span>
     </el-dialog>
+
     <el-dialog
       :title="mockType === 'view' ? '查看': '编辑'"
       :visible.sync="MockDialogVisible"

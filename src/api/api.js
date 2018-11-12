@@ -86,7 +86,7 @@ export const getQueryCondition = (obj) => {
   obj = obj || {}
   const page = {
     start: obj.start || 0,
-    limit: obj.limit || 10,
+    limit: obj.limit || 5,
     results: obj.results || 0
   }
   page.pageIndex = obj.pageIndex || Math.floor(page.start / page.limit) + 1
@@ -98,7 +98,7 @@ export const getQueryCondition = (obj) => {
 export const getCurrentPage = (pageResponse) => {
   const currentPage = {
     start: pageResponse.start || 0,
-    limit: pageResponse.limit || 10,
+    limit: pageResponse.limit || 5,
     results: pageResponse.results || 0
   }
   const pageIndex = Number(currentPage.start / currentPage.limit) + 1

@@ -49,6 +49,15 @@ export default new Router({
         keepAlive: true,
         pageName: '修改服务'
       }
+    },
+    {
+      path: '/s-metadata',
+      name: 'SMetadata',
+      component: () => import('@/components/serve/s-metadata'),
+      meta: {
+        keepAlive: true,
+        pageName: '查看元数据信息'
+      }
     }
   ]
-})
+});
