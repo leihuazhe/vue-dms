@@ -28,10 +28,10 @@
       </div>
       <el-table :data="tableData" style="width: 100%">
         <el-table-column align='center' label="ID" min-width="80" prop="id"></el-table-column>
-        <el-table-column align='center' label="服务名称" min-width="80" prop="simpleService"></el-table-column>
-        <el-table-column align='center' label="接口名称" min-width="80" prop="method"></el-table-column>
-        <el-table-column align='center' label="请求类型" min-width="80" prop="requestType"></el-table-column>
-        <el-table-column align='center' label="接口地址" min-width="120" prop="url"></el-table-column>
+        <el-table-column align='center' label="服务名称" min-width="100" prop="simpleService"></el-table-column>
+        <el-table-column align='center' label="接口名称" min-width="100" prop="method"></el-table-column>
+        <el-table-column align='center' label="请求类型" min-width="100" prop="requestType"></el-table-column>
+        <el-table-column align='center' label="接口地址" min-width="300" prop="url" show-overflow-tooltip></el-table-column>
         <el-table-column align='center' label="操作" width="250">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="queryMockRule(scope.row)">查看Mock规则</el-button>
@@ -62,22 +62,22 @@
                ref="methodForm" :model="methodForm">
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="24">
-            <el-form-item label="服务名称" class="dialog-form-item" prop="serviceName">
-              <el-input v-model.trim="methodForm.serviceName" placeholder="请输入内容"></el-input>
+            <el-form-item label="服务名称" class="dialog-form-item" prop="simpleService">
+              <el-input v-model.trim="methodForm.simpleService" placeholder="请输入内容"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="24">
-            <el-form-item label="接口名称" class="dialog-form-item" prop="methodName">
-              <el-input v-model.trim="methodForm.methodName" placeholder="请输入内容"></el-input>
+            <el-form-item label="接口名称" class="dialog-form-item" prop="method">
+              <el-input v-model.trim="methodForm.method" placeholder="请输入内容"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="24">
-            <el-form-item label="请求类型" class="dialog-form-item" prop="type">
-              <el-select v-model="methodForm.type">
+            <el-form-item label="请求类型" class="dialog-form-item" prop="requestType">
+              <el-select v-model="methodForm.requestType">
                 <el-option v-for="item in record.typeList" :value="item.value" :label="item.label"
                            :key="item.value"></el-option>
               </el-select>
@@ -86,8 +86,8 @@
         </el-row>
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="24">
-            <el-form-item label="接口地址" class="dialog-form-item" prop="address">
-              <el-input v-model.trim="methodForm.address" placeholder="请输入内容"></el-input>
+            <el-form-item label="接口地址" class="dialog-form-item" prop="url">
+              <el-input v-model.trim="methodForm.url" placeholder="请输入内容"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -171,12 +171,12 @@
         this.searchForm()
       },
       saveClick () {
-        let {serviceName, methodName, type, address} = this.methodForm
+        let {simpleService, method, requestType, url} = this.methodForm
         let request = {
-          serviceName,
-          methodName,
-          type,
-          address
+          simpleService,
+          method,
+          requestType,
+          url
         }
         console.log(request)
       },
