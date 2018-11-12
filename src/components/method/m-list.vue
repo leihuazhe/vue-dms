@@ -28,7 +28,7 @@
     </div>
     <div class="c-content">
       <div class="f-right">
-        <el-button type="primary" @click="dialogVisible = true">添加接口信息</el-button>
+        <el-button type="primary" @click="addMethod">添加接口信息</el-button>
       </div>
       <el-table :data="tableData" style="width: 100%">
         <el-table-column align='center' label="ID" min-width="80" prop="aaaa"></el-table-column>
@@ -39,7 +39,7 @@
         <el-table-column align='center' label="操作" width="250">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="queryMockRule(scope.row)">查看Mock规则</el-button>
-            <el-button type="text" size="small">修改</el-button>
+            <el-button type="text" size="small" @click="modifyMockRule(scope.row)">修改</el-button>
             <el-button type="text" size="small">删除</el-button>
           </template>
         </el-table-column>
@@ -130,6 +130,12 @@ export default {
         address
       };
       console.log(request);
+    },
+    addMethod () {
+      this.dialogVisible = true
+    },  
+    modifyMockRule (row) {
+      
     }
   }
 };
