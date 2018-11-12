@@ -43,18 +43,21 @@
       :visible.sync="MockDialogVisible"
       width="90%"
       custom-class="mock-dialog">
-      <el-form :inline="true" class="demo-form-inline" label-width="120px" label-position="top" :rules="rules" ref="MockRuleForm" :model="MockRuleForm">
+      <el-form :inline="true" class="demo-form-inline" label-width="120px" label-position="top" :rules="rules"
+               ref="MockRuleForm" :model="MockRuleForm">
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="12">
             <el-form-item label="Mock表达式:" class="dialog-form-item" prop="serviceName">
               <span v-if="mockType === 'view'">{{ editMockForm.MockJsonString }}</span>
-              <v-jsoneditor v-else v-model="editMockForm.MockJson" :options="options" :plus="false" height="400px" @error="onError"></v-jsoneditor>
+              <v-jsoneditor v-else v-model="editMockForm.MockJson" :options="options" :plus="false" height="400px"
+                            @error="onError"></v-jsoneditor>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="返回数据:" class="dialog-form-item" prop="methodName">
               <span v-if="mockType === 'view'">{{ editMockForm.dataJsonString }}</span>
-              <v-jsoneditor v-else v-model="editMockForm.dataJson" :options="options" :plus="false" height="400px" @error="onError"></v-jsoneditor>
+              <v-jsoneditor v-else v-model="editMockForm.dataJson" :options="options" :plus="false" height="400px"
+                            @error="onError"></v-jsoneditor>
             </el-form-item>
           </el-col>
         </el-row>
@@ -67,204 +70,273 @@
 </template>
 
 <script>
-import VJsoneditor from "v-jsoneditor/src/index"
-export default {
-  components: {
-    VJsoneditor
-  },
-  data () {
-    return {
-      options: {
-        mode: "code"
-      },
-      methodForm: {
-        serviceName: "aaaa",
-        methodName: "bbbbb"
-      },
-      tableData: [
-        {
-          aaaa: "108",
-          MockJson: {
-            body: {
-              request: {
-                reportType: [
-                  "SHOPINCOMEDIFF_REPORT",
-                  "SKU_RECEIVE_REPORT",
-                  "SUPPLIER_ACCOUNT_DETAIL",
-                  "SHOP_CHECKACCOUNT_REPORT",
-                  "LOGISTICS_CHECKACCOUNT_REPORT",
-                  "CIGARETTE_TRANS_REPORT",
-                  "INCOMEDETAIL_REPORT",
-                  "INVENTORY_DETAIL_REPORT",
-                  "LOGISTICS_DETAIL_REPORT",
-                  "SHOP_IOCTW_REPORT",
-                  "RETIREMENT_REPORT",
-                  "STORE_TURNOVER",
-                  "PAY_SOURCE_DATA",
-                  "SINGLE_GOODS_SALE",
-                  "SHOP_BUSINESS_DAILY",
-                  "SPOT_AMOUNT",
-                  "LOGISTICS_BACK",
-                  "MEMBER_BALANCE",
-                  "MEMBER_COUPON",
-                  "LOGISTICS_RETIREMENT_REPORT"
-                ],
-                exportUserId: 16619,
-                pageParams: { start: 0, size: 10, results: 0, pageIndex: 1 }
+  import VJsoneditor from 'v-jsoneditor/src/index'
+  import * as crud from '../../api/api'
+  import util from '../../assets/js/co-util'
+
+  export default {
+    components: {
+      VJsoneditor
+    },
+    data () {
+      return {
+        queryCondition: {
+          id: null,
+          pageRequest: crud.getQueryCondition()
+        },
+        options: {
+          mode: 'code'
+        },
+        methodForm: {
+          serviceName: 'aaaa',
+          methodName: 'bbbbb'
+        },
+        tableData: [
+          {
+            aaaa: '108',
+            MockJson: {
+              body: {
+                request: {
+                  reportType: [
+                    'SHOPINCOMEDIFF_REPORT',
+                    'SKU_RECEIVE_REPORT',
+                    'SUPPLIER_ACCOUNT_DETAIL',
+                    'SHOP_CHECKACCOUNT_REPORT',
+                    'LOGISTICS_CHECKACCOUNT_REPORT',
+                    'CIGARETTE_TRANS_REPORT',
+                    'INCOMEDETAIL_REPORT',
+                    'INVENTORY_DETAIL_REPORT',
+                    'LOGISTICS_DETAIL_REPORT',
+                    'SHOP_IOCTW_REPORT',
+                    'RETIREMENT_REPORT',
+                    'STORE_TURNOVER',
+                    'PAY_SOURCE_DATA',
+                    'SINGLE_GOODS_SALE',
+                    'SHOP_BUSINESS_DAILY',
+                    'SPOT_AMOUNT',
+                    'LOGISTICS_BACK',
+                    'MEMBER_BALANCE',
+                    'MEMBER_COUPON',
+                    'LOGISTICS_RETIREMENT_REPORT'
+                  ],
+                  exportUserId: 16619,
+                  pageParams: {
+                    start: 0,
+                    size: 10,
+                    results: 0,
+                    pageIndex: 1
+                  }
+                }
               }
-            }
-          },
-          MockJsonString: {
-            body: {
-              request: {
-                reportType: [
-                  "SHOPINCOMEDIFF_REPORT",
-                  "SKU_RECEIVE_REPORT",
-                  "SUPPLIER_ACCOUNT_DETAIL",
-                  "SHOP_CHECKACCOUNT_REPORT",
-                  "LOGISTICS_CHECKACCOUNT_REPORT",
-                  "CIGARETTE_TRANS_REPORT",
-                  "INCOMEDETAIL_REPORT",
-                  "INVENTORY_DETAIL_REPORT",
-                  "LOGISTICS_DETAIL_REPORT",
-                  "SHOP_IOCTW_REPORT",
-                  "RETIREMENT_REPORT",
-                  "STORE_TURNOVER",
-                  "PAY_SOURCE_DATA",
-                  "SINGLE_GOODS_SALE",
-                  "SHOP_BUSINESS_DAILY",
-                  "SPOT_AMOUNT",
-                  "LOGISTICS_BACK",
-                  "MEMBER_BALANCE",
-                  "MEMBER_COUPON",
-                  "LOGISTICS_RETIREMENT_REPORT"
-                ],
-                exportUserId: 16619,
-                pageParams: { start: 0, size: 10, results: 0, pageIndex: 1 }
+            },
+            MockJsonString: {
+              body: {
+                request: {
+                  reportType: [
+                    'SHOPINCOMEDIFF_REPORT',
+                    'SKU_RECEIVE_REPORT',
+                    'SUPPLIER_ACCOUNT_DETAIL',
+                    'SHOP_CHECKACCOUNT_REPORT',
+                    'LOGISTICS_CHECKACCOUNT_REPORT',
+                    'CIGARETTE_TRANS_REPORT',
+                    'INCOMEDETAIL_REPORT',
+                    'INVENTORY_DETAIL_REPORT',
+                    'LOGISTICS_DETAIL_REPORT',
+                    'SHOP_IOCTW_REPORT',
+                    'RETIREMENT_REPORT',
+                    'STORE_TURNOVER',
+                    'PAY_SOURCE_DATA',
+                    'SINGLE_GOODS_SALE',
+                    'SHOP_BUSINESS_DAILY',
+                    'SPOT_AMOUNT',
+                    'LOGISTICS_BACK',
+                    'MEMBER_BALANCE',
+                    'MEMBER_COUPON',
+                    'LOGISTICS_RETIREMENT_REPORT'
+                  ],
+                  exportUserId: 16619,
+                  pageParams: {
+                    start: 0,
+                    size: 10,
+                    results: 0,
+                    pageIndex: 1
+                  }
+                }
               }
-            }
-          },
-          dataJson: {
-            body: {
-              request: {
-                reportType: [
-                  "SHOPINCOMEDIFF_REPORT",
-                  "SKU_RECEIVE_REPORT",
-                  "SUPPLIER_ACCOUNT_DETAIL",
-                  "SHOP_CHECKACCOUNT_REPORT",
-                  "LOGISTICS_CHECKACCOUNT_REPORT",
-                  "CIGARETTE_TRANS_REPORT",
-                  "INCOMEDETAIL_REPORT",
-                  "INVENTORY_DETAIL_REPORT",
-                  "LOGISTICS_DETAIL_REPORT",
-                  "SHOP_IOCTW_REPORT",
-                  "RETIREMENT_REPORT",
-                  "STORE_TURNOVER",
-                  "PAY_SOURCE_DATA",
-                  "SINGLE_GOODS_SALE",
-                  "SHOP_BUSINESS_DAILY",
-                  "SPOT_AMOUNT",
-                  "LOGISTICS_BACK",
-                  "MEMBER_BALANCE",
-                  "MEMBER_COUPON",
-                  "LOGISTICS_RETIREMENT_REPORT"
-                ],
-                exportUserId: 16619,
-                pageParams: { start: 0, size: 10, results: 0, pageIndex: 1 }
+            },
+            dataJson: {
+              body: {
+                request: {
+                  reportType: [
+                    'SHOPINCOMEDIFF_REPORT',
+                    'SKU_RECEIVE_REPORT',
+                    'SUPPLIER_ACCOUNT_DETAIL',
+                    'SHOP_CHECKACCOUNT_REPORT',
+                    'LOGISTICS_CHECKACCOUNT_REPORT',
+                    'CIGARETTE_TRANS_REPORT',
+                    'INCOMEDETAIL_REPORT',
+                    'INVENTORY_DETAIL_REPORT',
+                    'LOGISTICS_DETAIL_REPORT',
+                    'SHOP_IOCTW_REPORT',
+                    'RETIREMENT_REPORT',
+                    'STORE_TURNOVER',
+                    'PAY_SOURCE_DATA',
+                    'SINGLE_GOODS_SALE',
+                    'SHOP_BUSINESS_DAILY',
+                    'SPOT_AMOUNT',
+                    'LOGISTICS_BACK',
+                    'MEMBER_BALANCE',
+                    'MEMBER_COUPON',
+                    'LOGISTICS_RETIREMENT_REPORT'
+                  ],
+                  exportUserId: 16619,
+                  pageParams: {
+                    start: 0,
+                    size: 10,
+                    results: 0,
+                    pageIndex: 1
+                  }
+                }
               }
-            }
-          },
-          dataJsonString: {
-            body: {
-              request: {
-                reportType: [
-                  "SHOPINCOMEDIFF_REPORT",
-                  "SKU_RECEIVE_REPORT",
-                  "SUPPLIER_ACCOUNT_DETAIL",
-                  "SHOP_CHECKACCOUNT_REPORT",
-                  "LOGISTICS_CHECKACCOUNT_REPORT",
-                  "CIGARETTE_TRANS_REPORT",
-                  "INCOMEDETAIL_REPORT",
-                  "INVENTORY_DETAIL_REPORT",
-                  "LOGISTICS_DETAIL_REPORT",
-                  "SHOP_IOCTW_REPORT",
-                  "RETIREMENT_REPORT",
-                  "STORE_TURNOVER",
-                  "PAY_SOURCE_DATA",
-                  "SINGLE_GOODS_SALE",
-                  "SHOP_BUSINESS_DAILY",
-                  "SPOT_AMOUNT",
-                  "LOGISTICS_BACK",
-                  "MEMBER_BALANCE",
-                  "MEMBER_COUPON",
-                  "LOGISTICS_RETIREMENT_REPORT"
-                ],
-                exportUserId: 16619,
-                pageParams: { start: 0, size: 10, results: 0, pageIndex: 1 }
+            },
+            dataJsonString: {
+              body: {
+                request: {
+                  reportType: [
+                    'SHOPINCOMEDIFF_REPORT',
+                    'SKU_RECEIVE_REPORT',
+                    'SUPPLIER_ACCOUNT_DETAIL',
+                    'SHOP_CHECKACCOUNT_REPORT',
+                    'LOGISTICS_CHECKACCOUNT_REPORT',
+                    'CIGARETTE_TRANS_REPORT',
+                    'INCOMEDETAIL_REPORT',
+                    'INVENTORY_DETAIL_REPORT',
+                    'LOGISTICS_DETAIL_REPORT',
+                    'SHOP_IOCTW_REPORT',
+                    'RETIREMENT_REPORT',
+                    'STORE_TURNOVER',
+                    'PAY_SOURCE_DATA',
+                    'SINGLE_GOODS_SALE',
+                    'SHOP_BUSINESS_DAILY',
+                    'SPOT_AMOUNT',
+                    'LOGISTICS_BACK',
+                    'MEMBER_BALANCE',
+                    'MEMBER_COUPON',
+                    'LOGISTICS_RETIREMENT_REPORT'
+                  ],
+                  exportUserId: 16619,
+                  pageParams: {
+                    start: 0,
+                    size: 10,
+                    results: 0,
+                    pageIndex: 1
+                  }
+                }
               }
             }
           }
-        }
-      ],
-      MockRuleForm: {},
-      rules: {},
-      mockType: "",
-      MockDialogVisible: false,
-      editMockForm: {}
-    }
-  },
-  methods: {
-    onError () {},
-    saveClick () {
-      console.log(this.json)
-      let {MockJson,dataJson} = this.editMockForm
-      let request = {
-        MockJson: JSON.stringify(MockJson),
-        dataJson: JSON.stringify(dataJson)
+        ],
+        MockRuleForm: {},
+        rules: {},
+        mockType: '',
+        MockDialogVisible: false,
+        editMockForm: {}
       }
-      console.log(request)
     },
-    viewClick (row) {
-      this.editMockForm = JSON.parse(JSON.stringify(row))
-      this.MockDialogVisible = true
-      this.mockType = "view"
+    methods: {
+      render () {
+       const  he = this.$route.params
+        console.log(he)
+        const id = this.$route.params.id
+        this.methodForm.serviceName = this.$route.params.service
+        this.methodForm.methodName = this.$route.params.method
+        this.getMockList()
+      },
+      getMockList () {
+        let { id, pageRequest } = this.queryCondition
+        let request = {
+          id,
+          pageRequest
+        }
+        util.dealNullQueryCondition(request)
+
+        crud.post({
+          service: 'admin/listMockExpress',
+          dealException: true,
+          data: request
+        })
+          .then(res => {
+            const data = res.data
+            if (data.status === 1 && JSON.stringify(data.success.mockList) !== 'undefined') {
+              this.tableData = data.success.mockList
+              this.queryCondition.pageRequest = crud.getCurrentPage(data.success.pageResponse)
+            }
+          })
+          .catch(error => {
+            console.error('request admin/listMockExpress error:', error)
+            util.message({
+              message: error,
+              type: 'error'
+            })
+          })
+      },
+
+      onError () {
+      },
+      saveClick () {
+        console.log(this.json)
+        let { MockJson, dataJson } = this.editMockForm
+        let request = {
+          MockJson: JSON.stringify(MockJson),
+          dataJson: JSON.stringify(dataJson)
+        }
+        console.log(request)
+      },
+      viewClick (row) {
+        this.editMockForm = JSON.parse(JSON.stringify(row))
+        this.MockDialogVisible = true
+        this.mockType = 'view'
+      },
+      editClick (row) {
+        this.editMockForm = JSON.parse(JSON.stringify(row))
+        this.MockDialogVisible = true
+        this.mockType = 'edit'
+      },
+      addMock () {
+        this.editMockForm = {}
+        this.MockDialogVisible = true
+        this.mockType = 'edit'
+      }
     },
-    editClick (row) {
-      this.editMockForm = JSON.parse(JSON.stringify(row))
-      this.MockDialogVisible = true
-      this.mockType = "edit"
-    },
-    addMock () {
-      this.editMockForm = {}
-      this.MockDialogVisible = true
-      this.mockType = "edit"
+
+    created () {
+      this.render()
     }
   }
-}
 </script>
 
 <style lang="scss">
-.m-mock-rule {
-  .f-right {
-    float: right;
-  }
-  .mock-dialog {
-    .el-row {
-      margin-bottom: 20px;
-      .dialog-form-item {
-        width: 100%;
-        .el-form-item__content {
-          width: calc(100% - 80px);
-          .el-date-editor.el-input,
-          .el-select {
-            width: 100%;
+  .m-mock-rule {
+    .f-right {
+      float: right;
+    }
+    .mock-dialog {
+      .el-row {
+        margin-bottom: 20px;
+        .dialog-form-item {
+          width: 100%;
+          .el-form-item__content {
+            width: calc(100% - 80px);
+            .el-date-editor.el-input,
+            .el-select {
+              width: 100%;
+            }
           }
         }
-      }
-      .el-form-item {
-        margin-bottom: 0;
+        .el-form-item {
+          margin-bottom: 0;
+        }
       }
     }
   }
-}
 </style>

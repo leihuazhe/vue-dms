@@ -47,6 +47,7 @@
                        @current-change="handleCurrentChange"
                        :current-page="queryCondition.pageRequest.pageIndex"
                        :page-sizes="[5, 10, 20, 30, 40]"
+
                        :page-size="queryCondition.pageRequest.limit"
                        layout="total, sizes, prev, pager, next, jumper"
                        :total="queryCondition.pageRequest.results">
@@ -150,11 +151,15 @@
           })
           .catch(error => {
             console.error('request admin/listInterfaces error:', error)
+            util.message({
+              message: error,
+              type: 'error'
+            })
           })
       },
       queryMockRule (row) {
         const id = row.id
-        this.$router.push({name: 'm-mock-rule',params: {id}})
+        this.$router.push({name: 'm-mock-rule',params: {id:id,service:row.simpleService,method:row.method}})
       },
 
       searchForm () {
