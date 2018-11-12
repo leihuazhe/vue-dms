@@ -106,6 +106,7 @@
 <script>
   import ListMixin from '../mixin/m-list';
   import * as crud from '../../api/api';
+  import util from '../../assets/js/co-util'
 
   export default {
     mixins: [ListMixin],
@@ -125,25 +126,24 @@
     },
     methods: {
       getMethodList () {
-        const self = this;
-        const queryCondition = JSON.parse(JSON.stringify(this.queryCondition));
-        for (let key in queryCondition) {
-          if (!queryCondition[key]) {
-            delete queryCondition[key];
-          }
+        let {serviceName, methodName, pageRequest} = this.queryCondition
+        let request = {
+          serviceName,
+          methodName,
+          pageRequest
         }
-        queryCondition.pageRequest.sortFields = 'created_at desc';
-        const data = JSON.stringify(this.queryCondition);
+        request.pageRequest.sortFields = 'created_at desc'
+        util.dealNullQueryCondition(request)
         crud.post({
           service: 'admin/listInterfaces',
           dealException: true,
-          data: data
+          data: request
         })
           .then(res => {
             const data = res.data;
             if (data.status === 1 && JSON.stringify(data.success.methodList) !== 'undefined') {
-              self.tableData = data.success.methodList;
-              self.queryCondition.pageRequest = crud.getCurrentPage(data.success.pageResponse);
+              this.tableData = data.success.methodList;
+              this.queryCondition.pageRequest = crud.getCurrentPage(data.success.pageResponse);
             }
           })
           .catch(error => {

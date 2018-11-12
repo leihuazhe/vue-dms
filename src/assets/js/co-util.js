@@ -66,5 +66,16 @@ export default {
     }).then(() => {
     }).catch(() => {
     })
+  },
+  /**
+   * 删除请求条件中属性值为空的属性
+   */
+  dealNullQueryCondition (obj) {
+    for (var p in obj) {
+      if (obj[p] === '' || (obj[p] !== 0 && obj[p] !== false && !obj[p] &&
+          (typeof obj[p] !== 'boolean' || typeof obj[p] !== 'number'))) {
+        delete obj[p]
+      }
+    }
   }
 }
