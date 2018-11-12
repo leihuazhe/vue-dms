@@ -24,12 +24,12 @@
         <div class="ey-tittle-level2 m25">Mock规则</div>
       </el-row>
       <div class="f-right">
-        <el-button type="primary" @click="addMockDialogVisible = true">添加Mock规则</el-button>
+        <el-button type="primary" @click="addMock">添加Mock规则</el-button>
       </div>
       <el-table :data="tableData" style="width: 100%">
         <el-table-column align='center' label="序号(优先级)" min-width="80" prop="aaaa"></el-table-column>
-        <el-table-column align='center' label="Mock表达式" min-width="120" prop="bbbb"></el-table-column>
-        <el-table-column align='center' label="返回数据" min-width="120" prop="dddd"></el-table-column>
+        <el-table-column align='center' label="Mock表达式" min-width="120" prop="MockJsonString"></el-table-column>
+        <el-table-column align='center' label="返回数据" min-width="120" prop="dataJsonString"></el-table-column>
         <el-table-column align='center' label="操作" width="250">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="viewClick(scope.row)">查看</el-button>
@@ -39,54 +39,19 @@
       </el-table>
     </div>
     <el-dialog
-      title="新增Mock规则"
-      :visible.sync="addMockDialogVisible"
-      width="30%"
-      custom-class="method-dialog">
-      <el-form :inline="true" class="demo-form-inline" label-width="120px" label-position="right" :rules="rules" ref="MockRuleForm" :model="MockRuleForm">
-        <el-row type="flex" align="middle" justify="start">
-          <el-col :span="24">
-            <el-form-item label="服务名称" class="dialog-form-item" prop="serviceName">
-              <el-input v-model.trim="MockRuleForm.serviceName" placeholder="请输入内容"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row type="flex" align="middle" justify="start">
-          <el-col :span="24">
-            <el-form-item label="接口名称" class="dialog-form-item" prop="methodName">
-              <el-input v-model.trim="MockRuleForm.methodName" placeholder="请输入内容"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row type="flex" align="middle" justify="start">
-          <el-col :span="24">
-            <el-form-item label="接口地址" class="dialog-form-item" prop="address">
-              <el-input v-model.trim="MockRuleForm.address" placeholder="请输入内容"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="saveClick">保存</el-button>
-      </span>
-    </el-dialog>
-
-    <el-dialog
       :title="mockType === 'view' ? '查看': '编辑'"
       :visible.sync="MockDialogVisible"
-      width="80%"
-      custom-class="method-dialog">
-      <el-form :inline="true" class="demo-form-inline" label-width="120px" label-position="right" :rules="rules" ref="MockRuleForm" :model="MockRuleForm">
+      width="90%"
+      custom-class="mock-dialog">
+      <el-form :inline="true" class="demo-form-inline" label-width="120px" label-position="top" :rules="rules" ref="MockRuleForm" :model="MockRuleForm">
         <el-row type="flex" align="middle" justify="start">
-          <el-col :span="24">
+          <el-col :span="12">
             <el-form-item label="Mock表达式:" class="dialog-form-item" prop="serviceName">
               <span v-if="mockType === 'view'">{{ editMockForm.MockJsonString }}</span>
               <v-jsoneditor v-else v-model="editMockForm.MockJson" :options="options" :plus="false" height="400px" @error="onError"></v-jsoneditor>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row type="flex" align="middle" justify="start">
-          <el-col :span="24">
+          <el-col :span="12">
             <el-form-item label="返回数据:" class="dialog-form-item" prop="methodName">
               <span v-if="mockType === 'view'">{{ editMockForm.dataJsonString }}</span>
               <v-jsoneditor v-else v-model="editMockForm.dataJson" :options="options" :plus="false" height="400px" @error="onError"></v-jsoneditor>
@@ -241,7 +206,6 @@ export default {
           }
         }
       ],
-      addMockDialogVisible: false,
       MockRuleForm: {},
       rules: {},
       mockType: "",
@@ -253,6 +217,12 @@ export default {
     onError () {},
     saveClick () {
       console.log(this.json);
+      let {MockJson,dataJson} = this.editMockForm
+      let request = {
+        MockJson: JSON.stringify(MockJson),
+        dataJson: JSON.stringify(dataJson)
+      }
+      console.log(request)
     },
     viewClick (row) {
       this.editMockForm = JSON.parse(JSON.stringify(row));
@@ -261,6 +231,11 @@ export default {
     },
     editClick (row) {
       this.editMockForm = JSON.parse(JSON.stringify(row));
+      this.MockDialogVisible = true;
+      this.mockType = "edit";
+    },
+    addMock () {
+      this.editMockForm = {};
       this.MockDialogVisible = true;
       this.mockType = "edit";
     }
@@ -273,13 +248,13 @@ export default {
   .f-right {
     float: right;
   }
-  .method-dialog {
+  .mock-dialog {
     .el-row {
       margin-bottom: 20px;
       .dialog-form-item {
         width: 100%;
         .el-form-item__content {
-          width: calc(100% - 120px);
+          width: calc(100% - 80px);
           .el-date-editor.el-input,
           .el-select {
             width: 100%;
