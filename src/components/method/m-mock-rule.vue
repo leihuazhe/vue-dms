@@ -28,8 +28,10 @@
       </div>
       <el-table :data="tableData" style="width: 100%">
         <el-table-column align='center' label="序号" width="80" type="index"></el-table-column>
-        <el-table-column align='center' label="Mock表达式" min-width="120" prop="mockExpress" show-overflow-tooltip></el-table-column>
-        <el-table-column align='center' label="返回数据" min-width="120" prop="data" show-overflow-tooltip></el-table-column>
+        <el-table-column align='center' label="Mock表达式" min-width="120" prop="mockExpress"
+                         show-overflow-tooltip></el-table-column>
+        <el-table-column align='center' label="返回数据" min-width="120" prop="data"
+                         show-overflow-tooltip></el-table-column>
         <el-table-column align='center' label="优先级" min-width="120" prop="sort"></el-table-column>
         <el-table-column align='center' label="操作" width="250">
           <template slot-scope="scope">
@@ -47,7 +49,7 @@
       width="90%"
       custom-class="mock-dialog">
       <el-form :inline="true" class="demo-form-inline" label-width="120px" label-position="top" :rules="rules"
-               ref="MockRuleForm" :model="MockRuleForm">
+               ref="editMockForm" :model="editMockForm">
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="12">
             <el-form-item label="Mock表达式:" class="dialog-form-item" prop="mockExpress">
@@ -66,7 +68,7 @@
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="saveClick" v-if="mockType === 'edit'">保存</el-button>
+        <el-button type="primary" @click="saveMockClick" v-if="mockType === 'edit'">保存</el-button>
       </span>
     </el-dialog>
   </div>
@@ -146,14 +148,43 @@
       onError () {
       },
 
-      saveClick () {
+      saveMockClick () {
         console.log(this.json)
-        let { MockJson, dataJson } = this.editMockForm
+        let { mockExpress, data } = this.editMockForm
+        // let methodId = this.$route.params.id
+        let methodId = this.queryCondition.methodId
         let request = {
-          MockJson: JSON.stringify(MockJson),
-          dataJson: JSON.stringify(dataJson)
+          methodId: methodId,
+          mockExpress: JSON.stringify(mockExpress),
+          mockData: JSON.stringify(data)
         }
         console.log(request)
+        crud.post({
+          service: 'admin/createMockInfo',
+          dealException: true,
+          data: request
+        })
+          .then(res => {
+            const data = res.data
+            if (data.status === 1) {
+              util.message({
+                type: 'success',
+                message: '创建Mock规则成功'
+              })
+            } else {
+              util.message({
+                message: data.responseMsg,
+                type: 'error'
+              })
+            }
+          })
+          .catch(error => {
+            console.error('request admin/listMockExpress error:', error)
+            util.message({
+              message: error,
+              type: 'error'
+            })
+          })
       },
       viewClick (row) {
         this.editMockForm = JSON.parse(JSON.stringify(row))
@@ -171,6 +202,55 @@
         this.editMockForm = {}
         this.MockDialogVisible = true
         this.mockType = 'edit'
+      },
+
+      // 点击角色保存
+      clickSaveMock (formName) {
+        this.$refs[formName].validate(valid => {
+          if (valid) {
+            let demo = JSON.parse(JSON.stringify(this.roleForm))
+            this.deleteKey.forEach(ele => {
+              delete demo[ele]
+            })
+            for (const i in demo) {
+              if (!demo[i]) delete demo[i]
+            }
+            if (this.roleForm.type === 'add') {
+              api.AdminService.createRole({
+                method: 'createRole',
+                data: {
+                  request: demo
+                },
+                success: res => {
+                  util.message({
+                    type: 'success',
+                    message: '创建角色成功'
+                  })
+                  this.dialogRoleForm = false
+                  this.listRole()
+                }
+              })
+            } else if (this.roleForm.type === 'modify') {
+              // this.$set(this.roleList, this.roleForm.index, this.roleForm)
+              api.AdminService.modifyRole({
+                data: {
+                  request: demo
+                },
+                success: res => {
+                  util.message({
+                    type: 'success',
+                    message: '修改角色成功'
+                  })
+                  this.dialogRoleForm = false
+                  this.listRole()
+                }
+              })
+            }
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
       }
     },
 
