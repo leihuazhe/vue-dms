@@ -109,9 +109,34 @@
     methods: {
       render () {
         this.queryCondition.methodId = this.$route.params.id
-        this.methodForm.serviceName = this.$route.params.service
-        this.methodForm.methodName = this.$route.params.method
+        this.getMethodForm(this.queryCondition.methodId)
         this.getMockList()
+      },
+      getMethodForm (id) {
+        crud.post({
+          service: 'admin/getMockMethodForm',
+          dealException: true,
+          data: {id}
+        })
+          .then(res => {
+            const data = res.data
+            if (data.status === 1 && JSON.stringify(data.success.serviceName) !== 'undefined') {
+              this.methodForm.serviceName = data.success.service
+              this.methodForm.methodName =  data.success.method
+            } else {
+              util.message({
+                message: data.responseMsg,
+                type: 'error'
+              })
+            }
+          })
+          .catch(error => {
+            console.error('request admin/listMockExpress error:', error)
+            util.message({
+              message: error,
+              type: 'error'
+            })
+          })
       },
 
       getMockList () {
