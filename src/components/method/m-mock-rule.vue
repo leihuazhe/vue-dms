@@ -51,15 +51,16 @@
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="12">
             <el-form-item label="Mock表达式:" class="dialog-form-item" prop="mockExpress">
-              <span v-if="mockType === 'view'">{{ editMockForm.mockExpress }}</span>
-              <v-jsoneditor v-else v-model="editMockForm.mockExpress" :options="options" :plus="false" height="400px"
+              <!--<span v-if="mockType === 'view'">{{ editMockForm.mockExpress }}</span>-->
+              <v-jsoneditor v-model="editMockForm.mockExpress" :options="options" :plus="false" height="400px"
+                            :mode="mockType" :showBtns="mockType ==='edit'"
                             @error="onError"></v-jsoneditor>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="返回数据:" class="dialog-form-item" prop="data">
-              <span v-if="mockType === 'view'">{{ editMockForm.data }}</span>
-              <v-jsoneditor v-else v-model="editMockForm.data" :options="options" :plus="false" height="400px"
+              <v-jsoneditor v-model="editMockForm.data" :options="options" :plus="false" height="400px"
+                            :mode="mockType"
                             @error="onError"></v-jsoneditor>
             </el-form-item>
           </el-col>
@@ -157,6 +158,8 @@
       },
       viewClick (row) {
         this.editMockForm = JSON.parse(JSON.stringify(row))
+        this.editMockForm.data = JSON.parse(this.editMockForm.data)
+        this.editMockForm.mockExpress = JSON.parse(this.editMockForm.mockExpress)
         this.MockDialogVisible = true
         this.mockType = 'view'
       },
@@ -165,12 +168,12 @@
         this.editMockForm.data = JSON.parse(this.editMockForm.data)
         this.editMockForm.mockExpress = JSON.parse(this.editMockForm.mockExpress)
         this.MockDialogVisible = true
-        this.mockType = 'edit'
+        this.mockType = 'code'
       },
       addMock () {
         this.editMockForm = {}
         this.MockDialogVisible = true
-        this.mockType = 'edit'
+        this.mockType = 'code'
       }
     },
 
