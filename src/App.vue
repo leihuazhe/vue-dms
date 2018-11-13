@@ -8,7 +8,7 @@
           @open="handleOpen"
           @close="handleClose" :collapse="isCollapse"
           router>
-          <el-menu-item index="/" class="bglogo" @click="isCollapse=!isCollapse">
+          <el-menu-item id="bglogo" index="/" class="bglogo" @click="isCollapse=!isCollapse">
             <i v-if="isCollapse" class="el-icon-d-arrow-right"></i>
             <template slot="title">
               <span>
@@ -100,12 +100,17 @@
       float: right;
     }
 
+    #bglogo {
+      height: 100px;
+    }
+
     .el-menu-item .pictrue {
       height: 40px;
       width: 40px;
       border-radius: 50%;
       border: 2px solid #ccc;
       margin-left: 10px;
+
     }
 
     .el-menu--horizontal > .el-menu-item.is-active,
@@ -127,14 +132,29 @@
       }
     }
 
+    /*.bglogo {
+       background-color: #19bf4f;
+       span {
+         width: 160px;
+         height: 50px;
+         display: inline-block;
+         background-image: url(./assets/image/nav_today.png);
+         background-size: 100%;
+       }
+     }*/
+
     .bglogo {
-      background-color: #19bf4f;
+      /*background-color: #1FAAEF;*/
+      background-color: azure !important;
       span {
         width: 160px;
-        height: 50px;
+        height: 100px;
         display: inline-block;
-        background-image: url(./assets/image/nav_today.png);
-        background-size: 100%;
+        background-image: url(./assets/dapeng/dapeng-logo-03.png);
+        background-repeat: no-repeat;
+        background-position: center;
+        /*background-size: 100%;*/
+        background-size: cover;
       }
     }
 
