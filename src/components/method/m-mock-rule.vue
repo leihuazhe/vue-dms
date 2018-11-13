@@ -7,12 +7,12 @@
       <el-form :inline="true" class="form-content">
         <el-row>
           <el-col :span="8" class="wrap">
-            <el-form-item label="服务名称：">
+            <el-form-item label="服务名称">
               <span>{{ methodForm.serviceName }}</span>
             </el-form-item>
           </el-col>
           <el-col :span="8" class="wrap">
-            <el-form-item label="接口名称：">
+            <el-form-item label="接口名称">
               <span>{{ methodForm.methodName }}</span>
             </el-form-item>
           </el-col>
@@ -27,9 +27,10 @@
         <el-button type="primary" @click="addMock">添加Mock规则</el-button>
       </div>
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column align='center' label="序号(优先级)" min-width="80" prop="aaaa"></el-table-column>
-        <el-table-column align='center' label="Mock表达式" min-width="120" prop="MockJsonString"></el-table-column>
-        <el-table-column align='center' label="返回数据" min-width="120" prop="dataJsonString"></el-table-column>
+        <el-table-column align='center' label="序号" width="80" type="index"></el-table-column>
+        <el-table-column align='center' label="Mock表达式" min-width="120" prop="mockExpress" show-overflow-tooltip></el-table-column>
+        <el-table-column align='center' label="返回数据" min-width="120" prop="data" show-overflow-tooltip></el-table-column>
+        <el-table-column align='center' label="优先级" min-width="120" prop="sort"></el-table-column>
         <el-table-column align='center' label="操作" width="250">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="viewClick(scope.row)">查看</el-button>
@@ -38,6 +39,8 @@
         </el-table-column>
       </el-table>
     </div>
+
+    <!--弹出框-->
     <el-dialog
       :title="mockType === 'view' ? '查看': '编辑'"
       :visible.sync="MockDialogVisible"
@@ -47,16 +50,16 @@
                ref="MockRuleForm" :model="MockRuleForm">
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="12">
-            <el-form-item label="Mock表达式:" class="dialog-form-item" prop="serviceName">
-              <span v-if="mockType === 'view'">{{ editMockForm.MockJsonString }}</span>
-              <v-jsoneditor v-else v-model="editMockForm.MockJson" :options="options" :plus="false" height="400px"
+            <el-form-item label="Mock表达式:" class="dialog-form-item" prop="mockExpress">
+              <span v-if="mockType === 'view'">{{ editMockForm.mockExpress }}</span>
+              <v-jsoneditor v-else v-model="editMockForm.mockExpress" :options="options" :plus="false" height="400px"
                             @error="onError"></v-jsoneditor>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="返回数据:" class="dialog-form-item" prop="methodName">
-              <span v-if="mockType === 'view'">{{ editMockForm.dataJsonString }}</span>
-              <v-jsoneditor v-else v-model="editMockForm.dataJson" :options="options" :plus="false" height="400px"
+            <el-form-item label="返回数据:" class="dialog-form-item" prop="data">
+              <span v-if="mockType === 'view'">{{ editMockForm.data }}</span>
+              <v-jsoneditor v-else v-model="editMockForm.data" :options="options" :plus="false" height="400px"
                             @error="onError"></v-jsoneditor>
             </el-form-item>
           </el-col>
@@ -81,161 +84,17 @@
     data () {
       return {
         queryCondition: {
-          id: null,
+          methodId: null,
           pageRequest: crud.getQueryCondition()
         },
         options: {
           mode: 'code'
         },
         methodForm: {
-          serviceName: 'aaaa',
-          methodName: 'bbbbb'
+          serviceName: null,
+          methodName: null
         },
-        tableData: [
-          {
-            aaaa: '108',
-            MockJson: {
-              body: {
-                request: {
-                  reportType: [
-                    'SHOPINCOMEDIFF_REPORT',
-                    'SKU_RECEIVE_REPORT',
-                    'SUPPLIER_ACCOUNT_DETAIL',
-                    'SHOP_CHECKACCOUNT_REPORT',
-                    'LOGISTICS_CHECKACCOUNT_REPORT',
-                    'CIGARETTE_TRANS_REPORT',
-                    'INCOMEDETAIL_REPORT',
-                    'INVENTORY_DETAIL_REPORT',
-                    'LOGISTICS_DETAIL_REPORT',
-                    'SHOP_IOCTW_REPORT',
-                    'RETIREMENT_REPORT',
-                    'STORE_TURNOVER',
-                    'PAY_SOURCE_DATA',
-                    'SINGLE_GOODS_SALE',
-                    'SHOP_BUSINESS_DAILY',
-                    'SPOT_AMOUNT',
-                    'LOGISTICS_BACK',
-                    'MEMBER_BALANCE',
-                    'MEMBER_COUPON',
-                    'LOGISTICS_RETIREMENT_REPORT'
-                  ],
-                  exportUserId: 16619,
-                  pageParams: {
-                    start: 0,
-                    size: 10,
-                    results: 0,
-                    pageIndex: 1
-                  }
-                }
-              }
-            },
-            MockJsonString: {
-              body: {
-                request: {
-                  reportType: [
-                    'SHOPINCOMEDIFF_REPORT',
-                    'SKU_RECEIVE_REPORT',
-                    'SUPPLIER_ACCOUNT_DETAIL',
-                    'SHOP_CHECKACCOUNT_REPORT',
-                    'LOGISTICS_CHECKACCOUNT_REPORT',
-                    'CIGARETTE_TRANS_REPORT',
-                    'INCOMEDETAIL_REPORT',
-                    'INVENTORY_DETAIL_REPORT',
-                    'LOGISTICS_DETAIL_REPORT',
-                    'SHOP_IOCTW_REPORT',
-                    'RETIREMENT_REPORT',
-                    'STORE_TURNOVER',
-                    'PAY_SOURCE_DATA',
-                    'SINGLE_GOODS_SALE',
-                    'SHOP_BUSINESS_DAILY',
-                    'SPOT_AMOUNT',
-                    'LOGISTICS_BACK',
-                    'MEMBER_BALANCE',
-                    'MEMBER_COUPON',
-                    'LOGISTICS_RETIREMENT_REPORT'
-                  ],
-                  exportUserId: 16619,
-                  pageParams: {
-                    start: 0,
-                    size: 10,
-                    results: 0,
-                    pageIndex: 1
-                  }
-                }
-              }
-            },
-            dataJson: {
-              body: {
-                request: {
-                  reportType: [
-                    'SHOPINCOMEDIFF_REPORT',
-                    'SKU_RECEIVE_REPORT',
-                    'SUPPLIER_ACCOUNT_DETAIL',
-                    'SHOP_CHECKACCOUNT_REPORT',
-                    'LOGISTICS_CHECKACCOUNT_REPORT',
-                    'CIGARETTE_TRANS_REPORT',
-                    'INCOMEDETAIL_REPORT',
-                    'INVENTORY_DETAIL_REPORT',
-                    'LOGISTICS_DETAIL_REPORT',
-                    'SHOP_IOCTW_REPORT',
-                    'RETIREMENT_REPORT',
-                    'STORE_TURNOVER',
-                    'PAY_SOURCE_DATA',
-                    'SINGLE_GOODS_SALE',
-                    'SHOP_BUSINESS_DAILY',
-                    'SPOT_AMOUNT',
-                    'LOGISTICS_BACK',
-                    'MEMBER_BALANCE',
-                    'MEMBER_COUPON',
-                    'LOGISTICS_RETIREMENT_REPORT'
-                  ],
-                  exportUserId: 16619,
-                  pageParams: {
-                    start: 0,
-                    size: 10,
-                    results: 0,
-                    pageIndex: 1
-                  }
-                }
-              }
-            },
-            dataJsonString: {
-              body: {
-                request: {
-                  reportType: [
-                    'SHOPINCOMEDIFF_REPORT',
-                    'SKU_RECEIVE_REPORT',
-                    'SUPPLIER_ACCOUNT_DETAIL',
-                    'SHOP_CHECKACCOUNT_REPORT',
-                    'LOGISTICS_CHECKACCOUNT_REPORT',
-                    'CIGARETTE_TRANS_REPORT',
-                    'INCOMEDETAIL_REPORT',
-                    'INVENTORY_DETAIL_REPORT',
-                    'LOGISTICS_DETAIL_REPORT',
-                    'SHOP_IOCTW_REPORT',
-                    'RETIREMENT_REPORT',
-                    'STORE_TURNOVER',
-                    'PAY_SOURCE_DATA',
-                    'SINGLE_GOODS_SALE',
-                    'SHOP_BUSINESS_DAILY',
-                    'SPOT_AMOUNT',
-                    'LOGISTICS_BACK',
-                    'MEMBER_BALANCE',
-                    'MEMBER_COUPON',
-                    'LOGISTICS_RETIREMENT_REPORT'
-                  ],
-                  exportUserId: 16619,
-                  pageParams: {
-                    start: 0,
-                    size: 10,
-                    results: 0,
-                    pageIndex: 1
-                  }
-                }
-              }
-            }
-          }
-        ],
+        tableData: [],
         MockRuleForm: {},
         rules: {},
         mockType: '',
@@ -245,21 +104,19 @@
     },
     methods: {
       render () {
-       const  he = this.$route.params
-        console.log(he)
-        const id = this.$route.params.id
+        this.queryCondition.methodId = this.$route.params.id
         this.methodForm.serviceName = this.$route.params.service
         this.methodForm.methodName = this.$route.params.method
         this.getMockList()
       },
+
       getMockList () {
-        let { id, pageRequest } = this.queryCondition
+        let { methodId, pageRequest } = this.queryCondition
         let request = {
-          id,
+          methodId,
           pageRequest
         }
         util.dealNullQueryCondition(request)
-
         crud.post({
           service: 'admin/listMockExpress',
           dealException: true,
@@ -270,6 +127,11 @@
             if (data.status === 1 && JSON.stringify(data.success.mockList) !== 'undefined') {
               this.tableData = data.success.mockList
               this.queryCondition.pageRequest = crud.getCurrentPage(data.success.pageResponse)
+            } else {
+              util.message({
+                message: data.responseMsg,
+                type: 'error'
+              })
             }
           })
           .catch(error => {
@@ -283,6 +145,7 @@
 
       onError () {
       },
+
       saveClick () {
         console.log(this.json)
         let { MockJson, dataJson } = this.editMockForm

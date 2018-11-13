@@ -7,7 +7,7 @@
 <script>
   export default {
     name: 's-metadata'
-  };
+  }
 </script>
 
 <style lang="scss">

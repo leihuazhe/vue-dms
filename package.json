@@ -13,6 +13,8 @@
     "v-jsoneditor": "^1.1.2",
     "vue": "^2.5.17",
     "vue-codemirror": "^4.0.5",
+    "vue-json-editor": "^1.2.3",
+    "vue-json-ui-editor": "^0.9.0",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {

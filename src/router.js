@@ -58,6 +58,15 @@ export default new Router({
         keepAlive: true,
         pageName: '查看元数据信息'
       }
+    },
+    {
+      path: '/m-mock-json',
+      name: 'SmockJson',
+      component: () => import('@/components/method/m-mock-json'),
+      meta: {
+        keepAlive: true,
+        pageName: '查看Mock Json'
+      }
     }
   ]
 })
