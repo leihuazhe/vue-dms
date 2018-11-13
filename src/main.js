@@ -4,7 +4,6 @@ import App from './App.vue'
 import router from './router'
 import './plugins/element.js'
 import VJsoneditor from 'v-jsoneditor/src/index'
-import Process from './assets/json/json.format'
 
 Vue.use(VJsoneditor)
 Vue.config.productionTip = false
