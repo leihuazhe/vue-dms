@@ -131,7 +131,7 @@
             }
           })
           .catch(error => {
-            console.error('request admin/listMockExpress error:', error)
+            console.error('request admin/getMockMethodForm error:', error)
             util.message({
               message: error,
               type: 'error'
