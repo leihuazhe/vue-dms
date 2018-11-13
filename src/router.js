@@ -6,6 +6,7 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
+      //带 ? 为可选
       path: '/m-list/:id?',
       name: 'm-list',
       component: () => import('@/components/method/m-list'),
