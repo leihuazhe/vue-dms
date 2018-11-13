@@ -130,7 +130,7 @@
     },
     methods: {
       getMethodList () {
-        const serviceId = this.$route.query.id
+        const serviceId = this.$route.params.id
         let { serviceName, methodName, pageRequest } = this.queryCondition
         let request = {
           serviceId,

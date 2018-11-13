@@ -6,7 +6,7 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/m-list',
+      path: '/m-list/:id?',
       name: 'm-list',
       component: () => import('@/components/method/m-list'),
       meta: {
@@ -24,7 +24,7 @@ export default new Router({
       }
     },
     {
-      path: '/s-list/:id?',
+      path: '/s-list',
       name: 'SList',
       component: () => import('@/components/serve/s-list'),
       meta: {
