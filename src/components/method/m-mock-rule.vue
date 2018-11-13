@@ -93,15 +93,17 @@
           mode: 'code'
         },
         methodForm: {
-          serviceName: null,
-          methodName: null
+          serviceName: {},
+          methodName: {}
         },
         tableData: [],
-        MockRuleForm: {},
         rules: {},
         mockType: '',
         MockDialogVisible: false,
-        editMockForm: {}
+        editMockForm: {
+          mockExpress: null,
+          data: null
+        }
       }
     },
     methods: {
@@ -150,8 +152,7 @@
 
       saveMockClick () {
         console.log(this.json)
-        let { mockExpress, data } = this.editMockForm
-        // let methodId = this.$route.params.id
+        let {mockExpress, data} = this.editMockForm
         let methodId = this.queryCondition.methodId
         let request = {
           methodId: methodId,
@@ -199,7 +200,10 @@
         this.mockType = 'edit'
       },
       addMock () {
-        this.editMockForm = {}
+        this.editMockForm = {
+          mockExpress: {},
+          data: {}
+        }
         this.MockDialogVisible = true
         this.mockType = 'edit'
       },
