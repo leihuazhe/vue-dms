@@ -115,7 +115,7 @@
         },
         record: {
           typeList: [{
-            value:'get',
+            value: 'get',
             label: 'GET'
           }, {
             value: 'post',
@@ -130,13 +130,16 @@
     },
     methods: {
       getMethodList () {
-        let {serviceName, methodName, pageRequest} = this.queryCondition
+        const serviceId = this.$route.query.id
+        let { serviceName, methodName, pageRequest } = this.queryCondition
         let request = {
+          serviceId,
           serviceName,
           methodName,
           pageRequest
         }
         util.dealNullQueryCondition(request)
+        console.log("getMethodList request:",request)
         crud.post({
           service: 'admin/listInterfaces',
           dealException: true,
@@ -159,7 +162,10 @@
       },
       queryMockRule (row) {
         const id = row.id
-        this.$router.push({name: 'm-mock-rule',params: {id:id,service:row.simpleService,method:row.method}})
+        this.$router.push({
+          name: 'm-mock-rule',
+          params: { id: id }
+        })
       },
 
       searchForm () {
@@ -176,7 +182,7 @@
         this.searchForm()
       },
       saveClick () {
-        let {simpleService, method, requestType, url} = this.methodForm
+        let { simpleService, method, requestType, url } = this.methodForm
         let request = {
           simpleService,
           method,
@@ -203,16 +209,16 @@
         this.getMethodList()
       },
       deleteMethod (row) {
-        util.confirm("是否删除该接口？", this.del, row.id)
+        util.confirm('是否删除该接口？', this.del, row.id)
       },
       del (id) {
         crud.post({
           service: 'admin/deleteInterface',
           dealException: true,
-          data: {id}
+          data: { id }
         })
           .then(res => {
-            let {status, responseMsg} = res.data
+            let { status, responseMsg } = res.data
             if (status === 1) {
               util.message({
                 message: '删除成功',

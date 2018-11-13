@@ -53,7 +53,7 @@
         <el-table-column align='center' label="Mock接口数量" min-width="120" prop="mockMethodSize"></el-table-column>
         <el-table-column align='center' label="操作" width="250">
           <template slot-scope="scope">
-            <el-button type="text" size="small">查看接口</el-button>
+            <el-button type="text" size="small" @click="jumpToInterface(scope.row.id)">查看接口</el-button>
             <el-button type="text" size="small" @click="modify(scope.row.id)">修改</el-button>
             <el-button type="text" size="small" @click="remove">删除</el-button>
           </template>
@@ -94,6 +94,13 @@
       }
     },
     methods: {
+      jumpToInterface (id) {
+        this.$router.push({
+          name: 'm-list',
+          params: { id: id }
+        })
+
+      },
       addServe () {
         this.$router.push({ name: 'SAdd' })
       },
@@ -140,12 +147,12 @@
 
       searchForm () {
         this.queryCondition.pageRequest = crud.getQueryCondition()
-       /* let flag = this.queryCondition.simpleName || this.queryCondition.version || this.queryCondition.serviceId;
-        if (flag) {
-          this.getServiceList();
-        } else {
-          util.message('查询输入项至少填写一个查询条件', 2500);
-        }*/
+        /* let flag = this.queryCondition.simpleName || this.queryCondition.version || this.queryCondition.serviceId;
+         if (flag) {
+           this.getServiceList();
+         } else {
+           util.message('查询输入项至少填写一个查询条件', 2500);
+         }*/
         this.getServiceList()
       },
       resetForm () {

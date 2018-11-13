@@ -24,7 +24,7 @@ export default new Router({
       }
     },
     {
-      path: '/s-list',
+      path: '/s-list/:id?',
       name: 'SList',
       component: () => import('@/components/serve/s-list'),
       meta: {
