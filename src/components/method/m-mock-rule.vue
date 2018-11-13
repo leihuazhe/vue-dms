@@ -162,6 +162,8 @@
       },
       editClick (row) {
         this.editMockForm = JSON.parse(JSON.stringify(row))
+        this.editMockForm.data = JSON.parse(this.editMockForm.data)
+        this.editMockForm.mockExpress = JSON.parse(this.editMockForm.mockExpress)
         this.MockDialogVisible = true
         this.mockType = 'edit'
       },
