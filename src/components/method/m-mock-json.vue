@@ -15,6 +15,7 @@
 <script>
   import VueJsonEditor from 'vue-json-editor'
 
+
   export default {
     name: 'm-mock-json',
     // 注入vueJsonEditor组件

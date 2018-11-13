@@ -1,7 +1,6 @@
 window.ImgCollapsed = '/js/json/Collapsed.gif'
-window.ImgExpanded ='../image/Expanded.gif'
+window.ImgExpanded = '../image/Expanded.gif'
 window.QuoteKeys = true
-
 
 
 function $id (id) {
@@ -262,4 +261,8 @@ function MultiplyString (num, str) {
 
   return sb.join('')
 
+}
+
+export  {
+  Process
 }
