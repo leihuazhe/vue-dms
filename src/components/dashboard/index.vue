@@ -29,9 +29,6 @@
         conversionMsg: ''      //转店前端文案提示
       }
     },
-    mounted () {
-      this.checkConversion()
-    },
     components: {},
     methods: {}
 
