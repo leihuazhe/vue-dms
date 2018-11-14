@@ -11,7 +11,4 @@
 </script>
 
 <style lang="scss">
-.s-add{
-
-}
 </style>
