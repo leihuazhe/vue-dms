@@ -68,25 +68,7 @@ export default new Router({
       }
     },
     {
-      path: '/s-metadata',
-      name: 's-metadata',
-      component: () => import('@/components/serve/s-metadata'),
-      meta: {
-        keepAlive: true,
-        pageName: '查看元数据信息'
-      }
-    },
-    {
-      path: '/m-mock-json',
-      name: 'SmockJson',
-      component: () => import('@/components/method/m-mock-json'),
-      meta: {
-        keepAlive: true,
-        pageName: '查看Mock Json'
-      }
-    },
-    {
-      path: '/m-d-list',
+      path: '/m-d-list/:id?',
       name: 'm-d-list',
       component: () => import('@/components/metadata/m-d-list'),
       meta: {

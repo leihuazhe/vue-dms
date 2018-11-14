@@ -47,7 +47,7 @@
         <el-table-column align='center' label="版本信息" min-width="60" prop="version"></el-table-column>
         <el-table-column align='center' label="元数据信息" min-width="120">
           <template slot-scope="scope">
-            <el-button type="text" @click="lookMetadata(scope.row.id)">点击查看{{scope.row.id}}</el-button>
+            <el-button type="text" @click="lookMetadata(scope.row.serviceId)">点击查看</el-button>
           </template>
         </el-table-column>
         <el-table-column align='center' label="Mock接口数量" min-width="120" prop="mockMethodSize"></el-table-column>
@@ -163,8 +163,8 @@
         this.dialogVisible = true
         // this.$router.push({ name: 'SModify' })
       },
-      lookMetadata () {
-        this.$router.push({ name: 's-metadata' })
+      lookMetadata (id) {
+        this.$router.push({ name: 'm-d-list',params:{id} })
       },
 
       getServiceList () {
