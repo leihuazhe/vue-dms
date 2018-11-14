@@ -25,9 +25,15 @@
       </el-row>
       <div class="f-right">
         <el-button type="primary" @click="addMock">添加Mock规则</el-button>
+        <el-button type="primary" @click="sortClick">{{editStatus?'保存':'修改顺序'}}</el-button>
       </div>
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column align='center' label="序号" width="80" type="index"></el-table-column>
+        <el-table-column align='center' label="序号" width="60">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.index" @change="inputIndex($event,scope.row)" v-if="editStatus"></el-input>
+            <span v-else>{{scope.$index}}</span>
+          </template>
+        </el-table-column>
         <el-table-column align='center' label="Mock表达式" min-width="120" prop="mockExpress" show-overflow-tooltip></el-table-column>
         <el-table-column align='center' label="返回数据" min-width="120" prop="data" show-overflow-tooltip></el-table-column>
         <el-table-column align='center' label="优先级" min-width="120" prop="sort"></el-table-column>
@@ -84,6 +90,7 @@
     },
     data () {
       return {
+        editStatus:false,
         queryCondition: {
           methodId: null,
           pageRequest: crud.getQueryCondition()
@@ -104,6 +111,14 @@
       }
     },
     methods: {
+      sortClick (){
+        this.editStatus = !this.editStatus
+        if(this.editStatus) {
+          this.tableData.forEach((item,index)=>item.index = index)
+        } else{
+          // 保存逻辑
+        }
+      },
       render () {
         this.queryCondition.methodId = this.$route.params.id
         this.methodForm.serviceName = this.$route.params.service
@@ -174,6 +189,12 @@
         this.editMockForm = {}
         this.MockDialogVisible = true
         this.mockType = 'code'
+      },
+      inputIndex (value,row){
+        let index = this.tableData.findIndex(item=>item.id === row.id)
+        this.tableData.splice(index,1)
+        value = value<0?0:value>this.tableData.length?this.tableData.length:value
+        this.tableData.splice(value,0,row)
       }
     },
 
