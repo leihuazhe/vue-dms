@@ -34,8 +34,10 @@
             <span v-else>{{scope.$index}}</span>
           </template>
         </el-table-column>
-        <el-table-column align='center' label="Mock表达式" min-width="120" prop="mockExpress" show-overflow-tooltip></el-table-column>
-        <el-table-column align='center' label="返回数据" min-width="120" prop="data" show-overflow-tooltip></el-table-column>
+        <el-table-column align='center' label="Mock表达式" min-width="120" prop="mockExpress"
+                         show-overflow-tooltip></el-table-column>
+        <el-table-column align='center' label="返回数据" min-width="120" prop="data"
+                         show-overflow-tooltip></el-table-column>
         <el-table-column align='center' label="优先级" min-width="120" prop="sort"></el-table-column>
         <el-table-column align='center' label="操作" width="250">
           <template slot-scope="scope">
@@ -103,7 +105,7 @@
     },
     data () {
       return {
-        editStatus:false,
+        editStatus: false,
         queryCondition: {
           methodId: null,
           pageRequest: crud.getQueryCondition()
@@ -126,11 +128,11 @@
       }
     },
     methods: {
-      sortClick (){
+      sortClick () {
         this.editStatus = !this.editStatus
-        if(this.editStatus) {
-          this.tableData.forEach((item,index)=>item.index = index)
-        } else{
+        if (this.editStatus) {
+          this.tableData.forEach((item, index) => item.index = index)
+        } else {
           // 保存逻辑
         }
       },
@@ -143,7 +145,7 @@
         crud.post({
           service: 'admin/getMockMethodForm',
           dealException: true,
-          data: { id }
+          data: {id}
         })
           .then(res => {
             const data = res.data
@@ -166,7 +168,7 @@
           })
       },
       getMockList () {
-        let { methodId, pageRequest } = this.queryCondition
+        let {methodId, pageRequest} = this.queryCondition
         let request = {
           methodId,
           pageRequest
@@ -205,7 +207,7 @@
       },
       saveMockClick () {
         console.log(this.json)
-        let { mockExpress, data } = this.editMockForm
+        let {mockExpress, data} = this.editMockForm
         let methodId = this.queryCondition.methodId
         let request = {
           methodId: methodId,
@@ -284,10 +286,10 @@
         crud.post({
           service: 'admin/deleteMockInfo',
           dealException: true,
-          data: { id }
+          data: {id}
         })
           .then(res => {
-            let { status, responseMsg } = res.data
+            let {status, responseMsg} = res.data
             if (status === 1) {
               /*util.message({
                 message: '删除成功',
@@ -305,11 +307,11 @@
             console.error('request admin/deleteInterface error:', error)
           })
       },
-      inputIndex (value,row){
-        let index = this.tableData.findIndex(item=>item.id === row.id)
-        this.tableData.splice(index,1)
-        value = value<0?0:value>this.tableData.length?this.tableData.length:value
-        this.tableData.splice(value,0,row)
+      inputIndex (value, row) {
+        let index = this.tableData.findIndex(item => item.id === row.id)
+        this.tableData.splice(index, 1)
+        value = value < 0 ? 0 : value > this.tableData.length ? this.tableData.length : value
+        this.tableData.splice(value, 0, row)
       }
     },
     created () {
