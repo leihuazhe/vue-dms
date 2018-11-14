@@ -293,7 +293,7 @@
             console.error('request admin/deleteInterface error:', error)
           })
       },
-      inputIndex(index,row){
+      inputIndex (index,row){
         console.log(index)
         let newIndex = this.tabeData.findIndex(item=>item.id === row.id)
         this.tableData.splice(newIndex,1)

@@ -77,8 +77,9 @@
     <!--:title和 title 的区别-->
     <el-dialog :title="serviceForm.title" :visible.sync="dialogVisible" class="s-dialog" width="40%"
                custom-class="s-dialog">
+      <!--:rules="rules"-->
       <el-form ref="serviceForm" :model="serviceForm" class="s-dialog" :inline="true"
-               label-width="80px" label-position="right" :rules="rules">
+               label-width="80px" label-position="right">
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="24">
             <el-form-item label="服务简称" class="dialog-form-item" prop="simpleName">
@@ -89,8 +90,8 @@
 
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="24">
-            <el-form-item label="服务全称" class="dialog-form-item" prop="service">
-              <el-input v-model.trim="serviceForm.service" placeholder="请输入服务全称"></el-input>
+            <el-form-item label="服务全称" class="dialog-form-item" prop="serviceName">
+              <el-input v-model.trim="serviceForm.serviceName" placeholder="请输入服务全称"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -118,6 +119,10 @@
     name: 's-list',
     data () {
       return {
+        deleteKey: [
+          'title',
+          'type'
+        ],
         tableData: [],
         queryCondition: {
           simpleName: null,
@@ -158,7 +163,7 @@
         // this.$router.push({ name: 'SModify' })
       },
       lookMetadata () {
-        this.$router.push({ name: 'SMetadata' })
+        this.$router.push({ name: 's-metadata' })
       },
 
       getServiceList () {
@@ -196,6 +201,10 @@
         this.$refs[serviceForm].validate(valid => {
           if (valid) {
             let service = JSON.parse(JSON.stringify(this.serviceForm))
+            //删除不需要的key
+            this.deleteKey.forEach(ele => {
+              delete service[ele]
+            })
             util.dealNullQueryCondition(service)
             if (this.serviceForm.type === 'add') {
               crud.post({
@@ -204,14 +213,20 @@
                 data: service
               })
                 .then(res => {
+                  let { status, responseMsg } = res.data
                   const data = res.data
-                  if (data.status === 1 && JSON.stringify(data.success.serviceList) !== 'undefined') {
+                  if (data.status === 1) {
                     util.message({
                       type: 'success',
-                      message: '创建角色成功'
+                      message: '创建服务成功'
                     })
-                    this.dialogRoleForm = false
-                    this.listRole()
+                    this.dialogVisible = false
+                    this.getServiceList()
+                  } else {
+                    util.message({
+                      message: responseMsg,
+                      type: 'error'
+                    })
                   }
                 })
                 .catch(error => {
@@ -354,6 +369,9 @@
           margin-bottom: 0;
         }
       }
+    }
+    .el-table .cell {
+      white-space: normal;
     }
 
   }
