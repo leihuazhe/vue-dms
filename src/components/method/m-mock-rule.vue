@@ -6,12 +6,12 @@
       </el-row>
       <el-form :inline="true" class="form-content">
         <el-row>
-          <el-col :span="8" class="wrap">
+          <el-col :span="12" class="wrap">
             <el-form-item label="服务名称">
               <span>{{ methodForm.serviceName }}</span>
             </el-form-item>
           </el-col>
-          <el-col :span="8" class="wrap">
+          <el-col :span="4" class="wrap">
             <el-form-item label="接口名称">
               <span>{{ methodForm.methodName }}</span>
             </el-form-item>
@@ -37,9 +37,22 @@
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="viewClick(scope.row)">查看</el-button>
             <el-button type="text" size="small" @click="editClick(scope.row)">编辑</el-button>
+            <el-button type="text" size="small" @click="deleteMockInfo(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
+      <!-- 分页 -->
+      <div class="block">
+        <el-pagination background
+                       @size-change="handleSizeChange"
+                       @current-change="handleCurrentChange"
+                       :current-page="queryCondition.pageRequest.pageIndex"
+                       :page-sizes="[5, 10, 20, 30, 40]"
+                       :page-size="queryCondition.pageRequest.limit"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="queryCondition.pageRequest.results">
+        </el-pagination>
+      </div>
     </div>
 
     <!--弹出框-->
@@ -109,9 +122,34 @@
     methods: {
       render () {
         this.queryCondition.methodId = this.$route.params.id
-        this.methodForm.serviceName = this.$route.params.service
-        this.methodForm.methodName = this.$route.params.method
+        this.getMethodForm(this.queryCondition.methodId)
         this.getMockList()
+      },
+      getMethodForm (id) {
+        crud.post({
+          service: 'admin/getMockMethodForm',
+          dealException: true,
+          data: { id }
+        })
+          .then(res => {
+            const data = res.data
+            if (data.status === 1 && JSON.stringify(data.success.serviceName) !== 'undefined') {
+              this.methodForm.serviceName = data.success.service
+              this.methodForm.methodName = data.success.method
+            } else {
+              util.message({
+                message: data.responseMsg,
+                type: 'error'
+              })
+            }
+          })
+          .catch(error => {
+            console.error('request admin/getMockMethodForm error:', error)
+            util.message({
+              message: error,
+              type: 'error'
+            })
+          })
       },
       getMockList () {
         let { methodId, pageRequest } = this.queryCondition
@@ -147,9 +185,13 @@
       },
       onError () {
       },
+      resetForm () {
+        this.tableData = []
+        this.getMockList()
+      },
       saveMockClick () {
         console.log(this.json)
-        let {mockExpress, data} = this.editMockForm
+        let { mockExpress, data } = this.editMockForm
         let methodId = this.queryCondition.methodId
         let request = {
           methodId: methodId,
@@ -169,6 +211,10 @@
                 type: 'success',
                 message: '创建Mock规则成功'
               })
+              //刷新
+              this.MockDialogVisible = false
+              this.resetForm()
+
             } else {
               util.message({
                 message: data.responseMsg,
@@ -204,54 +250,44 @@
         this.MockDialogVisible = true
         this.mockType = 'edit'
       },
-
-      // 点击角色保存
-      clickSaveMock (formName) {
-        this.$refs[formName].validate(valid => {
-          if (valid) {
-            let demo = JSON.parse(JSON.stringify(this.roleForm))
-            this.deleteKey.forEach(ele => {
-              delete demo[ele]
-            })
-            for (const i in demo) {
-              if (!demo[i]) delete demo[i]
-            }
-            if (this.roleForm.type === 'add') {
-              api.AdminService.createRole({
-                method: 'createRole',
-                data: {
-                  request: demo
-                },
-                success: res => {
-                  util.message({
-                    type: 'success',
-                    message: '创建角色成功'
-                  })
-                  this.dialogRoleForm = false
-                  this.listRole()
-                }
-              })
-            } else if (this.roleForm.type === 'modify') {
-              // this.$set(this.roleList, this.roleForm.index, this.roleForm)
-              api.AdminService.modifyRole({
-                data: {
-                  request: demo
-                },
-                success: res => {
-                  util.message({
-                    type: 'success',
-                    message: '修改角色成功'
-                  })
-                  this.dialogRoleForm = false
-                  this.listRole()
-                }
-              })
-            }
-          } else {
-            console.log('error submit!!')
-            return false
-          }
+      //分页 function
+      handleSizeChange (limit) {
+        this.queryCondition.pageRequest.limit = limit
+        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest)
+        this.getMockList()
+      },
+      handleCurrentChange (pageIndex) {
+        this.queryCondition.pageRequest.pageIndex = pageIndex
+        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest)
+        this.getMockList()
+      },
+      deleteMockInfo (row) {
+        util.confirm('是否删除该接口？', this.del, row.id)
+      },
+      del (id) {
+        crud.post({
+          service: 'admin/deleteMockInfo',
+          dealException: true,
+          data: { id }
         })
+          .then(res => {
+            let { status, responseMsg } = res.data
+            if (status === 1) {
+              /*util.message({
+                message: '删除成功',
+                type: 'success'
+              })*/
+              this.resetForm()
+            } else {
+              util.message({
+                message: responseMsg,
+                type: 'error'
+              })
+            }
+          })
+          .catch(error => {
+            console.error('request admin/deleteInterface error:', error)
+          })
       }
     },
     created () {

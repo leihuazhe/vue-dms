@@ -1,11 +1,28 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import App from './App.vue'
 
 Vue.use(Router)
 
 export default new Router({
   routes: [
     {
+      path: '/',
+      component: App,
+      redirect: '/about',
+      name: 'Dapeng Mock Server',
+      meta: { title: '首页' },
+      // rewriteUrl: '/about',
+      hidden: true
+    },
+    {
+      path: '/about',
+      name: 'about',
+      meta: { pageName: '首页' },
+      component: () => import('@/components/dashboard/index')
+    },
+    {
+      //带 ? 为可选
       path: '/m-list/:id?',
       name: 'm-list',
       component: () => import('@/components/method/m-list'),
