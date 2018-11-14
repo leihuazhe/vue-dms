@@ -74,14 +74,14 @@
             <el-form-item label="Mock表达式:" class="dialog-form-item" prop="mockExpress">
               <!--<span v-if="mockType === 'view'">{{ editMockForm.mockExpress }}</span>-->
               <v-jsoneditor v-model="editMockForm.mockExpress" :options="options" :plus="false" height="400px"
-                            mode="code"
+                            mode="code" ref="mockExpressEditor"
                             @error="onError"></v-jsoneditor>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="返回数据:" class="dialog-form-item" prop="data">
               <v-jsoneditor v-model="editMockForm.data" :options="options" :plus="false" height="400px"
-                            mode="code"
+                            mode="code" ref="dataEditor"
                             @error="onError"></v-jsoneditor>
             </el-form-item>
           </el-col>
@@ -224,8 +224,16 @@
         this.getMockList()
       },
       saveMockClick () {
-        console.log(this.json)
-        let {mockExpress, data} = this.editMockForm
+        // let {mockExpress, data} = this.editMockForm
+        let mockExpress = ''
+        let data = ''
+        try {
+          mockExpress = this.$refs.mockExpressEditor.editor.get()
+          data = this.$refs.dataEditor.editor.get()
+        }catch (e) {
+          util.message('JSON格式错误')
+          return
+        }
         let methodId = this.queryCondition.methodId
         let request = {
           methodId: methodId,
