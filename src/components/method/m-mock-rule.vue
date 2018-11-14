@@ -134,6 +134,18 @@
           this.tableData.forEach((item, index) => item.index = index)
         } else {
           // 保存逻辑
+          let priorityList = this.tableData.map(item=>item.id)
+          crud.post({
+            service: 'admin/updatePriority',
+            dealException: true,
+            data: {priorityList}
+          }).then(res=>{
+            util.message({type:'success',message:'修改成功'})
+            this.getMockList()
+          }).catch(error=>{
+            util.message('修改失败')
+            this.getMockList()
+          })
         }
       },
       render () {
@@ -168,6 +180,7 @@
           })
       },
       getMockList () {
+        this.editStatus = false
         let {methodId, pageRequest} = this.queryCondition
         let request = {
           methodId,
