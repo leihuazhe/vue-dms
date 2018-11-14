@@ -75,6 +75,17 @@ export default new Router({
         keepAlive: true,
         pageName: '元数据管理'
       }
+    },
+    {
+      path: '/m-d-detail-list/:id',
+      name: 'm-d-detail-list',
+      component: () => import('@/components/metadata/m-d-detail-list'),
+      meta: {
+        keepAlive: true,
+        pageName: '元数据详情'
+      }
     }
+
+
   ]
 })

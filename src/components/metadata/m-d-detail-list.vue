@@ -1,5 +1,5 @@
 <template>
-  <div class="m-d-list c-container">
+  <div class="m-d-detail-list c-container">
     <div class="c-header">
       <el-form :inline="true" class="demo-form-inline">
         <el-row type="flex" align="middle" justify="start">
@@ -23,52 +23,103 @@
       </el-form>
     </div>
     <div class="c-content">
-      <el-form :inline="true" class="demo-form-inline">
-        <el-form-item label="服务Tag" class="c-query-input">
-          <el-input v-model="data" placeholder="请输入服务Tag"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-upload
-            class="upload-demo"
-            action="/admin/upload"
-            multiple
-            :on-success="uploadSuccess"
-            :on-error="uploadError"
-            :data="{data}">
-            <el-button size="small" type="primary">点击上传</el-button>
-          </el-upload>
-        </el-form-item>
-      </el-form>
-      <el-table :data="tableData" style="width: 100%">
-        <el-table-column align='center' label="ID" min-width="50" prop="id"></el-table-column>
-        <el-table-column align='left' label="服务简称" min-width="150" prop="simpleName"
-                         show-overflow-tooltip></el-table-column>
-        <el-table-column align='center' label="元数据全称" min-width="220" prop="serviceName"></el-table-column>
-        <el-table-column align='center' label="版本信息" min-width="100" prop="version"></el-table-column>
-        <el-table-column align='center' label="接口数量" min-width="70" prop="methodSize"></el-table-column>
-        <el-table-column align='center' label="创建时间" min-width="80" prop="createAt"></el-table-column>
-        <el-table-column align='center' label="操作" width="200">
-          <template slot-scope="scope">
-            <el-button type="text" size="small" @click="updateMetadata(scope.row)">更新</el-button>
-          </template>
-          <template slot-scope="scope">
-            <el-button type="text" size="small" @click="queryDetails(scope.row)">查看详情</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <!-- 分页 -->
-      <div class="block">
-        <el-pagination background
-                       @size-change="handleSizeChange"
-                       @current-change="handleCurrentChange"
-                       :current-page="queryCondition.pageRequest.pageIndex"
-                       :page-sizes="[5, 10, 20, 30, 40]"
+      <el-tabs v-model.trim="activeName" type="card">
+        <!-- 第一个tab栏 -->
+        <el-tab-pane label="接口信息" name="first">
+          <span slot="label"><i class="el-icon-date"></i> 接口信息</span>
 
-                       :page-size="queryCondition.pageRequest.limit"
-                       layout="total, sizes, prev, pager, next, jumper"
-                       :total="queryCondition.pageRequest.results">
-        </el-pagination>
-      </div>
+          <!-- 基本信息 -->
+          <div class="essential-information">
+            <div class="ey-tittle-level2 m25">接口信息</div>
+
+            <el-table :data="methodData" style="width: 100%">
+
+              <el-table-column align='center' label="序号" width="100" type="index"></el-table-column>
+              <el-table-column align='left' label="方法名列表" min-width="150" prop="simpleName"
+                               show-overflow-tooltip></el-table-column>
+              <el-table-column align='center' label="事件" min-width="80" prop="serviceName"></el-table-column>
+              <el-table-column align='center' label="简述" min-width="300" prop="version"></el-table-column>
+              <el-table-column align='center' label="测试" width="100">
+                <template slot-scope="scope">
+                  <el-button type="text" size="small" @click="updateMetadata(scope.row)"><i class="el-icon-star-on"/>
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+            <!-- 分页 -->
+            <div class="block">
+              <el-pagination background
+                             @size-change="handleSizeChange"
+                             @current-change="handleCurrentChange"
+                             :current-page="queryCondition.pageRequest.pageIndex"
+                             :page-sizes="[5, 10, 20, 30, 40]"
+
+                             :page-size="queryCondition.pageRequest.limit"
+                             layout="total, sizes, prev, pager, next, jumper"
+                             :total="queryCondition.pageRequest.results">
+              </el-pagination>
+            </div>
+          </div>
+        </el-tab-pane>
+        <!-- 第二个tab栏 -->
+        <el-tab-pane label="结构体信息" name="second" :disabled="second">
+          <span slot="label"><i class="el-icon-menu"></i> 结构体信息</span>
+
+          <!-- 基本信息 -->
+          <div class="essential-information">
+            <div class="ey-tittle-level2 m25">结构体信息</div>
+            <el-table :data="structData" style="width: 100%">
+              <el-table-column align='center' label="序号" width="150" type="index"></el-table-column>
+              <el-table-column align='left' label="结构体列表" min-width="250" prop="simpleName"
+                               show-overflow-tooltip></el-table-column>
+              <el-table-column align='center' label="简述" min-width="250" prop="version"></el-table-column>
+
+            </el-table>
+            <!-- 分页 -->
+            <div class="block">
+              <el-pagination background
+                             @size-change="handleSizeChange"
+                             @current-change="handleCurrentChange"
+                             :current-page="queryCondition.pageRequest.pageIndex"
+                             :page-sizes="[5, 10, 20, 30, 40]"
+
+                             :page-size="queryCondition.pageRequest.limit"
+                             layout="total, sizes, prev, pager, next, jumper"
+                             :total="queryCondition.pageRequest.results">
+              </el-pagination>
+            </div>
+          </div>
+        </el-tab-pane>
+        <!-- 第三个tab栏 -->
+        <el-tab-pane label="枚举信息" name="third" :disabled="third">
+          <span slot="label"><i class="el-icon-setting"></i> 枚举信息</span>
+
+          <!-- 基本信息 -->
+          <div class="essential-information">
+            <div class="ey-tittle-level2 m25">枚举信息</div>
+            <el-table :data="enumData" style="width: 100%">
+              <el-table-column align='center' label="序号" width="150" type="index"></el-table-column>
+              <el-table-column align='left' label="枚举结构列表" min-width="300" prop="simpleName"
+                               show-overflow-tooltip></el-table-column>
+              <el-table-column align='center' label="简述" min-width="200" prop="version"></el-table-column>
+
+            </el-table>
+            <!-- 分页 -->
+            <div class="block">
+              <el-pagination background
+                             @size-change="handleSizeChange"
+                             @current-change="handleCurrentChange"
+                             :current-page="queryCondition.pageRequest.pageIndex"
+                             :page-sizes="[5, 10, 20, 30, 40]"
+
+                             :page-size="queryCondition.pageRequest.limit"
+                             layout="total, sizes, prev, pager, next, jumper"
+                             :total="queryCondition.pageRequest.results">
+              </el-pagination>
+            </div>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
     </div>
     <el-dialog
       title="查看详情"
@@ -118,9 +169,12 @@
   import util from '../../assets/js/co-util'
 
   export default {
-    name: 'm-d-list',
+    name: 'm-d-detail-list',
     data () {
       return {
+        activeName: 'first',
+        second: false,
+        third: false,
         queryCondition: {
           serviceName: null,
           methodName: null,
@@ -139,6 +193,7 @@
           ]
         },
         tableData: [],
+        enumData: [],
         methodForm: {},
         rules: {},
         dialogVisible: false,
@@ -149,6 +204,55 @@
       updateMetadata () {
 
       },
+      //获取接口方法
+      getMethodData () {
+        crud.fetchApi({
+          url: 'admin/listMetaMethods',
+          request: {},
+          success: function (res) {
+
+          },
+          error: function () {
+          },
+          msg: ''
+        })
+      },
+
+      /*/!**
+       * 统一封装请求
+       *!/
+      fetchApi () {
+        let func = (obj) => {
+          // 兼容无参请求写法
+          let { url, request, success, error, ...args } = obj || {}
+          util.dealNullQueryCondition(request)
+          crud
+            .post({
+              service: url,
+              dealException: true,
+              data: request
+            })
+            .then(res => {
+              const data = res.data
+              if (data.status === 1) {
+                success(data)
+              } else {
+                util.message({
+                  message: data.responseMsg,
+                  type: 'error'
+                })
+              }
+            })
+            .catch(error => {
+              console.error('request admin/listMetadata error:', error)
+              util.message({
+                message: error,
+                type: 'error'
+              })
+            })
+        }
+        return func
+      },*/
       getMetadataList () {
         const metadataId = this.$route.params.id
         let { serviceName, version, pageRequest } = this.queryCondition
@@ -243,9 +347,12 @@
 </script>
 
 <style lang="scss">
-  .m-d-list {
+  .m-d-detail-list {
     .f-right {
       float: right;
+    }
+    .el-tab-pane {
+      font-size: 20px;
     }
     .method-dialog {
       .el-row {
