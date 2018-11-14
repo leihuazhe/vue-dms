@@ -42,7 +42,7 @@ export default new Router({
     },
     {
       path: '/s-list',
-      name: 'SList',
+      name: 's-list',
       component: () => import('@/components/serve/s-list'),
       meta: {
         keepAlive: true,
@@ -51,7 +51,7 @@ export default new Router({
     },
     {
       path: '/s-add',
-      name: 'SAdd',
+      name: 's-add',
       component: () => import('@/components/serve/s-add'),
       meta: {
         keepAlive: true,
@@ -60,7 +60,7 @@ export default new Router({
     },
     {
       path: '/s-modify',
-      name: 'SModify',
+      name: 's-modify',
       component: () => import('@/components/serve/s-modify'),
       meta: {
         keepAlive: true,
@@ -69,7 +69,7 @@ export default new Router({
     },
     {
       path: '/s-metadata',
-      name: 'SMetadata',
+      name: 's-metadata',
       component: () => import('@/components/serve/s-metadata'),
       meta: {
         keepAlive: true,

@@ -27,7 +27,11 @@
         <el-button type="primary" @click="addMock">添加Mock规则</el-button>
       </div>
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column align='center' label="序号" width="80" type="index"></el-table-column>
+        <el-table-column align='center' label="序号" width="60" >
+          <template slot-scope="scope">
+            <el-input v-model="scope.$index" @input="inputIndex($event,scope.row)"></el-input>
+          </template>
+        </el-table-column>
         <el-table-column align='center' label="Mock表达式" min-width="120" prop="mockExpress"
                          show-overflow-tooltip></el-table-column>
         <el-table-column align='center' label="返回数据" min-width="120" prop="data"
@@ -288,6 +292,11 @@
           .catch(error => {
             console.error('request admin/deleteInterface error:', error)
           })
+      },
+      inputIndex (index,row){
+        console.log(index)
+        let newIndex = this.tabeData.findIndex(item=>item.id === row.id)
+        this.tableData.splice(newIndex,1)
       }
     },
     created () {
