@@ -25,11 +25,13 @@
       </el-row>
       <div class="f-right">
         <el-button type="primary" @click="addMock">添加Mock规则</el-button>
+        <el-button type="primary" @click="sortClick">{{editStatus?'保存':'修改顺序'}}</el-button>
       </div>
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column align='center' label="序号" width="60" >
+        <el-table-column align='center' label="序号" width="60">
           <template slot-scope="scope">
-            <el-input v-model="scope.$index" @input="inputIndex($event,scope.row)"></el-input>
+            <el-input v-model="scope.row.index" @change="inputIndex($event,scope.row)" v-if="editStatus"></el-input>
+            <span v-else>{{scope.$index}}</span>
           </template>
         </el-table-column>
         <el-table-column align='center' label="Mock表达式" min-width="120" prop="mockExpress"
@@ -70,15 +72,16 @@
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="12">
             <el-form-item label="Mock表达式:" class="dialog-form-item" prop="mockExpress">
-              <span v-if="mockType === 'view'">{{ editMockForm.mockExpress }}</span>
-              <v-jsoneditor v-else v-model="editMockForm.mockExpress" :options="options" :plus="false" height="400px"
+              <!--<span v-if="mockType === 'view'">{{ editMockForm.mockExpress }}</span>-->
+              <v-jsoneditor v-model="editMockForm.mockExpress" :options="options" :plus="false" height="400px"
+                            :mode="mockType" :showBtns="mockType ==='edit'"
                             @error="onError"></v-jsoneditor>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="返回数据:" class="dialog-form-item" prop="data">
-              <span v-if="mockType === 'view'">{{ editMockForm.data }}</span>
-              <v-jsoneditor v-else v-model="editMockForm.data" :options="options" :plus="false" height="400px"
+              <v-jsoneditor v-model="editMockForm.data" :options="options" :plus="false" height="400px"
+                            :mode="mockType"
                             @error="onError"></v-jsoneditor>
             </el-form-item>
           </el-col>
@@ -102,6 +105,7 @@
     },
     data () {
       return {
+        editStatus: false,
         queryCondition: {
           methodId: null,
           pageRequest: crud.getQueryCondition()
@@ -124,6 +128,26 @@
       }
     },
     methods: {
+      sortClick () {
+        this.editStatus = !this.editStatus
+        if (this.editStatus) {
+          this.tableData.forEach((item, index) => item.index = index)
+        } else {
+          // 保存逻辑
+          let priorityList = this.tableData.map(item=>item.id)
+          crud.post({
+            service: 'admin/updatePriority',
+            dealException: true,
+            data: {priorityList}
+          }).then(res=>{
+            util.message({type:'success',message:'修改成功'})
+            this.getMockList()
+          }).catch(error=>{
+            util.message('修改失败')
+            this.getMockList()
+          })
+        }
+      },
       render () {
         this.queryCondition.methodId = this.$route.params.id
         this.getMethodForm(this.queryCondition.methodId)
@@ -133,7 +157,7 @@
         crud.post({
           service: 'admin/getMockMethodForm',
           dealException: true,
-          data: { id }
+          data: {id}
         })
           .then(res => {
             const data = res.data
@@ -156,7 +180,8 @@
           })
       },
       getMockList () {
-        let { methodId, pageRequest } = this.queryCondition
+        this.editStatus = false
+        let {methodId, pageRequest} = this.queryCondition
         let request = {
           methodId,
           pageRequest
@@ -195,7 +220,7 @@
       },
       saveMockClick () {
         console.log(this.json)
-        let { mockExpress, data } = this.editMockForm
+        let {mockExpress, data} = this.editMockForm
         let methodId = this.queryCondition.methodId
         let request = {
           methodId: methodId,
@@ -236,6 +261,8 @@
       },
       viewClick (row) {
         this.editMockForm = JSON.parse(JSON.stringify(row))
+        this.editMockForm.data = JSON.parse(this.editMockForm.data)
+        this.editMockForm.mockExpress = JSON.parse(this.editMockForm.mockExpress)
         this.MockDialogVisible = true
         this.mockType = 'view'
       },
@@ -244,7 +271,7 @@
         this.editMockForm.mockExpress = JSON.parse(this.editMockForm.mockExpress)
         this.editMockForm.data = JSON.parse(this.editMockForm.data)
         this.MockDialogVisible = true
-        this.mockType = 'edit'
+        this.mockType = 'code'
       },
       addMock () {
         this.editMockForm = {
@@ -272,10 +299,10 @@
         crud.post({
           service: 'admin/deleteMockInfo',
           dealException: true,
-          data: { id }
+          data: {id}
         })
           .then(res => {
-            let { status, responseMsg } = res.data
+            let {status, responseMsg} = res.data
             if (status === 1) {
               /*util.message({
                 message: '删除成功',
@@ -293,10 +320,11 @@
             console.error('request admin/deleteInterface error:', error)
           })
       },
-      inputIndex (index,row){
-        console.log(index)
-        let newIndex = this.tabeData.findIndex(item=>item.id === row.id)
-        this.tableData.splice(newIndex,1)
+      inputIndex (value, row) {
+        let index = this.tableData.findIndex(item => item.id === row.id)
+        this.tableData.splice(index, 1)
+        value = value < 0 ? 0 : value > this.tableData.length ? this.tableData.length : value
+        this.tableData.splice(value, 0, row)
       }
     },
     created () {
