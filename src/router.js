@@ -1,12 +1,29 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import App from './App.vue'
 
 Vue.use(Router)
 
 export default new Router({
   routes: [
     {
-      path: '/m-list',
+      path: '/',
+      component: App,
+      redirect: '/about',
+      name: 'Dapeng Mock Server',
+      meta: { title: '首页' },
+      // rewriteUrl: '/about',
+      hidden: true
+    },
+    {
+      path: '/about',
+      name: 'about',
+      meta: { pageName: '首页' },
+      component: () => import('@/components/dashboard/index')
+    },
+    {
+      //带 ? 为可选
+      path: '/m-list/:id?',
       name: 'm-list',
       component: () => import('@/components/method/m-list'),
       meta: {
@@ -25,7 +42,7 @@ export default new Router({
     },
     {
       path: '/s-list',
-      name: 'SList',
+      name: 's-list',
       component: () => import('@/components/serve/s-list'),
       meta: {
         keepAlive: true,
@@ -34,7 +51,7 @@ export default new Router({
     },
     {
       path: '/s-add',
-      name: 'SAdd',
+      name: 's-add',
       component: () => import('@/components/serve/s-add'),
       meta: {
         keepAlive: true,
@@ -43,7 +60,7 @@ export default new Router({
     },
     {
       path: '/s-modify',
-      name: 'SModify',
+      name: 's-modify',
       component: () => import('@/components/serve/s-modify'),
       meta: {
         keepAlive: true,
@@ -52,7 +69,7 @@ export default new Router({
     },
     {
       path: '/s-metadata',
-      name: 'SMetadata',
+      name: 's-metadata',
       component: () => import('@/components/serve/s-metadata'),
       meta: {
         keepAlive: true,
@@ -66,6 +83,15 @@ export default new Router({
       meta: {
         keepAlive: true,
         pageName: '查看Mock Json'
+      }
+    },
+    {
+      path: '/m-d-list',
+      name: 'm-d-list',
+      component: () => import('@/components/metadata/m-d-list'),
+      meta: {
+        keepAlive: true,
+        pageName: '元数据管理'
       }
     }
   ]

@@ -6,12 +6,12 @@
       </el-row>
       <el-form :inline="true" class="form-content">
         <el-row>
-          <el-col :span="8" class="wrap">
+          <el-col :span="12" class="wrap">
             <el-form-item label="服务名称">
               <span>{{ methodForm.serviceName }}</span>
             </el-form-item>
           </el-col>
-          <el-col :span="8" class="wrap">
+          <el-col :span="4" class="wrap">
             <el-form-item label="接口名称">
               <span>{{ methodForm.methodName }}</span>
             </el-form-item>
@@ -41,9 +41,22 @@
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="viewClick(scope.row)">查看</el-button>
             <el-button type="text" size="small" @click="editClick(scope.row)">编辑</el-button>
+            <el-button type="text" size="small" @click="deleteMockInfo(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
+      <!-- 分页 -->
+      <div class="block">
+        <el-pagination background
+                       @size-change="handleSizeChange"
+                       @current-change="handleCurrentChange"
+                       :current-page="queryCondition.pageRequest.pageIndex"
+                       :page-sizes="[5, 10, 20, 30, 40]"
+                       :page-size="queryCondition.pageRequest.limit"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="queryCondition.pageRequest.results">
+        </el-pagination>
+      </div>
     </div>
 
     <!--弹出框-->
@@ -53,7 +66,7 @@
       width="90%"
       custom-class="mock-dialog">
       <el-form :inline="true" class="demo-form-inline" label-width="120px" label-position="top" :rules="rules"
-               ref="MockRuleForm" :model="MockRuleForm">
+               ref="editMockForm" :model="editMockForm">
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="12">
             <el-form-item label="Mock表达式:" class="dialog-form-item" prop="mockExpress">
@@ -73,7 +86,7 @@
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="saveClick" v-if="mockType === 'edit'">保存</el-button>
+        <el-button type="primary" @click="saveMockClick" v-if="mockType === 'edit'">保存</el-button>
       </span>
     </el-dialog>
   </div>
@@ -103,11 +116,13 @@
           methodName: null
         },
         tableData: [],
-        MockRuleForm: {},
         rules: {},
         mockType: '',
         MockDialogVisible: false,
-        editMockForm: {}
+        editMockForm: {
+          mockExpress: null,
+          data: null
+        }
       }
     },
     methods: {
@@ -121,11 +136,35 @@
       },
       render () {
         this.queryCondition.methodId = this.$route.params.id
-        this.methodForm.serviceName = this.$route.params.service
-        this.methodForm.methodName = this.$route.params.method
+        this.getMethodForm(this.queryCondition.methodId)
         this.getMockList()
       },
-
+      getMethodForm (id) {
+        crud.post({
+          service: 'admin/getMockMethodForm',
+          dealException: true,
+          data: { id }
+        })
+          .then(res => {
+            const data = res.data
+            if (data.status === 1 && JSON.stringify(data.success.serviceName) !== 'undefined') {
+              this.methodForm.serviceName = data.success.service
+              this.methodForm.methodName = data.success.method
+            } else {
+              util.message({
+                message: data.responseMsg,
+                type: 'error'
+              })
+            }
+          })
+          .catch(error => {
+            console.error('request admin/getMockMethodForm error:', error)
+            util.message({
+              message: error,
+              type: 'error'
+            })
+          })
+      },
       getMockList () {
         let { methodId, pageRequest } = this.queryCondition
         let request = {
@@ -158,18 +197,52 @@
             })
           })
       },
-
       onError () {
       },
-
-      saveClick () {
+      resetForm () {
+        this.tableData = []
+        this.getMockList()
+      },
+      saveMockClick () {
         console.log(this.json)
-        let { MockJson, dataJson } = this.editMockForm
+        let { mockExpress, data } = this.editMockForm
+        let methodId = this.queryCondition.methodId
         let request = {
-          MockJson: JSON.stringify(MockJson),
-          dataJson: JSON.stringify(dataJson)
+          methodId: methodId,
+          mockExpress: JSON.stringify(mockExpress),
+          mockData: JSON.stringify(data)
         }
         console.log(request)
+        crud.post({
+          service: 'admin/createMockInfo',
+          dealException: true,
+          data: request
+        })
+          .then(res => {
+            const data = res.data
+            if (data.status === 1) {
+              util.message({
+                type: 'success',
+                message: '创建Mock规则成功'
+              })
+              //刷新
+              this.MockDialogVisible = false
+              this.resetForm()
+
+            } else {
+              util.message({
+                message: data.responseMsg,
+                type: 'error'
+              })
+            }
+          })
+          .catch(error => {
+            console.error('request admin/listMockExpress error:', error)
+            util.message({
+              message: error,
+              type: 'error'
+            })
+          })
       },
       viewClick (row) {
         this.editMockForm = JSON.parse(JSON.stringify(row))
@@ -180,15 +253,57 @@
       },
       editClick (row) {
         this.editMockForm = JSON.parse(JSON.stringify(row))
-        this.editMockForm.data = JSON.parse(this.editMockForm.data)
         this.editMockForm.mockExpress = JSON.parse(this.editMockForm.mockExpress)
+        this.editMockForm.data = JSON.parse(this.editMockForm.data)
         this.MockDialogVisible = true
         this.mockType = 'code'
       },
       addMock () {
-        this.editMockForm = {}
+        this.editMockForm = {
+          mockExpress: {},
+          data: {}
+        }
         this.MockDialogVisible = true
-        this.mockType = 'code'
+        this.mockType = 'edit'
+      },
+      //分页 function
+      handleSizeChange (limit) {
+        this.queryCondition.pageRequest.limit = limit
+        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest)
+        this.getMockList()
+      },
+      handleCurrentChange (pageIndex) {
+        this.queryCondition.pageRequest.pageIndex = pageIndex
+        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest)
+        this.getMockList()
+      },
+      deleteMockInfo (row) {
+        util.confirm('是否删除该接口？', this.del, row.id)
+      },
+      del (id) {
+        crud.post({
+          service: 'admin/deleteMockInfo',
+          dealException: true,
+          data: { id }
+        })
+          .then(res => {
+            let { status, responseMsg } = res.data
+            if (status === 1) {
+              /*util.message({
+                message: '删除成功',
+                type: 'success'
+              })*/
+              this.resetForm()
+            } else {
+              util.message({
+                message: responseMsg,
+                type: 'error'
+              })
+            }
+          })
+          .catch(error => {
+            console.error('request admin/deleteInterface error:', error)
+          })
       },
       inputIndex (value,row){
         let index = this.tableData.findIndex(item=>item.id === row.id)
@@ -197,7 +312,6 @@
         this.tableData.splice(value,0,row)
       }
     },
-
     created () {
       this.render()
     }

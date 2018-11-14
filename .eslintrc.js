@@ -4,7 +4,7 @@ module.exports = {
   root: true,
   parserOptions: {
     parser: 'babel-eslint',
-    "sourceType": "module",
+    'sourceType': 'module',
   },
   env: {
     browser: true,
@@ -26,12 +26,12 @@ module.exports = {
     'generator-star-spacing': 'off',
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    "no-tabs": "off",
-    "indent": "off",
-    "no-mixed-spaces-and-tabs": "off",
-    "no-useless-escape": "off",
-    "space-before-function-paren": ["error", "always"],
-    "comma-dangle": ["error", "never"],
-    "semi": ["error", "never"]
+    'no-tabs': 'off',
+    'indent': 'off',
+    'no-mixed-spaces-and-tabs': 'off',
+    'no-useless-escape': 'off',
+    'space-before-function-paren': ['error', 'always'],
+    'comma-dangle': ['error', 'never'],
+    'semi': ['error', 'never']
   }
-}
+};
