@@ -110,8 +110,8 @@
           mode: 'code'
         },
         methodForm: {
-          serviceName: {},
-          methodName: {}
+          serviceName: null,
+          methodName: null
         },
         tableData: [],
         rules: {},
