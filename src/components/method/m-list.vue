@@ -101,242 +101,268 @@
 </template>
 
 <script>
-  import * as crud from '../../api/api'
-  import util from '../../assets/js/co-util'
+import * as crud from "../../api/api"
+import util from "../../assets/js/co-util"
 
-  export default {
-    name: 'm-list',
-    data () {
-      return {
-        queryCondition: {
-          serviceName: null,
-          methodName: null,
-          pageRequest: crud.getQueryCondition()
-        },
-        record: {
-          typeList: [{
-            value: 'GET',
-            label: 'GET'
-          }, {
-            value: 'POST',
-            label: 'POST'
-          }]
-        },
-        tableData: [],
-        dialogVisible: false,
-        methodForm: {},
-        rules: {
-          simpleService: [{
+export default {
+  name: "m-list",
+  data () {
+    return {
+      queryCondition: {
+        serviceName: null,
+        methodName: null,
+        pageRequest: crud.getQueryCondition()
+      },
+      record: {
+        typeList: [
+          {
+            value: "GET",
+            label: "GET"
+          },
+          {
+            value: "POST",
+            label: "POST"
+          }
+        ]
+      },
+      tableData: [],
+      dialogVisible: false,
+      methodForm: {},
+      rules: {
+        simpleService: [
+          {
             required: true,
-            message: '请输入服务名称',
-            trigger: 'blur'
-          }],
-          method: [{
+            message: "请输入服务名称",
+            trigger: "blur"
+          }
+        ],
+        method: [
+          {
             required: true,
-            message: '请输入接口名称',
-            trigger: 'blur'
-          }],
-          requestType: [{
+            message: "请输入接口名称",
+            trigger: "blur"
+          }
+        ],
+        requestType: [
+          {
             required: true,
-            message: '请选择请求类型',
-            trigger: 'blur'
-          }],
-          url: [{
+            message: "请选择请求类型",
+            trigger: "blur"
+          }
+        ],
+        url: [
+          {
             required: true,
-            message: '请输入接口地址',
-            trigger: 'blur'
-          }]
-        },
-        addOrModify: 'add'
+            message: "请输入接口地址",
+            trigger: "blur"
+          }
+        ]
+      },
+      addOrModify: "add"
+    }
+  },
+  methods: {
+    // 查询
+    getMethodList () {
+      const serviceId = this.$route.params.id
+      let { serviceName, methodName, pageRequest } = this.queryCondition
+      let request = {
+        serviceId,
+        serviceName,
+        methodName,
+        pageRequest
       }
-    },
-    methods: {
-      // 查询
-      getMethodList () {
-        const serviceId = this.$route.params.id
-        let { serviceName, methodName, pageRequest } = this.queryCondition
-        let request = {
-          serviceId,
-          serviceName,
-          methodName,
-          pageRequest
-        }
-        util.dealNullQueryCondition(request)
-        console.log("getMethodList request:",request)
-        crud.post({
-          service: 'admin/listInterfaces',
+      util.dealNullQueryCondition(request)
+      console.log("getMethodList request:", request)
+      crud
+        .post({
+          service: "admin/listInterfaces",
           dealException: true,
           data: request
         })
-          .then(res => {
-            const data = res.data
-            if (data.status === 1 && JSON.stringify(data.success.methodList) !== 'undefined') {
-              this.tableData = data.success.methodList
-              this.queryCondition.pageRequest = crud.getCurrentPage(data.success.pageResponse)
-            }
-          })
-          .catch(error => {
-            console.error('request admin/listInterfaces error:', error)
-            util.message({
-              message: error,
-              type: 'error'
-            })
-          })
-      },
-      // 查看Mock规则
-      queryMockRule (row) {
-        const id = row.id
-        this.$router.push({
-          name: 'm-mock-rule',
-          params: { id }
-        })
-      },
-      // 查询按钮
-      searchForm () {
-        this.queryCondition.pageRequest = crud.getQueryCondition()
-        this.getMethodList()
-      },
-      // 重置
-      resetForm () {
-        this.tableData = []
-        this.queryCondition = {
-          simpleName: null,
-          methodName: null,
-          pageRequest: crud.getQueryCondition()
-        }
-        this.searchForm()
-      },
-      saveClick () {
-        this.$refs['methodForm'].validate((valid) => {
-          if (valid) {
-            let { simpleService, method, requestType, url, id } = this.methodForm
-            let request = {
-              serviceName: simpleService,
-              methodName: method,
-              requestType,
-              url,
-              id
-            }
-            util.dealNullQueryCondition(request)
-            console.log(request)
-            let service = this.addOrModify === 'add' ? 'admin/createInterface' : 'admin/updateInterface'
-            let message = this.addOrModify === 'add' ? '新增成功' : '修改成功'
-            crud.post({
-              service,
-              dealException: true,
-              data: request 
-            })
-              .then(res => {
-                let { status, responseMsg } = res.data
-                if (status === 1) {
-                  util.message({
-                    message,
-                    type: 'success'
-                  })
-                  this.dialogVisible = false
-                  this.getMethodList()
-                } else {
-                  util.message({
-                    message: responseMsg,
-                    type: 'error'
-                  })
-                }
-              })
-              .catch(error => {
-                console.error(service, error)
-              })
-          } else {
-            console.log('error submit!!')
-            return false
+        .then(res => {
+          const data = res.data
+          if (
+            data.status === 1 &&
+            JSON.stringify(data.success.methodList) !== "undefined"
+          ) {
+            this.tableData = data.success.methodList
+            this.queryCondition.pageRequest = crud.getCurrentPage(
+              data.success.pageResponse
+            )
           }
         })
-      },
-      // 新增
-      addMethod () {
-        this.addOrModify = 'add'
-        this.dialogVisible = true
-        this.$nextTick(_ => {
-          this.$refs['methodForm'].clearValidate()
+        .catch(error => {
+          console.error("request admin/listInterfaces error:", error)
+          util.message({
+            message: error,
+            type: "error"
+          })
         })
-      },
-      // 修改
-      modifyMethod (row) {
-        this.addOrModify = 'modify'
-        this.methodForm = JSON.parse(JSON.stringify(row))
-        this.dialogVisible = true
-        this.$nextTick(_ => {
-          this.$refs['methodForm'].clearValidate()
-        })
-      },
-      handleSizeChange (limit) {
-        this.queryCondition.pageRequest.limit = limit
-        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest)
-        this.getMethodList()
-      },
-      handleCurrentChange (pageIndex) {
-        this.queryCondition.pageRequest.pageIndex = pageIndex
-        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest)
-        this.getMethodList()
-      },
-      // 删除接口
-      deleteMethod (row) {
-        util.confirm('是否删除该接口？', this.del, row.id)
-      },
-      // 删除接口二次确认
-      del (id) {
-        crud.post({
-          service: 'admin/deleteInterface',
+    },
+    // 查看Mock规则
+    queryMockRule (row) {
+      const id = row.id
+      this.$router.push({
+        name: "m-mock-rule",
+        params: { id }
+      })
+    },
+    // 查询按钮
+    searchForm () {
+      this.queryCondition.pageRequest = crud.getQueryCondition()
+      this.getMethodList()
+    },
+    // 重置
+    resetForm () {
+      this.tableData = []
+      this.queryCondition = {
+        simpleName: null,
+        methodName: null,
+        pageRequest: crud.getQueryCondition()
+      }
+      this.searchForm()
+    },
+    saveClick () {
+      this.$refs["methodForm"].validate(valid => {
+        if (valid) {
+          let { simpleService, method, requestType, url, id } = this.methodForm
+          let request = {
+            serviceName: simpleService,
+            methodName: method,
+            requestType,
+            url,
+            id
+          }
+          util.dealNullQueryCondition(request)
+          console.log(request)
+          let service =
+            this.addOrModify === "add"
+              ? "admin/createInterface"
+              : "admin/updateInterface"
+          let message = this.addOrModify === "add" ? "新增成功" : "修改成功"
+          crud
+            .post({
+              service,
+              dealException: true,
+              data: request
+            })
+            .then(res => {
+              let { status, responseMsg } = res.data
+              if (status === 1) {
+                util.message({
+                  message,
+                  type: "success"
+                })
+                this.dialogVisible = false
+                this.getMethodList()
+              } else {
+                util.message({
+                  message: responseMsg,
+                  type: "error"
+                })
+              }
+            })
+            .catch(error => {
+              console.error(service, error)
+            })
+        } else {
+          console.log("error submit!!")
+          return false
+        }
+      })
+    },
+    // 新增
+    addMethod () {
+      this.addOrModify = "add"
+      this.dialogVisible = true
+      this.$nextTick(_ => {
+        this.$refs["methodForm"].clearValidate()
+      })
+    },
+    // 修改
+    modifyMethod (row) {
+      this.addOrModify = "modify"
+      this.methodForm = JSON.parse(JSON.stringify(row))
+      this.dialogVisible = true
+      this.$nextTick(_ => {
+        this.$refs["methodForm"].clearValidate()
+      })
+    },
+    handleSizeChange (limit) {
+      this.queryCondition.pageRequest.limit = limit
+      this.queryCondition.pageRequest = crud.getQueryCondition(
+        this.queryCondition.pageRequest
+      )
+      this.getMethodList()
+    },
+    handleCurrentChange (pageIndex) {
+      this.queryCondition.pageRequest.pageIndex = pageIndex
+      this.queryCondition.pageRequest = crud.getQueryCondition(
+        this.queryCondition.pageRequest
+      )
+      this.getMethodList()
+    },
+    // 删除接口
+    deleteMethod (row) {
+      util.confirm("是否删除该接口？", this.del, row.id)
+    },
+    // 删除接口二次确认
+    del (id) {
+      crud
+        .post({
+          service: "admin/deleteInterface",
           dealException: true,
           data: { id }
         })
-          .then(res => {
-            let { status, responseMsg } = res.data
-            if (status === 1) {
-              util.message({
-                message: '删除成功',
-                type: 'success'
-              })
-              this.getMethodList()
-            } else {
-              util.message({
-                message: responseMsg,
-                type: 'error'
-              })
-            }
-          })
-          .catch(error => {
-            console.error('request admin/deleteInterface error:', error)
-          })
-      }
-    },
-    created () {
-      this.getMethodList()
+        .then(res => {
+          let { status, responseMsg } = res.data
+          if (status === 1) {
+            util.message({
+              message: "删除成功",
+              type: "success"
+            })
+            this.getMethodList()
+          } else {
+            util.message({
+              message: responseMsg,
+              type: "error"
+            })
+          }
+        })
+        .catch(error => {
+          console.error("request admin/deleteInterface error:", error)
+        })
     }
+  },
+  created () {
+    this.getMethodList()
   }
+}
 </script>
 
 <style lang="scss">
-  .m-list {
-    .f-right {
-      float: right;
-    }
-    .method-dialog {
-      .el-row {
-        margin-bottom: 20px;
-        .dialog-form-item {
-          width: 100%;
-          .el-form-item__content {
-            width: calc(100% - 90px);
-            .el-date-editor.el-input,
-            .el-select {
-              width: 100%;
-            }
+.m-list {
+  .f-right {
+    float: right;
+  }
+  .method-dialog {
+    .el-row {
+      margin-bottom: 20px;
+      .dialog-form-item {
+        width: 100%;
+        .el-form-item__content {
+          width: calc(100% - 90px);
+          .el-date-editor.el-input,
+          .el-select {
+            width: 100%;
           }
         }
-        .el-form-item {
-          margin-bottom: 0;
-        }
+      }
+      .el-form-item {
+        margin-bottom: 0;
       }
     }
   }
+}
 </style>
