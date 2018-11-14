@@ -78,8 +78,6 @@
 </script>
 
 <style lang="scss">
-  @import "../static/css/common/icon/iconfont.css";
-  @import "../static/css/common/index.scss";
 
   #app {
     .el-aside-btn {

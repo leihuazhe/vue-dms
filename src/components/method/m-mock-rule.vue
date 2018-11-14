@@ -42,7 +42,7 @@
         <el-table-column align='center' label="操作" width="250">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="viewClick(scope.row)">查看</el-button>
-            <el-button type="text" size="small" @click="editClick(scope.row)">编辑</el-button>
+            <el-button type="text" size="small" @click="modifyClick(scope.row)">编辑</el-button>
             <el-button type="text" size="small" @click="deleteMockInfo(scope.row)">删除</el-button>
           </template>
         </el-table-column>
@@ -74,21 +74,21 @@
             <el-form-item label="Mock表达式:" class="dialog-form-item" prop="mockExpress">
               <!--<span v-if="mockType === 'view'">{{ editMockForm.mockExpress }}</span>-->
               <v-jsoneditor v-model="editMockForm.mockExpress" :options="options" :plus="false" height="400px"
-                            :mode="mockType" :showBtns="mockType ==='edit'"
+                            mode="code" ref="mockExpressEditor"
                             @error="onError"></v-jsoneditor>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="返回数据:" class="dialog-form-item" prop="data">
               <v-jsoneditor v-model="editMockForm.data" :options="options" :plus="false" height="400px"
-                            :mode="mockType"
+                            mode="code" ref="dataEditor"
                             @error="onError"></v-jsoneditor>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="saveMockClick" v-if="mockType === 'edit'">保存</el-button>
+        <el-button type="primary" @click="saveMockClick" v-if="mockType !== 'view'">保存</el-button>
       </span>
     </el-dialog>
   </div>
@@ -213,14 +213,27 @@
           })
       },
       onError () {
+        console.log('error')
+        // util.message({
+        //   message: '规则错误，请重新填写！',
+        //   type: 'error'
+        // })
       },
       resetForm () {
         this.tableData = []
         this.getMockList()
       },
       saveMockClick () {
-        console.log(this.json)
-        let {mockExpress, data} = this.editMockForm
+        // let {mockExpress, data} = this.editMockForm
+        let mockExpress = ''
+        let data = ''
+        try {
+          mockExpress = this.$refs.mockExpressEditor.editor.get()
+          data = this.$refs.dataEditor.editor.get()
+        }catch (e) {
+          util.message('JSON格式错误')
+          return
+        }
         let methodId = this.queryCondition.methodId
         let request = {
           methodId: methodId,
@@ -266,12 +279,12 @@
         this.MockDialogVisible = true
         this.mockType = 'view'
       },
-      editClick (row) {
+      modifyClick (row) {
         this.editMockForm = JSON.parse(JSON.stringify(row))
         this.editMockForm.mockExpress = JSON.parse(this.editMockForm.mockExpress)
         this.editMockForm.data = JSON.parse(this.editMockForm.data)
         this.MockDialogVisible = true
-        this.mockType = 'code'
+        this.mockType = 'modify'
       },
       addMock () {
         this.editMockForm = {
@@ -279,7 +292,7 @@
           data: {}
         }
         this.MockDialogVisible = true
-        this.mockType = 'edit'
+        this.mockType = 'add'
       },
       //分页 function
       handleSizeChange (limit) {

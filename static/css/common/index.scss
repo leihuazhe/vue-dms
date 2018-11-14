@@ -499,3 +499,17 @@
   color: #1D96FF;
   font-size: 48px;
 }
+
+/* json编辑器样式 */
+.ace_editor{
+  body,
+  button,
+  input,
+  div,
+  span,
+  table,
+  select,
+  textarea{
+    font-size: inherit;
+  }
+}
