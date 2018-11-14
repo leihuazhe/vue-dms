@@ -53,7 +53,7 @@
         <el-table-column align='center' label="Mock接口数量" min-width="120" prop="mockMethodSize"></el-table-column>
         <el-table-column align='center' label="操作" width="250">
           <template slot-scope="scope">
-            <el-button type="text" size="small">查看接口</el-button>
+            <el-button type="text" size="small" @click="view(scope.row.serviceId)">查看接口</el-button>
             <el-button type="text" size="small" @click="modify(scope.row.id)">修改</el-button>
             <el-button type="text" size="small" @click="remove">删除</el-button>
           </template>
@@ -94,6 +94,9 @@
       }
     },
     methods: {
+      view (id) {
+        this.$router.push({ name: 'm-list', params: {id}})
+      },
       addServe () {
         this.$router.push({ name: 'SAdd' })
       },

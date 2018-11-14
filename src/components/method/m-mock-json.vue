@@ -13,7 +13,7 @@
 
 <script>
   import VueJsonEditor from 'vue-json-editor'
-
+  import * as crud from '../../api/api'
 
   export default {
     name: 'm-mock-json',
@@ -22,37 +22,16 @@
       VueJsonEditor
     },
     data () {
-      json: {
-        msg: 'demo of jsoneditor'
-      }
       return {
-        queryCondition: {
-          methodId: null,
-          pageRequest: crud.getQueryCondition()
-        },
-        options: {
-          mode: 'code'
-        },
-        methodForm: {
-          serviceName: null,
-          methodName: null
-        },
-        tableData: [],
-        MockRuleForm: {},
-        rules: {},
-        mockType: '',
-        MockDialogVisible: false,
-        editMockForm: {}
+        json: {
+          msg: 'demo of jsoneditor'
+        }
       }
     },
     methods: {
       onJsonChange (value) {
         console.log('value:', value)
       }
-    },
-
-    created () {
-      this.render()
     }
   }
 </script>

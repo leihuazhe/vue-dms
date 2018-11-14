@@ -93,8 +93,8 @@
           mode: 'code'
         },
         methodForm: {
-          serviceName: {},
-          methodName: {}
+          serviceName: null,
+          methodName: null
         },
         tableData: [],
         rules: {},
@@ -113,7 +113,6 @@
         this.methodForm.methodName = this.$route.params.method
         this.getMockList()
       },
-
       getMockList () {
         let { methodId, pageRequest } = this.queryCondition
         let request = {
@@ -146,10 +145,8 @@
             })
           })
       },
-
       onError () {
       },
-
       saveMockClick () {
         console.log(this.json)
         let {mockExpress, data} = this.editMockForm
@@ -257,7 +254,6 @@
         })
       }
     },
-
     created () {
       this.render()
     }
