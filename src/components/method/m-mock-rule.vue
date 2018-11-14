@@ -106,8 +106,8 @@
           mode: 'code'
         },
         methodForm: {
-          serviceName: {},
-          methodName: {}
+          serviceName: null,
+          methodName: null
         },
         tableData: [],
         rules: {},
@@ -289,7 +289,6 @@
             console.error('request admin/deleteInterface error:', error)
           })
       }
-
     },
     created () {
       this.render()
