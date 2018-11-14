@@ -12,14 +12,14 @@
 
   }
 
-  > .borderBottom.el-submenu.is-opened {
+  >.borderBottom.el-submenu.is-opened {
     .el-submenu__title {
       transition: border-color 0s, background-color 0s, color 0s;
       position: relative;
     }
 
     // 一级目录样式
-    > .el-submenu__title:before {
+    >.el-submenu__title:before {
       content: '';
       position: absolute;
       width: 4px;
@@ -30,8 +30,8 @@
       background: #3bc335;
     }
 
-    > .el-menu.el-menu--inline {
-      > .el-submenu.is-opened {
+    >.el-menu.el-menu--inline {
+      >.el-submenu.is-opened {
         .icon-lab_sec_nor {
 
           // 二级目录实心圆
@@ -40,8 +40,8 @@
           }
         }
 
-        > .el-menu.el-menu--inline {
-          > .el-submenu.is-opened {
+        >.el-menu.el-menu--inline {
+          >.el-submenu.is-opened {
             .icon-lab_thi_nor {
 
               // 三级目录空心圆
@@ -65,7 +65,7 @@
     -webkit-transform: scale(.7);
   }
 
-  .el-submenu.is-opened > .el-submenu__title .el-submenu__icon-arrow {
+  .el-submenu.is-opened>.el-submenu__title .el-submenu__icon-arrow {
     transform: rotate(90deg) scale(.7);
     -webkit-transform: rotate(90deg) scale(.7);
   }
@@ -325,7 +325,7 @@
     height: 56px;
   }
 
-  .el-button + .el-button {
+  .el-button+.el-button {
     margin-left: 20px;
   }
 
@@ -501,7 +501,8 @@
 }
 
 /* json编辑器样式 */
-.ace_editor{
+.ace_editor {
+
   body,
   button,
   input,
@@ -509,7 +510,7 @@
   span,
   table,
   select,
-  textarea{
+  textarea {
     font-size: inherit;
   }
 }
