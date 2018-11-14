@@ -23,18 +23,22 @@
       </el-form>
     </div>
     <div class="c-content">
-      <div class="f-right">
-        <el-upload
-          class="upload-demo"
-          action="https://jsonplaceholder.typicode.com/posts/"
-          multiple
-          :limit="3"
-          :on-success="uploadSuccess"
-          :on-error="uploadError">
-          <el-button size="small" type="primary">点击上传</el-button>
-          <!-- <el-button type="primary" @click="importClick">导入</el-button> -->
-        </el-upload>
-      </div>
+      <el-form :inline="true" class="demo-form-inline">
+        <el-form-item label="服务Tag" class="c-query-input">
+          <el-input v-model="data" placeholder="请输入服务Tag"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-upload
+            class="upload-demo"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            multiple
+            :on-success="uploadSuccess"
+            :on-error="uploadError"
+            :data="{data}">
+            <el-button size="small" type="primary">点击上传</el-button>
+          </el-upload>
+        </el-form-item>
+      </el-form>
       <el-table :data="tableData" style="width: 100%">
         <el-table-column align='center' label="ID" min-width="80" prop="id"></el-table-column>
         <el-table-column align='center' label="服务简称" min-width="100" prop="simpleService"></el-table-column>
@@ -54,7 +58,6 @@
                        @current-change="handleCurrentChange"
                        :current-page="queryCondition.pageRequest.pageIndex"
                        :page-sizes="[5, 10, 20, 30, 40]"
-
                        :page-size="queryCondition.pageRequest.limit"
                        layout="total, sizes, prev, pager, next, jumper"
                        :total="queryCondition.pageRequest.results">
@@ -132,7 +135,8 @@ export default {
       tableData: [],
       methodForm: {},
       rules: {},
-      dialogVisible:false
+      dialogVisible: false,
+      data: null
     }
   },
   methods: {
@@ -197,17 +201,13 @@ export default {
       console.log(request)
     },
     // 导入成功回调
-    uploadSuccess () {
-      
-    },
+    uploadSuccess () {},
     // 导入失败回调
-    uploadError () {
-
-    },
+    uploadError () {},
     // 查看详情
     queryDetails (row) {
       console.log(row)
-      this.dialogVisible = true 
+      this.dialogVisible = true
     },
     handleSizeChange (limit) {
       this.queryCondition.pageRequest.limit = limit
