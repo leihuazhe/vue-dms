@@ -84,6 +84,15 @@ export default new Router({
         keepAlive: true,
         pageName: '查看Mock Json'
       }
+    },
+    {
+      path: '/m-d-list',
+      name: 'm-d-list',
+      component: () => import('@/components/metadata/m-d-list'),
+      meta: {
+        keepAlive: true,
+        pageName: '元数据管理'
+      }
     }
   ]
 })

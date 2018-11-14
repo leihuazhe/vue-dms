@@ -126,7 +126,8 @@
           pageRequest: crud.getQueryCondition()
         },
         serviceForm: {},
-        dialogVisible: false
+        dialogVisible: false,
+        rules: {}
       }
     },
     methods: {
