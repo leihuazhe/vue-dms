@@ -34,7 +34,7 @@
         <el-table-column align='center' label="接口地址" min-width="300" prop="url" show-overflow-tooltip></el-table-column>
         <el-table-column align='center' label="操作" width="250">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="queryMockRule(scope.row)">查看Mock规则</el-button>
+            <el-button type="text" size="small" @click="queryMockRule(scope.row.id)">查看Mock规则</el-button>
             <el-button type="text" size="small" @click="modifyMethod(scope.row)">修改</el-button>
             <el-button type="text" size="small" @click="deleteMethod(scope.row)">删除</el-button>
           </template>
@@ -201,8 +201,7 @@ export default {
         })
     },
     // 查看Mock规则
-    queryMockRule (row) {
-      const id = row.id
+    queryMockRule (id) {
       this.$router.push({
         name: "m-mock-rule",
         params: { id }

@@ -95,279 +95,303 @@
 </template>
 
 <script>
-  import VJsoneditor from 'v-jsoneditor/src/index'
-  import * as crud from '../../api/api'
-  import util from '../../assets/js/co-util'
+import VJsoneditor from "v-jsoneditor/src/index"
+import * as crud from "../../api/api"
+import util from "../../assets/js/co-util"
 
-  export default {
-    components: {
-      VJsoneditor
-    },
-    data () {
-      return {
-        editStatus: false,
-        queryCondition: {
-          methodId: null,
-          pageRequest: crud.getQueryCondition()
-        },
-        options: {
-          mode: 'code'
-        },
-        methodForm: {
-          serviceName: null,
-          methodName: null
-        },
-        tableData: [],
-        rules: {},
-        mockType: '',
-        MockDialogVisible: false,
-        editMockForm: {
-          mockExpress: null,
-          data: null
-        }
+export default {
+  components: {
+    VJsoneditor
+  },
+  name: 'm-mock-rule',
+  data () {
+    return {
+      editStatus: false,
+      queryCondition: {
+        methodId: null,
+        pageRequest: crud.getQueryCondition()
+      },
+      options: {
+        mode: "code"
+      },
+      methodForm: {
+        serviceName: null,
+        methodName: null
+      },
+      tableData: [],
+      rules: {},
+      mockType: "",
+      MockDialogVisible: false,
+      editMockForm: {
+        mockExpress: null,
+        data: null
+      }
+    }
+  },
+  methods: {
+    sortClick () {
+      this.editStatus = !this.editStatus
+      if (this.editStatus) {
+        this.tableData.forEach((item, index) => (item.index = index))
+      } else {
+        // 保存逻辑
+        let priorityList = this.tableData.map(item => item.id)
+        crud
+          .post({
+            service: "admin/updatePriority",
+            dealException: true,
+            data: { priorityList }
+          })
+          .then(res => {
+            util.message({ type: "success", message: "修改成功" })
+            this.getMockList()
+          })
+          .catch(error => {
+            util.message("修改失败")
+            this.getMockList()
+          })
       }
     },
-    methods: {
-      sortClick () {
-        this.editStatus = !this.editStatus
-        if (this.editStatus) {
-          this.tableData.forEach((item, index) => item.index = index)
-        } else {
-          // 保存逻辑
-          let priorityList = this.tableData.map(item=>item.id)
-          crud.post({
-            service: 'admin/updatePriority',
-            dealException: true,
-            data: {priorityList}
-          }).then(res=>{
-            util.message({type:'success',message:'修改成功'})
-            this.getMockList()
-          }).catch(error=>{
-            util.message('修改失败')
-            this.getMockList()
-          })
-        }
-      },
-      render () {
-        this.queryCondition.methodId = this.$route.params.id
-        this.getMethodForm(this.queryCondition.methodId)
-        this.getMockList()
-      },
-      getMethodForm (id) {
-        crud.post({
-          service: 'admin/getMockMethodForm',
+    render () {
+      this.queryCondition.methodId = Number(this.$route.params.id)
+      this.getMethodForm(this.queryCondition.methodId)
+      this.getMockList()
+    },
+    getMethodForm (id) {
+      crud
+        .post({
+          service: "admin/getMockMethodForm",
           dealException: true,
-          data: {id}
+          data: { id }
         })
-          .then(res => {
-            const data = res.data
-            if (data.status === 1 && JSON.stringify(data.success.serviceName) !== 'undefined') {
-              this.methodForm.serviceName = data.success.service
-              this.methodForm.methodName = data.success.method
-            } else {
-              util.message({
-                message: data.responseMsg,
-                type: 'error'
-              })
-            }
-          })
-          .catch(error => {
-            console.error('request admin/getMockMethodForm error:', error)
+        .then(res => {
+          const data = res.data
+          if (
+            data.status === 1 &&
+            JSON.stringify(data.success.serviceName) !== "undefined"
+          ) {
+            this.methodForm.serviceName = data.success.service
+            this.methodForm.methodName = data.success.method
+          } else {
             util.message({
-              message: error,
-              type: 'error'
+              message: data.responseMsg,
+              type: "error"
             })
+          }
+        })
+        .catch(error => {
+          console.error("request admin/getMockMethodForm error:", error)
+          util.message({
+            message: error,
+            type: "error"
           })
-      },
-      getMockList () {
-        this.editStatus = false
-        let {methodId, pageRequest} = this.queryCondition
-        let request = {
-          methodId,
-          pageRequest
-        }
-        util.dealNullQueryCondition(request)
-        crud.post({
-          service: 'admin/listMockExpress',
+        })
+    },
+    getMockList () {
+      this.editStatus = false
+      let { methodId, pageRequest } = this.queryCondition
+      let request = {
+        methodId,
+        pageRequest
+      }
+      util.dealNullQueryCondition(request)
+      crud
+        .post({
+          service: "admin/listMockExpress",
           dealException: true,
           data: request
         })
-          .then(res => {
-            const data = res.data
-            if (data.status === 1 && JSON.stringify(data.success.mockList) !== 'undefined') {
-              this.tableData = data.success.mockList
-              this.queryCondition.pageRequest = crud.getCurrentPage(data.success.pageResponse)
-            } else {
-              util.message({
-                message: data.responseMsg,
-                type: 'error'
-              })
-            }
-          })
-          .catch(error => {
-            console.error('request admin/listMockExpress error:', error)
+        .then(res => {
+          const data = res.data
+          if (
+            data.status === 1 &&
+            JSON.stringify(data.success.mockList) !== "undefined"
+          ) {
+            this.tableData = data.success.mockList
+            this.queryCondition.pageRequest = crud.getCurrentPage(
+              data.success.pageResponse
+            )
+          } else {
             util.message({
-              message: error,
-              type: 'error'
+              message: data.responseMsg,
+              type: "error"
             })
+          }
+        })
+        .catch(error => {
+          console.error("request admin/listMockExpress error:", error)
+          util.message({
+            message: error,
+            type: "error"
           })
-      },
-      onError () {
-        console.log('error')
-        // util.message({
-        //   message: '规则错误，请重新填写！',
-        //   type: 'error'
-        // })
-      },
-      resetForm () {
-        this.tableData = []
-        this.getMockList()
-      },
-      saveMockClick () {
-        // let {mockExpress, data} = this.editMockForm
-        let mockExpress = ''
-        let data = ''
-        try {
-          mockExpress = this.$refs.mockExpressEditor.editor.get()
-          data = this.$refs.dataEditor.editor.get()
-        }catch (e) {
-          util.message('JSON格式错误')
-          return
-        }
-        let methodId = this.queryCondition.methodId
-        let request = {
-          methodId: methodId,
-          mockExpress: JSON.stringify(mockExpress),
-          mockData: JSON.stringify(data)
-        }
-        console.log(request)
-        crud.post({
-          service: 'admin/createMockInfo',
+        })
+    },
+    onError () {
+      console.log("error")
+    },
+    resetForm () {
+      this.tableData = []
+      this.getMockList()
+    },
+    saveMockClick () {
+      let { id } = this.editMockForm
+      let { methodId } = this.queryCondition
+      let mockExpress = ""
+      let data = ""
+      try {
+        mockExpress = this.$refs.mockExpressEditor.editor.get()
+        data = this.$refs.dataEditor.editor.get()
+      } catch (e) {
+        util.message("JSON格式错误")
+        return
+      }
+      let request = {
+        methodId,
+        mockId: id,
+        mockExpress: JSON.stringify(mockExpress),
+        mockData: JSON.stringify(data)
+      }
+      util.dealNullQueryCondition(request)
+      console.log(request)
+      let service = this.mockType === 'add' ? 'admin/createMockInfo' : 'admin/updateMockInfo'
+      let message = this.mockType === 'add' ? 'Mock规则创建成功' : 'Mock规则修改成功'
+      crud
+        .post({
+          service,
           dealException: true,
           data: request
         })
-          .then(res => {
-            const data = res.data
-            if (data.status === 1) {
-              util.message({
-                type: 'success',
-                message: '创建Mock规则成功'
-              })
-              //刷新
-              this.MockDialogVisible = false
-              this.resetForm()
-
-            } else {
-              util.message({
-                message: data.responseMsg,
-                type: 'error'
-              })
-            }
-          })
-          .catch(error => {
-            console.error('request admin/listMockExpress error:', error)
+        .then(res => {
+          const data = res.data
+          if (data.status === 1) {
             util.message({
-              message: error,
-              type: 'error'
+              type: "success",
+              message
             })
-          })
-      },
-      viewClick (row) {
-        this.editMockForm = JSON.parse(JSON.stringify(row))
-        this.editMockForm.data = JSON.parse(this.editMockForm.data)
-        this.editMockForm.mockExpress = JSON.parse(this.editMockForm.mockExpress)
-        this.MockDialogVisible = true
-        this.mockType = 'view'
-      },
-      modifyClick (row) {
-        this.editMockForm = JSON.parse(JSON.stringify(row))
-        this.editMockForm.mockExpress = JSON.parse(this.editMockForm.mockExpress)
-        this.editMockForm.data = JSON.parse(this.editMockForm.data)
-        this.MockDialogVisible = true
-        this.mockType = 'modify'
-      },
-      addMock () {
-        this.editMockForm = {
-          mockExpress: {},
-          data: {}
-        }
-        this.MockDialogVisible = true
-        this.mockType = 'add'
-      },
-      //分页 function
-      handleSizeChange (limit) {
-        this.queryCondition.pageRequest.limit = limit
-        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest)
-        this.getMockList()
-      },
-      handleCurrentChange (pageIndex) {
-        this.queryCondition.pageRequest.pageIndex = pageIndex
-        this.queryCondition.pageRequest = crud.getQueryCondition(this.queryCondition.pageRequest)
-        this.getMockList()
-      },
-      deleteMockInfo (row) {
-        util.confirm('是否删除该接口？', this.del, row.id)
-      },
-      del (id) {
-        crud.post({
-          service: 'admin/deleteMockInfo',
-          dealException: true,
-          data: {id}
+            //刷新
+            this.MockDialogVisible = false
+            this.resetForm()
+          } else {
+            util.message({
+              message: data.responseMsg,
+              type: "error"
+            })
+          }
         })
-          .then(res => {
-            let {status, responseMsg} = res.data
-            if (status === 1) {
-              /*util.message({
+        .catch(error => {
+          console.error("request admin/listMockExpress error:", error)
+          util.message({
+            message: error,
+            type: "error"
+          })
+        })
+    },
+    viewClick (row) {
+      this.editMockForm = JSON.parse(JSON.stringify(row))
+      this.editMockForm.data = JSON.parse(this.editMockForm.data)
+      this.editMockForm.mockExpress = JSON.parse(this.editMockForm.mockExpress)
+      this.MockDialogVisible = true
+      this.mockType = "view"
+    },
+    modifyClick (row) {
+      this.editMockForm = JSON.parse(JSON.stringify(row))
+      this.editMockForm.mockExpress = JSON.parse(this.editMockForm.mockExpress)
+      this.editMockForm.data = JSON.parse(this.editMockForm.data)
+      this.MockDialogVisible = true
+      this.mockType = "modify"
+    },
+    addMock () {
+      this.editMockForm = {
+        mockExpress: {},
+        data: {}
+      }
+      this.MockDialogVisible = true
+      this.mockType = "add"
+    },
+    //分页 function
+    handleSizeChange (limit) {
+      this.queryCondition.pageRequest.limit = limit
+      this.queryCondition.pageRequest = crud.getQueryCondition(
+        this.queryCondition.pageRequest
+      )
+      this.getMockList()
+    },
+    handleCurrentChange (pageIndex) {
+      this.queryCondition.pageRequest.pageIndex = pageIndex
+      this.queryCondition.pageRequest = crud.getQueryCondition(
+        this.queryCondition.pageRequest
+      )
+      this.getMockList()
+    },
+    deleteMockInfo (row) {
+      util.confirm("是否删除该接口？", this.del, row.id)
+    },
+    del (id) {
+      crud
+        .post({
+          service: "admin/deleteMockInfo",
+          dealException: true,
+          data: { id }
+        })
+        .then(res => {
+          let { status, responseMsg } = res.data
+          if (status === 1) {
+            /*util.message({
                 message: '删除成功',
                 type: 'success'
               })*/
-              this.resetForm()
-            } else {
-              util.message({
-                message: responseMsg,
-                type: 'error'
-              })
-            }
-          })
-          .catch(error => {
-            console.error('request admin/deleteInterface error:', error)
-          })
-      },
-      inputIndex (value, row) {
-        let index = this.tableData.findIndex(item => item.id === row.id)
-        this.tableData.splice(index, 1)
-        value = value < 0 ? 0 : value > this.tableData.length ? this.tableData.length : value
-        this.tableData.splice(value, 0, row)
-      }
+            this.resetForm()
+          } else {
+            util.message({
+              message: responseMsg,
+              type: "error"
+            })
+          }
+        })
+        .catch(error => {
+          console.error("request admin/deleteInterface error:", error)
+        })
     },
-    created () {
-      this.render()
+    inputIndex (value, row) {
+      let index = this.tableData.findIndex(item => item.id === row.id)
+      this.tableData.splice(index, 1)
+      value =
+        value < 0
+          ? 0
+          : value > this.tableData.length
+            ? this.tableData.length
+            : value
+      this.tableData.splice(value, 0, row)
     }
+  },
+  activated () {
+    this.render()
   }
+}
 </script>
 
 <style lang="scss">
-  .m-mock-rule {
-    .f-right {
-      float: right;
-    }
-    .mock-dialog {
-      .el-row {
-        margin-bottom: 20px;
-        .dialog-form-item {
-          width: 100%;
-          .el-form-item__content {
-            width: calc(100% - 80px);
-            .el-date-editor.el-input,
-            .el-select {
-              width: 100%;
-            }
+.m-mock-rule {
+  .f-right {
+    float: right;
+  }
+  .mock-dialog {
+    .el-row {
+      margin-bottom: 20px;
+      .dialog-form-item {
+        width: 100%;
+        .el-form-item__content {
+          width: calc(100% - 80px);
+          .el-date-editor.el-input,
+          .el-select {
+            width: 100%;
           }
         }
-        .el-form-item {
-          margin-bottom: 0;
-        }
+      }
+      .el-form-item {
+        margin-bottom: 0;
       }
     }
   }
+}
 </style>

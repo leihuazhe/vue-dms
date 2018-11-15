@@ -294,11 +294,8 @@
         this.getMetaMethodList()
       }
     },
-    created () {
-      this.getMetaMethodList()
-    },
-    mounted (){
-      // this.highlightCode()
+    activated () {
+      this.getMethodData()
     }
   }
 </script>

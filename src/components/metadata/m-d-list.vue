@@ -38,6 +38,9 @@
             <el-button size="small" type="primary">点击上传</el-button>
           </el-upload>
         </el-form-item>
+        <el-form-item>
+          <el-button size="small" type="primary">解析</el-button>
+        </el-form-item>
       </el-form>
       <el-table :data="tableData" style="width: 100%">
         <el-table-column align='center' label="ID" min-width="50" prop="id"></el-table-column>
@@ -52,7 +55,8 @@
             <el-button type="text" size="small" @click="updateMetadata(scope.row)">更新</el-button>
           </template>
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="queryDetails(scope.row)">查看详情</el-button>
+            <el-button type="text" size="small" @click="queryDetails(scope.row.id)">查看详情</el-button>
+            <el-button type="text" size="small" @click="refreshDetails(scope.row.serviceName)">刷新</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -71,202 +75,246 @@
       </div>
     </div>
     <el-dialog
-      title="查看详情"
+      title="刷新"
       :visible.sync="dialogVisible"
       width="40%"
       custom-class="method-dialog">
       <el-form :inline="true" class="demo-form-inline" label-width="80px" label-position="right" :rules="rules"
-               ref="methodForm" :model="methodForm">
+               ref="metaDataForm" :model="metaDataForm">
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="24">
-            <el-form-item label="服务名称" class="dialog-form-item" prop="simpleService">
-              <el-input v-model.trim="methodForm.simpleService" placeholder="请输入内容"></el-input>
+            <el-form-item label="服务Tag" class="dialog-form-item" prop="tag">
+              <el-input v-model.trim="metaDataForm.tag" placeholder="请输入内容"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row type="flex" align="middle" justify="start">
-          <el-col :span="24">
-            <el-form-item label="接口名称" class="dialog-form-item" prop="method">
-              <el-input v-model.trim="methodForm.method" placeholder="请输入内容"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row type="flex" align="middle" justify="start">
-          <el-col :span="24">
-            <el-form-item label="请求类型" class="dialog-form-item" prop="requestType">
-              <el-select v-model="methodForm.requestType">
-                <el-option v-for="item in record.typeList" :value="item.value" :label="item.label"
-                           :key="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row type="flex" align="middle" justify="start">
-          <el-col :span="24">
-            <el-form-item label="接口地址" class="dialog-form-item" prop="url">
-              <el-input v-model.trim="methodForm.url" placeholder="请输入内容"></el-input>
+          <el-col :span="8">
+            <el-form-item>
+              <el-upload
+                class="upload-demo"
+                action="/admin/upload"
+                ref="upload"
+                multiple
+                :on-success="refreshUploadSuccess"
+                :data="{data: metaDataForm.tag}"
+                :auto-upload="false">
+                <el-button slot="trigger" size="small" type="primary">选择文件</el-button>
+              </el-upload>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="saveClick">上传</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-  import * as crud from '../../api/api'
-  import util from '../../assets/js/co-util'
+import * as crud from "../../api/api"
+import util from "../../assets/js/co-util"
 
-  export default {
-    name: 'm-d-list',
-    data () {
-      return {
-        queryCondition: {
-          serviceName: null,
-          methodName: null,
-          pageRequest: crud.getQueryCondition()
-        },
-        record: {
-          typeList: [
-            {
-              value: 'get',
-              label: 'GET'
-            },
-            {
-              value: 'post',
-              label: 'POST'
-            }
-          ]
-        },
-        tableData: [],
-        methodForm: {},
-        rules: {},
-        dialogVisible: false,
-        data: null
-      }
-    },
-    methods: {
-      updateMetadata () {
-
+export default {
+  name: "m-d-list",
+  data () {
+    return {
+      queryCondition: {
+        serviceName: null,
+        methodName: null,
+        pageRequest: crud.getQueryCondition()
       },
-      getMetadataList () {
-        const metadataId = this.$route.params.id
-        let { serviceName, version, pageRequest } = this.queryCondition
-        let request = {
-          metadataId,
-          serviceName,
-          version,
-          pageRequest
-        }
-        util.dealNullQueryCondition(request)
-        crud
-          .post({
-            service: 'admin/listMetadata',
-            dealException: true,
-            data: request
-          })
-          .then(res => {
-            const data = res.data
-            if (data.status === 1 && JSON.stringify(data.success.metadataList) !== 'undefined') {
-              this.tableData = data.success.metadataList
-              this.queryCondition.pageRequest = crud.getCurrentPage(
-                data.success.pageResponse
-              )
-            } else {
-              util.message({
-                message: data.responseMsg,
-                type: 'error'
-              })
-            }
-          })
-          .catch(error => {
-            console.error('request admin/listMetadata error:', error)
-            util.message({
-              message: error,
-              type: 'error'
-            })
-          })
+      record: {
+        typeList: [
+          {
+            value: "get",
+            label: "GET"
+          },
+          {
+            value: "post",
+            label: "POST"
+          }
+        ]
       },
-      searchForm () {
-        this.queryCondition.pageRequest = crud.getQueryCondition()
-        this.getMetadataList()
+      tableData: [],
+      metaDataForm: {},
+      rules: {
+        tag: [
+          {
+            required: true,
+            message: "请输入Tag",
+            trigger: "blur"
+          }
+        ]
       },
-      resetForm () {
-        this.tableData = []
-        this.queryCondition = {
-          simpleName: null,
-          methodName: null,
-          pageRequest: crud.getQueryCondition()
-        }
-        this.searchForm()
-      },
-      saveClick () {
-        let { simpleService, method, requestType, url } = this.methodForm
-        let request = {
-          simpleService,
-          method,
-          requestType,
-          url
-        }
-        console.log(request)
-      },
-      // 导入成功回调
-      uploadSuccess () {
-      },
-      // 导入失败回调
-      uploadError () {
-      },
-      // 查看详情
-      queryDetails (row) {
-        console.log(row)
-        this.dialogVisible = true
-      },
-      handleSizeChange (limit) {
-        this.queryCondition.pageRequest.limit = limit
-        this.queryCondition.pageRequest = crud.getQueryCondition(
-          this.queryCondition.pageRequest
-        )
-        this.getMetadataList()
-      },
-      handleCurrentChange (pageIndex) {
-        this.queryCondition.pageRequest.pageIndex = pageIndex
-        this.queryCondition.pageRequest = crud.getQueryCondition(
-          this.queryCondition.pageRequest
-        )
-        this.getMetadataList()
-      }
-    },
-    created () {
-      this.getMetadataList()
+      dialogVisible: false,
+      data: null,
+      refreshServiceName: null // 刷新的元数据全称
     }
+  },
+  methods: {
+    updateMetadata () {},
+    getMetadataList () {
+      const metadataId = this.$route.params.id
+      let { serviceName, version, pageRequest } = this.queryCondition
+      let request = {
+        metadataId,
+        serviceName,
+        version,
+        pageRequest
+      }
+      util.dealNullQueryCondition(request)
+      crud
+        .post({
+          service: "admin/listMetadata",
+          dealException: true,
+          data: request
+        })
+        .then(res => {
+          const data = res.data
+          if (
+            data.status === 1 &&
+            JSON.stringify(data.success.metadataList) !== "undefined"
+          ) {
+            this.tableData = data.success.metadataList
+            this.queryCondition.pageRequest = crud.getCurrentPage(
+              data.success.pageResponse
+            )
+          } else {
+            util.message({
+              message: data.responseMsg,
+              type: "error"
+            })
+          }
+        })
+        .catch(error => {
+          console.error("request admin/listMetadata error:", error)
+          util.message({
+            message: error,
+            type: "error"
+          })
+        })
+    },
+    searchForm () {
+      this.queryCondition.pageRequest = crud.getQueryCondition()
+      this.getMetadataList()
+    },
+    resetForm () {
+      this.tableData = []
+      this.queryCondition = {
+        simpleName: null,
+        methodName: null,
+        pageRequest: crud.getQueryCondition()
+      }
+      this.searchForm()
+    },
+    // 导入成功回调
+    uploadSuccess () {},
+    // 导入失败回调
+    uploadError () {},
+    // 查看详情
+    queryDetails (id) {
+      this.$router.push({
+        name: "m-d-detail-list",
+        params: { id }
+      })
+    },
+    handleSizeChange (limit) {
+      this.queryCondition.pageRequest.limit = limit
+      this.queryCondition.pageRequest = crud.getQueryCondition(
+        this.queryCondition.pageRequest
+      )
+      this.getMetadataList()
+    },
+    handleCurrentChange (pageIndex) {
+      this.queryCondition.pageRequest.pageIndex = pageIndex
+      this.queryCondition.pageRequest = crud.getQueryCondition(
+        this.queryCondition.pageRequest
+      )
+      this.getMetadataList()
+    },
+    // 刷新
+    refreshDetails (serviceName) {
+      this.refreshServiceName = serviceName
+      this.dialogVisible = true
+    },
+    // 上传
+    saveClick () {
+      // let { simpleService, method, requestType, url } = this.metaDataForm
+      // let request = {
+      //   simpleService,
+      //   method,
+      //   requestType,
+      //   url
+      // }
+      // console.log(request)
+      this.$refs["metaDataForm"].validate(valid => {
+        if (valid) {
+          let uploadFiles = this.$refs.upload.uploadFiles
+          let result = uploadFiles.every(val => {
+            return val.name.split(".")[1] === "thrift"
+          })
+          if (
+            (uploadFiles.length === 1 &&
+              uploadFiles[0].raw.type === "text/xml") ||
+            result
+          ) {
+            this.$refs.upload.submit()
+          } else {
+            util.message({
+              message: "文件格式错误",
+              type: "error"
+            })
+          }
+        } else {
+          console.log("error submit!!")
+          return false
+        }
+      })
+    },
+    // 刷新成功的回调
+    refreshUploadSuccess (response, file, fileList) {
+      util.message({
+        message: "上传成功",
+        type: "success"
+      })
+      this.dialogVisible = false
+      this.metaDataForm.tag = null
+      this.$refs.upload.uploadFiles = []
+    }
+  },
+  created () {
+    this.getMetadataList()
   }
+}
 </script>
 
 <style lang="scss">
-  .m-d-list {
-    .f-right {
-      float: right;
-    }
-    .method-dialog {
-      .el-row {
-        margin-bottom: 20px;
-        .dialog-form-item {
-          width: 100%;
-          .el-form-item__content {
-            width: calc(100% - 80px);
-            .el-date-editor.el-input,
-            .el-select {
-              width: 100%;
-            }
+.m-d-list {
+  .f-right {
+    float: right;
+  }
+  .method-dialog {
+    .el-row {
+      margin-bottom: 20px;
+      .dialog-form-item {
+        width: 100%;
+        .el-form-item__content {
+          width: calc(100% - 80px);
+          .el-date-editor.el-input,
+          .el-select {
+            width: 100%;
           }
         }
-        .el-form-item {
-          margin-bottom: 0;
-        }
+      }
+      .el-form-item {
+        margin-bottom: 0;
       }
     }
-    .el-table .cell {
-      white-space: normal;
-    }
   }
+  .el-table .cell {
+    white-space: normal;
+  }
+}
 </style>
