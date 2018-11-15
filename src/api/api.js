@@ -20,7 +20,7 @@ axios.interceptors.request.use(function (config) {
 
 // 添加一个响应拦截器 后面加全局loading
 axios.interceptors.response.use(function (response) {
-  console.log("response=>",response)
+  console.log('response=>', response)
   return response
 }, error => {
   dealError(error.response ? error.response.status : '')
@@ -109,8 +109,8 @@ export const getCurrentPage = (pageResponse) => {
 /**
  * 统一封装请求
  */
-export const fetchApi  = ()=> {
-  let func = (obj) => {
+export const fetchApi = (obj) => {
+  // let func = () => {
     // 兼容无参请求写法
     let { url, request, success, error, ...args } = obj || {}
     util.dealNullQueryCondition(request)
@@ -138,6 +138,6 @@ export const fetchApi  = ()=> {
           type: 'error'
         })
       })
-  }
-  return func
+  // }
+  // return func
 }
