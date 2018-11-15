@@ -7,6 +7,7 @@ import VJsoneditor from 'v-jsoneditor/src/index'
 import "../static/css/common/index.scss"
 import "../static/css/common/icon/iconfont.css"
 
+
 Vue.use(VJsoneditor)
 Vue.config.productionTip = false
 

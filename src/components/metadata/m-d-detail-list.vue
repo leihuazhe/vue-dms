@@ -35,9 +35,13 @@
             <el-table :data="methodData" style="width: 100%">
 
               <el-table-column align='center' label="序号" width="100" type="index"></el-table-column>
-              <el-table-column align='left' label="方法名列表" min-width="300" prop="methodName"
+              <el-table-column align='left' label="方法名列表" min-width="100" prop="methodName"
                                show-overflow-tooltip></el-table-column>
-              <el-table-column align='left' label="简述" min-width="300" prop="describe"></el-table-column>
+              <el-table-column align='center' label="简述" min-width="300" prop="describe">
+                <template slot-scope="scope">
+                  <pre><code v-html="scope.row.describe" v-highlight></code></pre>
+                </template>
+              </el-table-column>
               <el-table-column align='center' label="测试" width="100">
                 <template slot-scope="scope">
                   <el-button type="text" size="small" @click="updateMetadata(scope.row)"><i class="el-icon-star-on"/>
@@ -68,7 +72,7 @@
           <div class="essential-information">
             <div class="ey-tittle-level2 m25">结构体信息</div>
             <el-table :data="structData" style="width: 100%">
-              <el-table-column align='center' label="序号" width="150" type="index"></el-table-column>
+              <el-table-column align='center' label="序号" width="100" type="index"></el-table-column>
               <el-table-column align='left' label="结构体列表" min-width="250" prop="simpleName"
                                show-overflow-tooltip></el-table-column>
               <el-table-column align='center' label="简述" min-width="250" prop="version"></el-table-column>
@@ -97,7 +101,7 @@
           <div class="essential-information">
             <div class="ey-tittle-level2 m25">枚举信息</div>
             <el-table :data="enumData" style="width: 100%">
-              <el-table-column align='center' label="序号" width="150" type="index"></el-table-column>
+              <el-table-column align='center' label="序号" width="100" type="index"></el-table-column>
               <el-table-column align='left' label="枚举结构列表" min-width="300" prop="simpleName"
                                show-overflow-tooltip></el-table-column>
               <el-table-column align='center' label="简述" min-width="200" prop="version"></el-table-column>
@@ -166,6 +170,7 @@
 <script>
   import * as crud from '../../api/api'
   import util from '../../assets/js/co-util'
+  import marked from 'marked'
 
   export default {
     name: 'm-d-detail-list',
@@ -201,11 +206,8 @@
       }
     },
     methods: {
-      updateMetadata () {
-
-      },
-      //获取接口方法
-      getMethodData () {
+      //获取元数据接口方法
+      getMetaMethodList () {
         const metadataId = this.$route.params.id
         let { methodName, detail, pageRequest } = this.queryCondition
         let request = {
@@ -224,47 +226,10 @@
           .then(res => {
             const data = res.data
             if (JSON.stringify(data.success.metaMethodList) !== 'undefined') {
-              this.methodData = data.success.metaMethodList
-              this.queryCondition.pageRequest = crud.getCurrentPage(data.success.pageResponse)
-            } else {
-              util.message({
-                message: data.responseMsg,
-                type: 'error'
-              })
-            }
-          })
-          .catch(error => {
-            console.error('request admin/listMetadata error:', error)
-            util.message({
-              message: error,
-              type: 'error'
-            })
-          })
-      },
-
-      getMetadataList () {
-        const metadataId = this.$route.params.id
-        let { methodName, version, pageRequest } = this.queryCondition
-        let request = {
-          metadataId,
-          serviceName,
-          version,
-          pageRequest
-        }
-        util.dealNullQueryCondition(request)
-        crud
-          .post({
-            service: 'admin/listMetadata',
-            dealException: true,
-            data: request
-          })
-          .then(res => {
-            const data = res.data
-            if (data.status === 1 && JSON.stringify(data.success.metadataList) !== 'undefined') {
-              this.tableData = data.success.metadataList
-              this.queryCondition.pageRequest = crud.getCurrentPage(
-                data.success.pageResponse
-              )
+              let {metaMethodList,pageResponse} = data.success
+              this.methodData = metaMethodList
+              this.queryCondition.pageRequest = crud.getCurrentPage(pageResponse)
+              // this.highlightCode()
             } else {
               util.message({
                 message: data.responseMsg,
@@ -319,14 +284,14 @@
         this.queryCondition.pageRequest = crud.getQueryCondition(
           this.queryCondition.pageRequest
         )
-        this.getMetadataList()
+        this.getMetaMethodList()
       },
       handleCurrentChange (pageIndex) {
         this.queryCondition.pageRequest.pageIndex = pageIndex
         this.queryCondition.pageRequest = crud.getQueryCondition(
           this.queryCondition.pageRequest
         )
-        this.getMetadataList()
+        this.getMetaMethodList()
       }
     },
     activated () {
