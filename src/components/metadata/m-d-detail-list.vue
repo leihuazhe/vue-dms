@@ -23,7 +23,7 @@
       </el-form>
     </div>
     <div class="c-content">
-      <el-tabs v-model.trim="activeName" type="card">
+      <el-tabs v-model.trim="activeName" type="card" >
         <!-- 第一个tab栏 -->
         <el-tab-pane label="接口信息" name="first">
           <span slot="label"><i class="el-icon-date"></i> 接口信息</span>
@@ -32,7 +32,7 @@
           <div class="essential-information">
             <div class="ey-tittle-level2 m25">接口信息</div>
 
-            <el-table :data="methodData" style="width: 100%">
+            <el-table :data="methodData" style="width: 100%" class="methodTable">
 
               <el-table-column align='center' label="序号" width="100" type="index"></el-table-column>
               <el-table-column align='left' label="方法名列表" min-width="100" prop="methodName"
@@ -307,6 +307,15 @@
     }
     .el-tab-pane {
       font-size: 20px;
+      .methodTable{
+        tbody{
+          .cell{
+            /*height: 300px;*/
+            code{
+            }
+          }
+        }
+      }
     }
     .method-dialog {
       .el-row {

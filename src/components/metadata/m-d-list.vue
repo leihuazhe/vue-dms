@@ -33,6 +33,7 @@
             class="upload-demo"
             action="/admin/upload"
             multiple
+            :show-file-list="false"
             :on-success="uploadSuccess"
             :on-error="uploadError"
             :data="{data}">
@@ -40,7 +41,7 @@
           </el-upload>
         </el-form-item>
         <el-form-item>
-          <el-button size="small" type="primary" @click="parseFiles()">解析</el-button>
+          <!--<el-button size="small" type="primary" @click="parseFiles()">解析</el-button>-->
         </el-form-item>
       </el-form>
       <el-table :data="tableData" style="width: 100%">
@@ -116,6 +117,7 @@
 <script>
   import * as crud from '../../api/api'
   import util from '../../assets/js/co-util'
+  import { Loading } from 'element-ui'
 
   export default {
     name: 'm-d-list',
@@ -151,6 +153,7 @@
         },
         dialogVisible: false,
         data: null,
+        loadingL:'',
         refreshServiceName: null // 刷新的元数据全称
       }
     },
@@ -213,6 +216,11 @@
       },
       // 导入成功回调
       uploadSuccess () {
+        this.loading = Loading.service({
+          fullscreen: true ,
+          text:'解析中，请稍后···'
+        })
+        this.parseFiles()
       },
       // 导入失败回调
       uploadError () {
@@ -311,6 +319,7 @@
                 message: '解析文件成功!',
                 type: 'info'
               })
+              this.loading.close()
               this.getMetadataList()
             } else {
               util.message({
