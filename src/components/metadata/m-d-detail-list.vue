@@ -201,11 +201,8 @@
       }
     },
     methods: {
-      updateMetadata () {
-
-      },
-      //获取接口方法
-      getMethodData () {
+      //获取元数据接口方法
+      getMetaMethodList () {
         const metadataId = this.$route.params.id
         let { methodName, detail, pageRequest } = this.queryCondition
         let request = {
@@ -226,45 +223,6 @@
             if (JSON.stringify(data.success.metaMethodList) !== 'undefined') {
               this.methodData = data.success.metaMethodList
               this.queryCondition.pageRequest = crud.getCurrentPage(data.success.pageResponse)
-            } else {
-              util.message({
-                message: data.responseMsg,
-                type: 'error'
-              })
-            }
-          })
-          .catch(error => {
-            console.error('request admin/listMetadata error:', error)
-            util.message({
-              message: error,
-              type: 'error'
-            })
-          })
-      },
-
-      getMetadataList () {
-        const metadataId = this.$route.params.id
-        let { methodName, version, pageRequest } = this.queryCondition
-        let request = {
-          metadataId,
-          serviceName,
-          version,
-          pageRequest
-        }
-        util.dealNullQueryCondition(request)
-        crud
-          .post({
-            service: 'admin/listMetadata',
-            dealException: true,
-            data: request
-          })
-          .then(res => {
-            const data = res.data
-            if (data.status === 1 && JSON.stringify(data.success.metadataList) !== 'undefined') {
-              this.tableData = data.success.metadataList
-              this.queryCondition.pageRequest = crud.getCurrentPage(
-                data.success.pageResponse
-              )
             } else {
               util.message({
                 message: data.responseMsg,
@@ -319,18 +277,18 @@
         this.queryCondition.pageRequest = crud.getQueryCondition(
           this.queryCondition.pageRequest
         )
-        this.getMetadataList()
+        this.getMetaMethodList()
       },
       handleCurrentChange (pageIndex) {
         this.queryCondition.pageRequest.pageIndex = pageIndex
         this.queryCondition.pageRequest = crud.getQueryCondition(
           this.queryCondition.pageRequest
         )
-        this.getMetadataList()
+        this.getMetaMethodList()
       }
     },
     created () {
-      this.getMethodData()
+      this.getMetaMethodList()
     }
   }
 </script>
