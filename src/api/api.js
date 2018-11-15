@@ -106,3 +106,38 @@ export const getCurrentPage = (pageResponse) => {
   return currentPage
 }
 
+/**
+ * 统一封装请求
+ */
+export const fetchApi  = ()=> {
+  let func = (obj) => {
+    // 兼容无参请求写法
+    let { url, request, success, error, ...args } = obj || {}
+    util.dealNullQueryCondition(request)
+    crud
+      .post({
+        service: url,
+        dealException: true,
+        data: request
+      })
+      .then(res => {
+        const data = res.data
+        if (data.status === 1) {
+          success(data)
+        } else {
+          util.message({
+            message: data.responseMsg,
+            type: 'error'
+          })
+        }
+      })
+      .catch(error => {
+        console.error('request admin/listMetadata error:', error)
+        util.message({
+          message: error,
+          type: 'error'
+        })
+      })
+  }
+  return func
+}

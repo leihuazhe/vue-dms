@@ -438,13 +438,13 @@
 
   .ey-tittle-content {
     font-size: 20px;
-    color: #19bf4f;
+    color: #1FAAEF;
     position: relative;
 
     &::after {
       content: '';
       display: inline-block;
-      border-bottom: 4px solid #19bf4f;
+      border-bottom: 4px solid #1FAAEF;
       border-radius: 2px;
       position: absolute;
       bottom: -20px;
@@ -473,7 +473,7 @@
     height: 18px;
     width: 4px;
     border-radius: 2px;
-    background: #19bf4f;
+    background: #1FAAEF;
     transform: translate(0, -50%)
   }
 }

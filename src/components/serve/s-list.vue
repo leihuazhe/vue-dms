@@ -90,8 +90,8 @@
 
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="24">
-            <el-form-item label="服务全称" class="dialog-form-item" prop="serviceName">
-              <el-input v-model.trim="serviceForm.serviceName" placeholder="请输入服务全称"></el-input>
+            <el-form-item label="服务全称" class="dialog-form-item" prop="service">
+              <el-input v-model.trim="serviceForm.service" placeholder="请输入服务全称"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -160,6 +160,7 @@
       modifyService (data) {
         this.serviceForm = JSON.parse(JSON.stringify(data))
         this.serviceForm.title = '修改服务'
+        this.serviceForm.type = 'modify'
         this.dialogVisible = true
         // this.$router.push({ name: 'SModify' })
       },
