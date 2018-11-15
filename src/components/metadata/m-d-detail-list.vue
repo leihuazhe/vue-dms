@@ -35,9 +35,9 @@
             <el-table :data="methodData" style="width: 100%">
 
               <el-table-column align='center' label="序号" width="100" type="index"></el-table-column>
-              <el-table-column align='left' label="方法名列表" min-width="300" prop="methodName"
+              <el-table-column align='left' label="方法名列表" min-width="100" prop="methodName"
                                show-overflow-tooltip></el-table-column>
-              <el-table-column align='left' label="简述" min-width="300" prop="describe"></el-table-column>
+              <el-table-column align='center' label="简述" min-width="300" prop="describe"></el-table-column>
               <el-table-column align='center' label="测试" width="100">
                 <template slot-scope="scope">
                   <el-button type="text" size="small" @click="updateMetadata(scope.row)"><i class="el-icon-star-on"/>
@@ -68,7 +68,7 @@
           <div class="essential-information">
             <div class="ey-tittle-level2 m25">结构体信息</div>
             <el-table :data="structData" style="width: 100%">
-              <el-table-column align='center' label="序号" width="150" type="index"></el-table-column>
+              <el-table-column align='center' label="序号" width="100" type="index"></el-table-column>
               <el-table-column align='left' label="结构体列表" min-width="250" prop="simpleName"
                                show-overflow-tooltip></el-table-column>
               <el-table-column align='center' label="简述" min-width="250" prop="version"></el-table-column>
@@ -97,7 +97,7 @@
           <div class="essential-information">
             <div class="ey-tittle-level2 m25">枚举信息</div>
             <el-table :data="enumData" style="width: 100%">
-              <el-table-column align='center' label="序号" width="150" type="index"></el-table-column>
+              <el-table-column align='center' label="序号" width="100" type="index"></el-table-column>
               <el-table-column align='left' label="枚举结构列表" min-width="300" prop="simpleName"
                                show-overflow-tooltip></el-table-column>
               <el-table-column align='center' label="简述" min-width="200" prop="version"></el-table-column>
