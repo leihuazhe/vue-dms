@@ -44,7 +44,7 @@
           <!--<el-button size="small" type="primary" @click="parseFiles()">解析</el-button>-->
         </el-form-item>
       </el-form>
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData" style="width: 100%" v-loading="loading">
         <el-table-column align='center' label="序号" width="50" type="index"></el-table-column>
         <el-table-column align='left' label="服务简称" min-width="150" prop="simpleName"
                          show-overflow-tooltip></el-table-column>
@@ -153,7 +153,7 @@
         },
         dialogVisible: false,
         data: null,
-        loadingL:'',
+        loading:false,
         refreshServiceName: null // 刷新的元数据全称
       }
     },
@@ -216,10 +216,11 @@
       },
       // 导入成功回调
       uploadSuccess () {
-        this.loading = Loading.service({
-          fullscreen: true ,
-          text:'解析中，请稍后···'
-        })
+        // this.loading = Loading.service({
+        //   fullscreen: true ,
+        //   text:'解析中，请稍后···'
+        // })
+        this.loading = true
         this.parseFiles()
       },
       // 导入失败回调
@@ -319,7 +320,8 @@
                 message: '解析文件成功!',
                 type: 'info'
               })
-              this.loading.close()
+              // this.loading.close()
+              this.loading = false
               this.getMetadataList()
             } else {
               util.message({
