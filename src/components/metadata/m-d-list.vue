@@ -215,13 +215,11 @@
         this.searchForm()
       },
       // 导入成功回调
-      uploadSuccess () {
-        // this.loading = Loading.service({
-        //   fullscreen: true ,
-        //   text:'解析中，请稍后···'
-        // })
-        this.loading = true
-        this.parseFiles()
+      uploadSuccess (response, file, fileList) {
+        if(file === fileList[fileList.length-1]) { // 判断是否为文件列表中最后一个
+          this.loading = true
+          this.parseFiles()
+        }
       },
       // 导入失败回调
       uploadError () {
