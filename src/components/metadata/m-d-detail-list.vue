@@ -4,13 +4,13 @@
       <el-form :inline="true" class="demo-form-inline">
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="8">
-            <el-form-item label="服务名称" class="c-query-input">
-              <el-input v-model="queryCondition.serviceName" placeholder="支持模糊搜索"></el-input>
+            <el-form-item label="方法名称" class="c-query-input">
+              <el-input v-model="queryCondition.methodName" placeholder="支持模糊搜索"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="服务版本" class="c-query-input">
-              <el-input v-model="queryCondition.version" placeholder="支持模糊搜索"></el-input>
+            <el-form-item label="详情" class="c-query-input">
+              <el-input v-model="queryCondition.detail" placeholder="支持模糊搜索"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -35,10 +35,9 @@
             <el-table :data="methodData" style="width: 100%">
 
               <el-table-column align='center' label="序号" width="100" type="index"></el-table-column>
-              <el-table-column align='left' label="方法名列表" min-width="150" prop="simpleName"
+              <el-table-column align='left' label="方法名列表" min-width="300" prop="methodName"
                                show-overflow-tooltip></el-table-column>
-              <el-table-column align='center' label="事件" min-width="80" prop="serviceName"></el-table-column>
-              <el-table-column align='center' label="简述" min-width="300" prop="version"></el-table-column>
+              <el-table-column align='left' label="简述" min-width="300" prop="describe"></el-table-column>
               <el-table-column align='center' label="测试" width="100">
                 <template slot-scope="scope">
                   <el-button type="text" size="small" @click="updateMetadata(scope.row)"><i class="el-icon-star-on"/>
@@ -192,7 +191,8 @@
             }
           ]
         },
-        tableData: [],
+        methodData: [],
+        structData: [],
         enumData: [],
         methodForm: {},
         rules: {},
@@ -206,56 +206,45 @@
       },
       //获取接口方法
       getMethodData () {
-        crud.fetchApi({
-          url: 'admin/listMetaMethods',
-          request: {},
-          success: function (res) {
-
-          },
-          error: function () {
-          },
-          msg: ''
-        })
-      },
-
-      /*/!**
-       * 统一封装请求
-       *!/
-      fetchApi () {
-        let func = (obj) => {
-          // 兼容无参请求写法
-          let { url, request, success, error, ...args } = obj || {}
-          util.dealNullQueryCondition(request)
-          crud
-            .post({
-              service: url,
-              dealException: true,
-              data: request
-            })
-            .then(res => {
-              const data = res.data
-              if (data.status === 1) {
-                success(data)
-              } else {
-                util.message({
-                  message: data.responseMsg,
-                  type: 'error'
-                })
-              }
-            })
-            .catch(error => {
-              console.error('request admin/listMetadata error:', error)
+        const metadataId = this.$route.params.id
+        let { methodName, detail, pageRequest } = this.queryCondition
+        let request = {
+          metadataId,
+          methodName,
+          detail,
+          pageRequest
+        }
+        util.dealNullQueryCondition(request)
+        crud
+          .post({
+            service: 'admin/listMetaDetailMethod',
+            dealException: true,
+            data: request
+          })
+          .then(res => {
+            const data = res.data
+            if (JSON.stringify(data.success.metaMethodList) !== 'undefined') {
+              this.methodData = data.success.metaMethodList
+              this.queryCondition.pageRequest = crud.getCurrentPage(data.success.pageResponse)
+            } else {
               util.message({
-                message: error,
+                message: data.responseMsg,
                 type: 'error'
               })
+            }
+          })
+          .catch(error => {
+            console.error('request admin/listMetadata error:', error)
+            util.message({
+              message: error,
+              type: 'error'
             })
-        }
-        return func
-      },*/
+          })
+      },
+
       getMetadataList () {
         const metadataId = this.$route.params.id
-        let { serviceName, version, pageRequest } = this.queryCondition
+        let { methodName, version, pageRequest } = this.queryCondition
         let request = {
           metadataId,
           serviceName,
@@ -341,7 +330,7 @@
       }
     },
     created () {
-      this.getMetadataList()
+      this.getMethodData()
     }
   }
 </script>
