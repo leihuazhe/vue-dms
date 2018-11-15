@@ -32,7 +32,7 @@
           <div class="essential-information">
             <div class="ey-tittle-level2 m25">接口信息</div>
 
-            <el-table :data="methodData" style="width: 100%" class="methodTable">
+            <el-table :data="methodData" style="width: 100%" class="methodTable" border>
 
               <el-table-column align='center' label="序号" width="100" type="index"></el-table-column>
               <el-table-column align='left' label="方法名列表" min-width="100" prop="methodName"

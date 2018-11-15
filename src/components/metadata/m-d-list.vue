@@ -24,20 +24,20 @@
     </div>
     <div class="c-content">
       <el-form :inline="true" class="demo-form-inline">
-        <el-form-item label="服务Tag" class="c-query-input">
-          <el-input v-model="data" placeholder="请输入服务Tag"></el-input>
-        </el-form-item>
+        <!-- <el-form-item label="服务Tag" class="c-query-input">
+           <el-input v-model="data" placeholder="请输入服务Tag"></el-input>
+         </el-form-item>-->
         <el-form-item>
           <el-upload
-            :disabled="!data"
             class="upload-demo"
             action="/admin/upload"
             multiple
             :show-file-list="false"
             :on-success="uploadSuccess"
+            :before-upload="beforeUpload"
             :on-error="uploadError"
-            :data="{data}">
-            <el-button size="small" type="primary" :disabled="!data">点击上传</el-button>
+            :data="tagData">
+            <el-button size="small" type="primary">点击上传</el-button>
           </el-upload>
         </el-form-item>
         <el-form-item>
@@ -53,12 +53,27 @@
         <el-table-column align='center' label="接口数量" min-width="70" prop="methodSize"></el-table-column>
         <el-table-column align='center' label="创建时间" min-width="100" prop="createAt"></el-table-column>
         <el-table-column align='center' label="操作" width="200">
-          <template slot-scope="scope">
-            <el-button type="text" size="small" @click="updateMetadata(scope.row)">更新</el-button>
-          </template>
+          <!-- <template slot-scope="scope">
+             <el-button type="text" size="small" @click="updateMetadata(scope.row)">更新</el-button>
+           </template>-->
+
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="queryDetails(scope.row.id)">查看详情</el-button>
-            <el-button type="text" size="small" @click="refreshDetails(scope.row.serviceName)">刷新</el-button>
+            <el-button type="text" size="small">
+              <el-upload
+                class="update-upload"
+                action="/admin/updateUpload"
+                multiple
+                :show-file-list="false"
+                :before-upload="beforeUpload"
+                :on-success="updateUploadSuccess"
+                :on-error="updateUploadError"
+                :data="getUpdateData(scope.row.serviceName)">
+                <el-button size="small" type="text">上传更新</el-button>
+              </el-upload>
+            </el-button>
+
+            <!--<el-button type="text" size="small" @click="refreshDetails(scope.row.serviceName)">刷新</el-button>-->
           </template>
         </el-table-column>
       </el-table>
@@ -152,8 +167,8 @@
           ]
         },
         dialogVisible: false,
-        data: null,
-        loading:false,
+        tagData: null,
+        loading: false,
         refreshServiceName: null // 刷新的元数据全称
       }
     },
@@ -214,15 +229,47 @@
         }
         this.searchForm()
       },
+      beforeUpload (file) {
+        const fileName = file.name
+        const suffixName = fileName.substring(fileName.lastIndexOf('.') + 1)
+        if (!['thrift', 'xml'].includes(suffixName)) {
+          util.message({
+            message: '上传失败,文件类型必须是 thrift 或 xml',
+            type: 'error'
+          })
+          return false
+        }
+      },
+
       // 导入成功回调
       uploadSuccess (response, file, fileList) {
-        if(file === fileList[fileList.length-1]) { // 判断是否为文件列表中最后一个
+        const tag = this.tagData
+        if (file === fileList[fileList.length - 1]) { // 判断是否为文件列表中最后一个
           this.loading = true
-          this.parseFiles()
+          this.parseFiles(tag)
         }
       },
       // 导入失败回调
-      uploadError () {
+      uploadError (response, file, fileList) {
+        util.message({
+          type: 'error',
+          message: `${file.name}上传失败，请重新上传！`
+        })
+      },
+      //更新时
+      updateUploadSuccess (response, file, fileList) {
+        if (file === fileList[fileList.length - 1]) { // 判断是否为文件列表中最后一个
+          const serviceName = response.success
+          this.loading = true
+          this.parseUpdateFiles(serviceName)
+        }
+      },
+
+      updateUploadError (response, file, fileList) {
+
+      },
+      getUpdateData (serviceName) {
+        return { serviceName }
       },
       // 查看详情
       queryDetails (id) {
@@ -297,8 +344,8 @@
       /**
        * 解析上传的文件，并刷新表格.
        */
-      parseFiles () {
-        const tag = this.data
+      parseFiles (tag1) {
+        const tag = tag1.data
         if (!util.isNull(tag)) {
           util.message({
             message: '服务tag不能为空，请指定',
@@ -314,12 +361,12 @@
           .then(res => {
             const data = res.data
             if (data.status === 1) {
+              this.tagData = util.uuid(8, 16)
               util.message({
                 message: '解析文件成功!',
                 type: 'info'
               })
               // this.loading.close()
-              this.loading = false
               this.getMetadataList()
             } else {
               util.message({
@@ -327,6 +374,7 @@
                 type: 'error'
               })
             }
+            this.loading = false
           })
           .catch(error => {
             console.error('request admin/resourceGenerator error:', error)
@@ -334,10 +382,54 @@
               message: error,
               type: 'error'
             })
+            this.loading = false
+          })
+      },
+      //更新上传后解析...
+      parseUpdateFiles (serviceName) {
+        if (!util.isNull(serviceName)) {
+          util.message({
+            message: '服务tag不能为空，请指定',
+            type: 'error'
+          })
+          this.loading = false
+          return
+        }
+        crud.post({
+          service: 'admin/updateResourceGenerator',
+          dealException: true,
+          data: { serviceName }
+        })
+          .then(res => {
+            const data = res.data
+            if (data.status === 1) {
+              util.message({
+                message: '解析文件成功!',
+                type: 'info'
+              })
+              // this.loading.close()
+              this.getMetadataList()
+            } else {
+              util.message({
+                message: data.responseMsg,
+                type: 'error'
+              })
+            }
+            this.loading = false
+          })
+          .catch(error => {
+            console.error('request admin/resourceGenerator error:', error)
+            util.message({
+              message: error,
+              type: 'error'
+            })
+            this.loading = false
           })
       }
+
     },
     created () {
+      this.tagData = util.uuid(8, 16)
       this.getMetadataList()
     }
   }
