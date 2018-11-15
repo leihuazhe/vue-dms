@@ -84,8 +84,11 @@ export default new Router({
         keepAlive: true,
         pageName: '元数据详情'
       }
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component: () => import('@/components/test'),
     }
-
-
   ]
 })

@@ -37,7 +37,11 @@
               <el-table-column align='center' label="序号" width="100" type="index"></el-table-column>
               <el-table-column align='left' label="方法名列表" min-width="100" prop="methodName"
                                show-overflow-tooltip></el-table-column>
-              <el-table-column align='center' label="简述" min-width="300" prop="describe"></el-table-column>
+              <el-table-column align='center' label="简述" min-width="300" prop="describe">
+                <template slot-scope="scope">
+                  <pre><code v-html="scope.row.describe" v-highlight></code></pre>
+                </template>
+              </el-table-column>
               <el-table-column align='center' label="测试" width="100">
                 <template slot-scope="scope">
                   <el-button type="text" size="small" @click="updateMetadata(scope.row)"><i class="el-icon-star-on"/>
@@ -166,6 +170,7 @@
 <script>
   import * as crud from '../../api/api'
   import util from '../../assets/js/co-util'
+  import marked from 'marked'
 
   export default {
     name: 'm-d-detail-list',
@@ -221,8 +226,10 @@
           .then(res => {
             const data = res.data
             if (JSON.stringify(data.success.metaMethodList) !== 'undefined') {
-              this.methodData = data.success.metaMethodList
-              this.queryCondition.pageRequest = crud.getCurrentPage(data.success.pageResponse)
+              let {metaMethodList,pageResponse} = data.success
+              this.methodData = metaMethodList
+              this.queryCondition.pageRequest = crud.getCurrentPage(pageResponse)
+              // this.highlightCode()
             } else {
               util.message({
                 message: data.responseMsg,
@@ -289,6 +296,9 @@
     },
     created () {
       this.getMetaMethodList()
+    },
+    mounted (){
+      // this.highlightCode()
     }
   }
 </script>
