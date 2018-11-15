@@ -170,7 +170,7 @@
 <script>
   import * as crud from '../../api/api'
   import util from '../../assets/js/co-util'
-  import marked from 'marked'
+  // import marked from 'marked'
 
   export default {
     name: 'm-d-detail-list',
@@ -295,7 +295,7 @@
       }
     },
     activated () {
-      this.getMethodData()
+      this.getMetaMethodList()
     }
   }
 </script>

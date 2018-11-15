@@ -294,7 +294,7 @@
             content: '';
             width: 100%;
             height: 4px;
-            background: #19bf4f;
+            background: #1FAAEF;
             opacity: 0;
             position: absolute;
             bottom: -4px;

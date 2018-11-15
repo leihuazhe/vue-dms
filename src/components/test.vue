@@ -6,7 +6,7 @@
 </template>
 
 <script>
-  import marked from 'marked'
+  // import marked from 'marked'
   export default {
     name: "test",
     data (){
@@ -17,7 +17,7 @@
     computed: {
       compiledMarkdown: function () {
         console.log(JSON.stringify(this.input))
-        return marked(this.input, {sanitize: true})
+        // return marked(this.input, {sanitize: true})
       }
     },
     methods: {

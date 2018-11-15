@@ -29,27 +29,28 @@
         </el-form-item>
         <el-form-item>
           <el-upload
+            :disabled="!data"
             class="upload-demo"
             action="/admin/upload"
             multiple
             :on-success="uploadSuccess"
             :on-error="uploadError"
             :data="{data}">
-            <el-button size="small" type="primary">点击上传</el-button>
+            <el-button size="small" type="primary" :disabled="!data">点击上传</el-button>
           </el-upload>
         </el-form-item>
         <el-form-item>
-          <el-button size="small" type="primary">解析</el-button>
+          <el-button size="small" type="primary" @click="parseFiles()">解析</el-button>
         </el-form-item>
       </el-form>
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column align='center' label="ID" min-width="50" prop="id"></el-table-column>
+        <el-table-column align='center' label="序号" width="50" type="index"></el-table-column>
         <el-table-column align='left' label="服务简称" min-width="150" prop="simpleName"
                          show-overflow-tooltip></el-table-column>
         <el-table-column align='center' label="元数据全称" min-width="220" prop="serviceName"></el-table-column>
         <el-table-column align='center' label="版本信息" min-width="100" prop="version"></el-table-column>
         <el-table-column align='center' label="接口数量" min-width="70" prop="methodSize"></el-table-column>
-        <el-table-column align='center' label="创建时间" min-width="80" prop="createAt"></el-table-column>
+        <el-table-column align='center' label="创建时间" min-width="100" prop="createAt"></el-table-column>
         <el-table-column align='center' label="操作" width="200">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="updateMetadata(scope.row)">更新</el-button>
@@ -113,208 +114,251 @@
 </template>
 
 <script>
-import * as crud from "../../api/api"
-import util from "../../assets/js/co-util"
+  import * as crud from '../../api/api'
+  import util from '../../assets/js/co-util'
 
-export default {
-  name: "m-d-list",
-  data () {
-    return {
-      queryCondition: {
-        serviceName: null,
-        methodName: null,
-        pageRequest: crud.getQueryCondition()
-      },
-      record: {
-        typeList: [
-          {
-            value: "get",
-            label: "GET"
-          },
-          {
-            value: "post",
-            label: "POST"
-          }
-        ]
-      },
-      tableData: [],
-      metaDataForm: {},
-      rules: {
-        tag: [
-          {
-            required: true,
-            message: "请输入Tag",
-            trigger: "blur"
-          }
-        ]
-      },
-      dialogVisible: false,
-      data: null,
-      refreshServiceName: null // 刷新的元数据全称
-    }
-  },
-  methods: {
-    updateMetadata () {},
-    getMetadataList () {
-      const metadataId = this.$route.params.id
-      let { serviceName, version, pageRequest } = this.queryCondition
-      let request = {
-        metadataId,
-        serviceName,
-        version,
-        pageRequest
+  export default {
+    name: 'm-d-list',
+    data () {
+      return {
+        queryCondition: {
+          serviceName: null,
+          methodName: null,
+          pageRequest: crud.getQueryCondition()
+        },
+        record: {
+          typeList: [
+            {
+              value: 'get',
+              label: 'GET'
+            },
+            {
+              value: 'post',
+              label: 'POST'
+            }
+          ]
+        },
+        tableData: [],
+        metaDataForm: {},
+        rules: {
+          tag: [
+            {
+              required: true,
+              message: '请输入Tag',
+              trigger: 'blur'
+            }
+          ]
+        },
+        dialogVisible: false,
+        data: null,
+        refreshServiceName: null // 刷新的元数据全称
       }
-      util.dealNullQueryCondition(request)
-      crud
-        .post({
-          service: "admin/listMetadata",
-          dealException: true,
-          data: request
-        })
-        .then(res => {
-          const data = res.data
-          if (
-            data.status === 1 &&
-            JSON.stringify(data.success.metadataList) !== "undefined"
-          ) {
-            this.tableData = data.success.metadataList
-            this.queryCondition.pageRequest = crud.getCurrentPage(
-              data.success.pageResponse
-            )
-          } else {
-            util.message({
-              message: data.responseMsg,
-              type: "error"
-            })
-          }
-        })
-        .catch(error => {
-          console.error("request admin/listMetadata error:", error)
-          util.message({
-            message: error,
-            type: "error"
-          })
-        })
     },
-    searchForm () {
-      this.queryCondition.pageRequest = crud.getQueryCondition()
-      this.getMetadataList()
-    },
-    resetForm () {
-      this.tableData = []
-      this.queryCondition = {
-        simpleName: null,
-        methodName: null,
-        pageRequest: crud.getQueryCondition()
-      }
-      this.searchForm()
-    },
-    // 导入成功回调
-    uploadSuccess () {},
-    // 导入失败回调
-    uploadError () {},
-    // 查看详情
-    queryDetails (id) {
-      this.$router.push({
-        name: "m-d-detail-list",
-        params: { id }
-      })
-    },
-    handleSizeChange (limit) {
-      this.queryCondition.pageRequest.limit = limit
-      this.queryCondition.pageRequest = crud.getQueryCondition(
-        this.queryCondition.pageRequest
-      )
-      this.getMetadataList()
-    },
-    handleCurrentChange (pageIndex) {
-      this.queryCondition.pageRequest.pageIndex = pageIndex
-      this.queryCondition.pageRequest = crud.getQueryCondition(
-        this.queryCondition.pageRequest
-      )
-      this.getMetadataList()
-    },
-    // 刷新
-    refreshDetails (serviceName) {
-      this.refreshServiceName = serviceName
-      this.dialogVisible = true
-    },
-    // 上传
-    saveClick () {
-      // let { simpleService, method, requestType, url } = this.metaDataForm
-      // let request = {
-      //   simpleService,
-      //   method,
-      //   requestType,
-      //   url
-      // }
-      // console.log(request)
-      this.$refs["metaDataForm"].validate(valid => {
-        if (valid) {
-          let uploadFiles = this.$refs.upload.uploadFiles
-          let result = uploadFiles.every(val => {
-            return val.name.split(".")[1] === "thrift"
-          })
-          if (
-            (uploadFiles.length === 1 &&
-              uploadFiles[0].raw.type === "text/xml") ||
-            result
-          ) {
-            this.$refs.upload.submit()
-          } else {
-            util.message({
-              message: "文件格式错误",
-              type: "error"
-            })
-          }
-        } else {
-          console.log("error submit!!")
-          return false
+    methods: {
+      updateMetadata () {
+      },
+      getMetadataList () {
+        const metadataId = this.$route.params.id
+        let { serviceName, version, pageRequest } = this.queryCondition
+        let request = {
+          metadataId,
+          serviceName,
+          version,
+          pageRequest
         }
-      })
+        util.dealNullQueryCondition(request)
+        crud
+          .post({
+            service: 'admin/listMetadata',
+            dealException: true,
+            data: request
+          })
+          .then(res => {
+            const data = res.data
+            if (
+              data.status === 1 &&
+              JSON.stringify(data.success.metadataList) !== 'undefined'
+            ) {
+              this.tableData = data.success.metadataList
+              this.queryCondition.pageRequest = crud.getCurrentPage(
+                data.success.pageResponse
+              )
+            } else {
+              util.message({
+                message: data.responseMsg,
+                type: 'error'
+              })
+            }
+          })
+          .catch(error => {
+            console.error('request admin/listMetadata error:', error)
+            util.message({
+              message: error,
+              type: 'error'
+            })
+          })
+      },
+      searchForm () {
+        this.queryCondition.pageRequest = crud.getQueryCondition()
+        this.getMetadataList()
+      },
+      resetForm () {
+        this.tableData = []
+        this.queryCondition = {
+          simpleName: null,
+          methodName: null,
+          pageRequest: crud.getQueryCondition()
+        }
+        this.searchForm()
+      },
+      // 导入成功回调
+      uploadSuccess () {
+      },
+      // 导入失败回调
+      uploadError () {
+      },
+      // 查看详情
+      queryDetails (id) {
+        this.$router.push({
+          name: 'm-d-detail-list',
+          params: { id }
+        })
+      },
+      handleSizeChange (limit) {
+        this.queryCondition.pageRequest.limit = limit
+        this.queryCondition.pageRequest = crud.getQueryCondition(
+          this.queryCondition.pageRequest
+        )
+        this.getMetadataList()
+      },
+      handleCurrentChange (pageIndex) {
+        this.queryCondition.pageRequest.pageIndex = pageIndex
+        this.queryCondition.pageRequest = crud.getQueryCondition(
+          this.queryCondition.pageRequest
+        )
+        this.getMetadataList()
+      },
+      // 刷新
+      refreshDetails (serviceName) {
+        this.refreshServiceName = serviceName
+        this.dialogVisible = true
+      },
+      // 上传
+      saveClick () {
+        // let { simpleService, method, requestType, url } = this.metaDataForm
+        // let request = {
+        //   simpleService,
+        //   method,
+        //   requestType,
+        //   url
+        // }
+        // console.log(request)
+        this.$refs['metaDataForm'].validate(valid => {
+          if (valid) {
+            let uploadFiles = this.$refs.upload.uploadFiles
+            let result = uploadFiles.every(val => {
+              return val.name.split('.')[1] === 'thrift'
+            })
+            if (
+              (uploadFiles.length === 1 &&
+                uploadFiles[0].raw.type === 'text/xml') ||
+              result
+            ) {
+              this.$refs.upload.submit()
+            } else {
+              util.message({
+                message: '文件格式错误',
+                type: 'error'
+              })
+            }
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
+      },
+      // 刷新成功的回调
+      refreshUploadSuccess (response, file, fileList) {
+        util.message({
+          message: '上传成功',
+          type: 'success'
+        })
+        this.dialogVisible = false
+        this.metaDataForm.tag = null
+        this.$refs.upload.uploadFiles = []
+      },
+      /**
+       * 解析上传的文件，并刷新表格.
+       */
+      parseFiles () {
+        const tag = this.data
+        if (!util.isNull(tag)) {
+          util.message({
+            message: '服务tag不能为空，请指定',
+            type: 'error'
+          })
+          return
+        }
+        crud.post({
+          service: 'admin/resourceGenerator',
+          dealException: true,
+          data: { tag }
+        })
+          .then(res => {
+            const data = res.data
+            if (data.status === 1) {
+              util.message({
+                message: '解析文件成功!',
+                type: 'info'
+              })
+              this.getMetadataList()
+            } else {
+              util.message({
+                message: data.responseMsg,
+                type: 'error'
+              })
+            }
+          })
+          .catch(error => {
+            console.error('request admin/resourceGenerator error:', error)
+            util.message({
+              message: error,
+              type: 'error'
+            })
+          })
+      }
     },
-    // 刷新成功的回调
-    refreshUploadSuccess (response, file, fileList) {
-      util.message({
-        message: "上传成功",
-        type: "success"
-      })
-      this.dialogVisible = false
-      this.metaDataForm.tag = null
-      this.$refs.upload.uploadFiles = []
+    created () {
+      this.getMetadataList()
     }
-  },
-  created () {
-    this.getMetadataList()
   }
-}
 </script>
 
 <style lang="scss">
-.m-d-list {
-  .f-right {
-    float: right;
-  }
-  .method-dialog {
-    .el-row {
-      margin-bottom: 20px;
-      .dialog-form-item {
-        width: 100%;
-        .el-form-item__content {
-          width: calc(100% - 80px);
-          .el-date-editor.el-input,
-          .el-select {
-            width: 100%;
+  .m-d-list {
+    .f-right {
+      float: right;
+    }
+    .method-dialog {
+      .el-row {
+        margin-bottom: 20px;
+        .dialog-form-item {
+          width: 100%;
+          .el-form-item__content {
+            width: calc(100% - 80px);
+            .el-date-editor.el-input,
+            .el-select {
+              width: 100%;
+            }
           }
         }
-      }
-      .el-form-item {
-        margin-bottom: 0;
+        .el-form-item {
+          margin-bottom: 0;
+        }
       }
     }
+    .el-table .cell {
+      white-space: normal;
+    }
   }
-  .el-table .cell {
-    white-space: normal;
-  }
-}
 </style>

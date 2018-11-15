@@ -20,7 +20,9 @@ export default {
    */
   message: (obj) => {
     if (!(obj && (typeof obj === 'string' || Object.prototype.toString.call(obj) ===
-        '[object Object]'))) throw Error('请传入正确的参数')
+      '[object Object]'))) {
+      throw Error('请传入正确的参数')
+    }
     if (typeof obj === 'string') {
       obj = {
         message: obj
@@ -43,7 +45,7 @@ export default {
   confirm: (obj, callback, event, cancel) => {
     if (!(obj && (typeof obj === 'string' || Object.prototype.toString.call(obj) === '[object Object]'))) throw Error('请传入正确的参数')
     if (typeof obj === 'string') {
-      obj = {message: obj}
+      obj = { message: obj }
     }
     const message = obj.message || ''
     const icon = obj.type ? fontIcons[obj.type] : fontIcons['confirm']
@@ -63,9 +65,11 @@ export default {
           cancel && cancel()
         }
       }
-    }).then(() => {
-    }).catch(() => {
     })
+      .then(() => {
+      })
+      .catch(() => {
+      })
   },
   /**
    * 删除请求条件中属性值为空的属性
@@ -73,9 +77,19 @@ export default {
   dealNullQueryCondition (obj) {
     for (var p in obj) {
       if (obj[p] === '' || (obj[p] !== 0 && obj[p] !== false && !obj[p] &&
-          (typeof obj[p] !== 'boolean' || typeof obj[p] !== 'number'))) {
+        (typeof obj[p] !== 'boolean' || typeof obj[p] !== 'number'))) {
         delete obj[p]
       }
     }
+  },
+  /**
+   * 判断是否为空
+   */
+  isNull (obj) {
+    if (obj === '' || (obj !== 0 && obj !== false && !obj &&
+      (typeof obj !== 'boolean' || typeof obj !== 'number'))) {
+      return false
+    }
+    return true
   }
 }
