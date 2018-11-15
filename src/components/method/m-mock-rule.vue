@@ -152,7 +152,7 @@ export default {
       }
     },
     render () {
-      this.queryCondition.methodId = this.$route.params.id
+      this.queryCondition.methodId = Number(this.$route.params.id)
       this.getMethodForm(this.queryCondition.methodId)
       this.getMockList()
     },
@@ -234,6 +234,7 @@ export default {
     },
     saveMockClick () {
       let { id } = this.editMockForm
+      let { methodId } = this.queryCondition
       let mockExpress = ""
       let data = ""
       try {
@@ -244,6 +245,7 @@ export default {
         return
       }
       let request = {
+        methodId,
         mockId: id,
         mockExpress: JSON.stringify(mockExpress),
         mockData: JSON.stringify(data)
