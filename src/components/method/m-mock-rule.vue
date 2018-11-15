@@ -103,6 +103,7 @@ export default {
   components: {
     VJsoneditor
   },
+  name: 'm-mock-rule',
   data () {
     return {
       editStatus: false,
@@ -363,7 +364,7 @@ export default {
       this.tableData.splice(value, 0, row)
     }
   },
-  created () {
+  activated () {
     this.render()
   }
 }

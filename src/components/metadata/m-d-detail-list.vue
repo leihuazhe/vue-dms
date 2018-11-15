@@ -329,7 +329,7 @@
         this.getMetadataList()
       }
     },
-    created () {
+    activated () {
       this.getMethodData()
     }
   }
