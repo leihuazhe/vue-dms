@@ -6,7 +6,7 @@
           <el-col :span="8">
             <el-form-item label="服务名称" class="c-query-input">
               <el-input v-model="queryCondition.serviceName" placeholder="支持模糊搜索"
-                        :disabled="searchId"></el-input>
+                        :disabled="!!searchId"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
