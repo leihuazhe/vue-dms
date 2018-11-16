@@ -165,12 +165,12 @@
 </template>
 
 <script>
-  import * as crud from '../../api/api';
-  import util from '../../assets/js/co-util';
+  import * as crud from '../../api/api'
+  import util from '../../assets/js/co-util'
 
   export default {
     name: 'm-list',
-    data() {
+    data () {
       return {
         queryCondition: {
           serviceName: null,
@@ -227,68 +227,68 @@
         searchId: null,
         serviceNameList: null,
         restaurants: []
-      };
+      }
     },
     methods: {
-      querySearch(queryString, cb) {
-        var restaurants = this.restaurants;
-        var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+      querySearch (queryString, cb) {
+        var restaurants = this.restaurants
+        var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants
         // 调用 callback 返回建议列表的数据
-        cb(results);
+        cb(results)
       },
-      createFilter(queryString) {
+      createFilter (queryString) {
         return (restaurant) => {
           return (restaurant.toLowerCase()
-            .indexOf(queryString.toLowerCase()) === 0);
-        };
+            .indexOf(queryString.toLowerCase()) === 0)
+        }
       },
-      handleSelect(item) {
-        this.methodForm.serviceName = item;
+      handleSelect (item) {
+        this.methodForm.serviceName = item
       },
 
       //查询service信息
-      getServiceNameList() {
-        const id = this.searchId;
-        let request = { id };
-        util.dealNullQueryCondition(request);
+      getServiceNameList () {
+        const id = this.searchId
+        let request = { id }
+        util.dealNullQueryCondition(request)
         crud.post({
           service: 'admin/listServicesName',
           dealException: true,
           data: request
         })
           .then(res => {
-            const data = res.data;
+            const data = res.data
             if (data.status === 1) {
-              this.serviceNameList = data.success;
-              this.restaurants = data.success;
+              this.serviceNameList = data.success
+              this.restaurants = data.success
               if (id) {
-                this.queryCondition.serviceName = this.serviceNameList[0];
+                this.queryCondition.serviceName = this.serviceNameList[0]
               } else {
-                this.queryCondition.serviceName = null;
+                this.queryCondition.serviceName = null
               }
             }
           })
           .catch(error => {
-            console.error('request admin/listServicesName error:', error);
+            console.error('request admin/listServicesName error:', error)
             util.message({
               message: error,
               type: 'error'
-            });
-          });
+            })
+          })
 
       },
       // 查询
-      getMethodList() {
-        const serviceId = this.searchId;
-        let { serviceName, methodName, pageRequest } = this.queryCondition;
+      getMethodList () {
+        const serviceId = this.searchId
+        let { serviceName, methodName, pageRequest } = this.queryCondition
         let request = {
           serviceId,
           serviceName,
           methodName,
           pageRequest
-        };
-        util.dealNullQueryCondition(request);
-        console.log('getMethodList request:', request);
+        }
+        util.dealNullQueryCondition(request)
+        console.log('getMethodList request:', request)
         crud
           .post({
             service: 'admin/listInterfaces',
@@ -296,63 +296,63 @@
             data: request
           })
           .then(res => {
-            const data = res.data;
+            const data = res.data
             if (data.status === 1 && JSON.stringify(data.success.methodList) !== 'undefined') {
-              this.tableData = data.success.methodList;
+              this.tableData = data.success.methodList
               this.queryCondition.pageRequest = crud.getCurrentPage(
                 data.success.pageResponse
-              );
+              )
             }
           })
           .catch(error => {
-            console.error('request admin/listInterfaces error:', error);
+            console.error('request admin/listInterfaces error:', error)
             util.message({
               message: error,
               type: 'error'
-            });
-          });
+            })
+          })
       },
       // 查看Mock规则
-      queryMockRule(id) {
+      queryMockRule (id) {
         this.$router.push({
           name: 'm-mock-rule',
           params: { id }
-        });
+        })
       },
       // 查询按钮
-      searchForm() {
-        this.queryCondition.pageRequest = crud.getQueryCondition();
-        this.getMethodList();
+      searchForm () {
+        this.queryCondition.pageRequest = crud.getQueryCondition()
+        this.getMethodList()
       },
       // 重置
-      resetForm() {
-        this.tableData = [];
+      resetForm () {
+        this.tableData = []
         this.queryCondition = {
           simpleName: null,
           methodName: null,
           pageRequest: crud.getQueryCondition()
-        };
-        this.searchId = null;
-        this.searchForm();
+        }
+        this.searchId = null
+        this.searchForm()
       },
-      saveClick() {
+      saveClick () {
         this.$refs['methodForm'].validate(valid => {
           if (valid) {
-            let { simpleService, method, requestType, url, id } = this.methodForm;
+            let { simpleService, method, requestType, url, id } = this.methodForm
             let request = {
               serviceName: simpleService,
               methodName: method,
               requestType,
               url,
               id
-            };
-            util.dealNullQueryCondition(request);
-            console.log(request);
+            }
+            util.dealNullQueryCondition(request)
+            console.log(request)
             let service =
               this.addOrModify === 'add'
                 ? 'admin/createInterface'
-                : 'admin/updateInterface';
-            let message = this.addOrModify === 'add' ? '新增成功' : '修改成功';
+                : 'admin/updateInterface'
+            let message = this.addOrModify === 'add' ? '新增成功' : '修改成功'
             crud
               .post({
                 service,
@@ -360,68 +360,68 @@
                 data: request
               })
               .then(res => {
-                let { status, responseMsg } = res.data;
+                let { status, responseMsg } = res.data
                 if (status === 1) {
                   util.message({
                     message,
                     type: 'success'
-                  });
-                  this.dialogVisible = false;
-                  this.getMethodList();
+                  })
+                  this.dialogVisible = false
+                  this.getMethodList()
                 } else {
                   util.message({
                     message: responseMsg,
                     type: 'error'
-                  });
+                  })
                 }
               })
               .catch(error => {
-                console.error(service, error);
-              });
+                console.error(service, error)
+              })
           } else {
-            console.log('error submit!!');
-            return false;
+            console.log('error submit!!')
+            return false
           }
-        });
+        })
       },
       // 新增
-      addMethod() {
-        this.addOrModify = 'add';
-        this.createDialogVisible = true;
+      addMethod () {
+        this.addOrModify = 'add'
+        this.createDialogVisible = true
         // this.dialogVisible = true
         this.$nextTick(_ => {
-          this.$refs['methodForm'].clearValidate();
-        });
+          this.$refs['methodForm'].clearValidate()
+        })
       },
       // 修改
-      modifyMethod(row) {
-        this.addOrModify = 'modify';
-        this.methodForm = JSON.parse(JSON.stringify(row));
-        this.dialogVisible = true;
+      modifyMethod (row) {
+        this.addOrModify = 'modify'
+        this.methodForm = JSON.parse(JSON.stringify(row))
+        this.dialogVisible = true
         this.$nextTick(_ => {
-          this.$refs['methodForm'].clearValidate();
-        });
+          this.$refs['methodForm'].clearValidate()
+        })
       },
-      handleSizeChange(limit) {
-        this.queryCondition.pageRequest.limit = limit;
+      handleSizeChange (limit) {
+        this.queryCondition.pageRequest.limit = limit
         this.queryCondition.pageRequest = crud.getQueryCondition(
           this.queryCondition.pageRequest
-        );
-        this.getMethodList();
+        )
+        this.getMethodList()
       },
-      handleCurrentChange(pageIndex) {
-        this.queryCondition.pageRequest.pageIndex = pageIndex;
+      handleCurrentChange (pageIndex) {
+        this.queryCondition.pageRequest.pageIndex = pageIndex
         this.queryCondition.pageRequest = crud.getQueryCondition(
           this.queryCondition.pageRequest
-        );
-        this.getMethodList();
+        )
+        this.getMethodList()
       },
       // 删除接口
-      deleteMethod(row) {
-        util.confirm('是否删除该接口？', this.del, row.id);
+      deleteMethod (row) {
+        util.confirm('是否删除该接口？', this.del, row.id)
       },
       // 删除接口二次确认
-      del(id) {
+      del (id) {
         crud
           .post({
             service: 'admin/deleteInterface',
@@ -429,31 +429,31 @@
             data: { id }
           })
           .then(res => {
-            let { status, responseMsg } = res.data;
+            let { status, responseMsg } = res.data
             if (status === 1) {
               util.message({
                 message: '删除成功',
                 type: 'success'
-              });
-              this.getMethodList();
+              })
+              this.getMethodList()
             } else {
               util.message({
                 message: responseMsg,
                 type: 'error'
-              });
+              })
             }
           })
           .catch(error => {
-            console.error('request admin/deleteInterface error:', error);
-          });
+            console.error('request admin/deleteInterface error:', error)
+          })
       }
     },
-    activated() {
-      this.searchId = this.$route.params.id;
-      this.getServiceNameList();
-      this.getMethodList();
+    activated () {
+      this.searchId = this.$route.params.id
+      this.getServiceNameList()
+      this.getMethodList()
     }
-  };
+  }
 </script>
 
 <style lang="scss">
