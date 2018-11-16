@@ -75,7 +75,6 @@
               <el-autocomplete class="inline-input" v-model.trim="methodForm.serviceName"
                                :fetch-suggestions="querySearch"
                                placeholder="请输入内容" @select="handleSelect">
-                <i class="el-icon-edit el-input__icon" slot="suffix"></i>
                 <template slot-scope="{ item }">
                   <div class="name">{{ item }}</div>
                 </template>
@@ -476,6 +475,7 @@
           width: 100%;
           .el-form-item__content {
             width: calc(100% - 90px);
+            .el-autocomplete,
             .el-date-editor.el-input,
             .el-select {
               width: 100%;
