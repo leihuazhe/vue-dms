@@ -32,10 +32,11 @@
       </div>
       <el-table :data="tableData" style="width: 100%">
         <el-table-column align='center' label="ID" min-width="80" prop="id"></el-table-column>
-        <el-table-column align='center' label="服务名称" min-width="100" prop="simpleService"></el-table-column>
+        <el-table-column align='center' label="服务简称" min-width="100" prop="simpleService"></el-table-column>
         <el-table-column align='center' label="接口名称" min-width="100" prop="method"></el-table-column>
         <el-table-column align='center' label="请求类型" min-width="100" prop="requestType"></el-table-column>
-        <el-table-column align='center' label="接口地址" min-width="300" prop="url" show-overflow-tooltip></el-table-column>
+        <el-table-column align='center' label="接口地址" min-width="150" prop="url" show-overflow-tooltip></el-table-column>
+        <el-table-column align='center' label="规则数量" min-width="100" prop="mockSize" show-overflow-tooltip></el-table-column>
         <el-table-column align='center' label="操作" width="250">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="queryMockRule(scope.row.id)">查看Mock规则</el-button>
@@ -62,24 +63,23 @@
 
     <!--添加弹出框 begin-->
     <el-dialog
-      title="新增接口"
+      :title="methodForm.title"
       :visible.sync="createDialogVisible"
       width="40%"
+      :before-close="beforeClose"
       custom-class="method-dialog">
       <el-form :inline="true" class="demo-form-inline" label-width="90px" label-position="right"
                :rules="rules" ref="methodForm" :model="methodForm">
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="24">
             <el-form-item label="服务名称" class="dialog-form-item" prop="serviceName">
-
               <el-autocomplete class="inline-input" v-model.trim="methodForm.serviceName"
                                :fetch-suggestions="querySearch"
-                               placeholder="请输入内容" @select="handleSelect">
+                               placeholder="请输入内容" @select="handleSelect" :disabled="methodForm.type==='modify'">
                 <template slot-scope="{ item }">
                   <div class="name">{{ item }}</div>
                 </template>
               </el-autocomplete>
-
               <!--<el-input v-model.trim="methodForm.simpleService" placeholder="请输入内容"></el-input>-->
             </el-form-item>
           </el-col>
@@ -110,56 +110,10 @@
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="saveClick">保存</el-button>
+        <el-button type="primary" @click="saveOrUpdate">保存</el-button>
       </span>
     </el-dialog>
     <!--添加弹出框 end -->
-
-
-    <!--弹出框-->
-    <el-dialog
-      title="新增接口"
-      :visible.sync="dialogVisible"
-      width="40%"
-      custom-class="method-dialog">
-      <el-form :inline="true" class="demo-form-inline" label-width="90px" label-position="right"
-               :rules="rules" ref="methodForm" :model="methodForm">
-        <el-row type="flex" align="middle" justify="start">
-          <el-col :span="24">
-            <el-form-item label="服务名称" class="dialog-form-item" prop="simpleService">
-              <el-input v-model.trim="methodForm.simpleService" placeholder="请输入内容"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row type="flex" align="middle" justify="start">
-          <el-col :span="24">
-            <el-form-item label="接口名称" class="dialog-form-item" prop="method">
-              <el-input v-model.trim="methodForm.method" placeholder="请输入内容"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row type="flex" align="middle" justify="start">
-          <el-col :span="24">
-            <el-form-item label="请求类型" class="dialog-form-item" prop="requestType">
-              <el-select v-model="methodForm.requestType">
-                <el-option v-for="item in record.typeList" :value="item.value" :label="item.label"
-                           :key="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row type="flex" align="middle" justify="start">
-          <el-col :span="24">
-            <el-form-item label="接口地址" class="dialog-form-item" prop="url">
-              <el-input v-model.trim="methodForm.url" placeholder="请输入内容"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="saveClick">保存</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
@@ -191,7 +145,16 @@
         tableData: [],
         dialogVisible: false,
         createDialogVisible: false,
-        methodForm: {},
+        methodForm: {
+          title: '',
+          type: '',
+          id: null,
+          serviceName: '',
+          method: '',
+          requestType: '',
+          url: ''
+
+        },
         rules: {
           serviceName: [
             {
@@ -222,9 +185,8 @@
             }
           ]
         },
-        addOrModify: 'add',
         searchId: null,
-        serviceNameList: null,
+        searchName: null,
         restaurants: []
       }
     },
@@ -238,13 +200,22 @@
       createFilter (queryString) {
         return (restaurant) => {
           return (restaurant.toLowerCase()
-            .indexOf(queryString.toLowerCase()) === 0)
+            .indexOf(queryString.toLowerCase()) > -1)
         }
       },
       handleSelect (item) {
         this.methodForm.serviceName = item
       },
-
+      /**
+       * 关闭dialog时清除已填的数据
+       */
+      beforeClose (done) {
+        this.methodForm = {}
+        // this.$refs.methodForm.clearValidate()
+        // this.$refs.methodForm.resetFields()
+        // console.log(this.methodForm)
+        done()
+      },
       //查询service信息
       getServiceNameList () {
         const id = this.searchId
@@ -258,10 +229,10 @@
           .then(res => {
             const data = res.data
             if (data.status === 1) {
-              this.serviceNameList = data.success
               this.restaurants = data.success
               if (id) {
-                this.queryCondition.serviceName = this.serviceNameList[0]
+                this.searchName = this.restaurants[0]
+                this.queryCondition.serviceName = this.searchName
               } else {
                 this.queryCondition.serviceName = null
               }
@@ -332,26 +303,27 @@
           pageRequest: crud.getQueryCondition()
         }
         this.searchId = null
+        this.searchName = null
         this.searchForm()
       },
-      saveClick () {
+      /**
+       * 增加或修改保存...
+       */
+      saveOrUpdate () {
         this.$refs['methodForm'].validate(valid => {
           if (valid) {
-            let { simpleService, method, requestType, url, id } = this.methodForm
+            let { serviceName, method, requestType, url, id } = this.methodForm
             let request = {
-              serviceName: simpleService,
+              serviceName: serviceName,
               methodName: method,
               requestType,
               url,
               id
             }
             util.dealNullQueryCondition(request)
-            console.log(request)
-            let service =
-              this.addOrModify === 'add'
-                ? 'admin/createInterface'
-                : 'admin/updateInterface'
-            let message = this.addOrModify === 'add' ? '新增成功' : '修改成功'
+
+            let service = this.methodForm.type === 'add' ? 'admin/createInterface' : 'admin/updateInterface'
+            let message = this.methodForm.type === 'add' ? '新增接口成功' : '修改接口成功'
             crud
               .post({
                 service,
@@ -365,7 +337,8 @@
                     message,
                     type: 'success'
                   })
-                  this.dialogVisible = false
+                  this.createDialogVisible = false
+                  this.methodForm = {}
                   this.getMethodList()
                 } else {
                   util.message({
@@ -375,7 +348,7 @@
                 }
               })
               .catch(error => {
-                console.error(service, error)
+                console.error(message, error)
               })
           } else {
             console.log('error submit!!')
@@ -385,18 +358,23 @@
       },
       // 新增
       addMethod () {
-        this.addOrModify = 'add'
+        this.methodForm.title = '新增接口'
+        this.methodForm.type = 'add'
         this.createDialogVisible = true
         // this.dialogVisible = true
         this.$nextTick(_ => {
           this.$refs['methodForm'].clearValidate()
         })
+        if (this.searchId) {
+          this.methodForm.serviceName = this.searchName
+        }
       },
       // 修改
       modifyMethod (row) {
-        this.addOrModify = 'modify'
         this.methodForm = JSON.parse(JSON.stringify(row))
-        this.dialogVisible = true
+        this.methodForm.title = '修改接口'
+        this.methodForm.type = 'modify'
+        this.createDialogVisible = true
         this.$nextTick(_ => {
           this.$refs['methodForm'].clearValidate()
         })
