@@ -13,7 +13,7 @@
               <el-input v-model="queryCondition.version" placeholder="支持模糊搜索"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="8" class="c-query-input">
             <div class="f-right">
               <el-button type="primary" @click="searchForm('queryCondition')">搜索</el-button>
               <el-button class="c-button__default" @click="resetForm('queryCondition')">重置</el-button>
@@ -23,32 +23,33 @@
       </el-form>
     </div>
     <div class="c-content">
-      <el-form :inline="true" class="demo-form-inline">
-        <!-- <el-form-item label="服务Tag" class="c-query-input">
-           <el-input v-model="data" placeholder="请输入服务Tag"></el-input>
-         </el-form-item>-->
-        <el-form-item>
-          <el-upload
-            class="upload-demo"
-            action="/admin/upload"
-            multiple
-            :show-file-list="false"
-            :on-success="uploadSuccess"
-            :before-upload="beforeUpload"
-            :on-error="uploadError"
-            :data="tagData">
-            <el-button size="small" type="primary">点击上传</el-button>
-          </el-upload>
-        </el-form-item>
-        <el-form-item>
-          <!--<el-button size="small" type="primary" @click="parseFiles()">解析</el-button>-->
-        </el-form-item>
-      </el-form>
+      <div class="f-left">
+        <div class="ey-tittle-level2 m25">元数据列表</div>
+      </div>
+
+      <div class="f-right">
+        <el-form :inline="true" class="demo-form-inline">
+          <el-form-item>
+            <el-upload
+              class="upload-demo"
+              action="/admin/upload"
+              multiple
+              :show-file-list="false"
+              :on-success="uploadSuccess"
+              :before-upload="beforeUpload"
+              :on-error="uploadError"
+              :data="tagData">
+              <el-button size="small" type="primary">点击上传</el-button>
+            </el-upload>
+          </el-form-item>
+        </el-form>
+      </div>
+
       <el-table :data="tableData" style="width: 100%" v-loading="loading">
         <el-table-column align='center' label="序号" width="50" type="index"></el-table-column>
         <el-table-column align='left' label="服务简称" min-width="150" prop="simpleName"
                          show-overflow-tooltip></el-table-column>
-        <el-table-column align='center' label="元数据全称" min-width="220" prop="serviceName"></el-table-column>
+        <el-table-column align='center' label="元数据全称" min-width="300" prop="serviceName"></el-table-column>
         <el-table-column align='center' label="版本信息" min-width="100" prop="version"></el-table-column>
         <el-table-column align='center' label="接口数量" min-width="70" prop="methodSize"></el-table-column>
         <el-table-column align='center' label="创建时间" min-width="100" prop="createAt"></el-table-column>
@@ -175,6 +176,11 @@
     methods: {
       updateMetadata () {
       },
+
+      createMetadata (serviceName) {
+
+      },
+
       getMetadataList () {
         const metadataId = this.$route.params.id
         let { serviceName, version, pageRequest } = this.queryCondition
@@ -425,18 +431,36 @@
             })
             this.loading = false
           })
+      },
+      needAddDialog () {
+        if (this.$route.query.addFlag) {
+          util.message({
+            message: '请点击右上角按钮上传指定服务的thrift或xml文件',
+            type: 'error'
+          })
+        }
       }
 
     },
     created () {
       this.tagData = util.uuid(8, 16)
       this.getMetadataList()
+      this.needAddDialog()
     }
+
   }
 </script>
 
 <style lang="scss">
   .m-d-list {
+    .f-left {
+      float: left;
+      .table-title-text {
+        height: 40px;
+        line-height: 40px;
+        font-size: 20px;
+      }
+    }
     .f-right {
       float: right;
     }

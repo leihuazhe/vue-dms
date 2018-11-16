@@ -13,7 +13,7 @@
               <el-input v-model="queryCondition.detail" placeholder="支持模糊搜索"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="8" class="c-query-input">
             <div class="f-right">
               <el-button type="primary" @click="searchForm('queryCondition')">搜索</el-button>
               <el-button class="c-button__default" @click="resetForm('queryCondition')">重置</el-button>

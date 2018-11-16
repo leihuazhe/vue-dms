@@ -72,7 +72,7 @@ export default new Router({
       name: 'm-d-list',
       component: () => import('@/components/metadata/m-d-list'),
       meta: {
-        keepAlive: true,
+        keepAlive: false,
         pageName: '元数据管理'
       }
     },

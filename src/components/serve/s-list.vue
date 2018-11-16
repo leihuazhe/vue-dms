@@ -17,41 +17,61 @@
               </el-form-item>
             </div>
           </el-col>
-          <el-col :span="8">
+          <!--<el-col :span="8">
             <el-form-item class="c-query-select" label="服务ID">
               <el-input v-model.trim="queryCondition.serviceId" placeholder="请输入服务ID"></el-input>
             </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row type="flex" align="middle" justify="start">
-          <el-col :span="24" class="c-query-input">
+          </el-col>-->
+          <el-col :span="8" class="c-query-input">
             <div class="f-right">
               <el-button type="primary" @click="searchForm('queryCondition')">搜索</el-button>
               <el-button class="c-button__default" @click="resetForm('queryCondition')">重置</el-button>
             </div>
           </el-col>
         </el-row>
+        <!--one row-->
+        <!--<el-row type="flex" align="middle" justify="start">
+          <el-col :span="24" class="c-query-input">
+            <div class="f-right">
+              <el-button type="primary" @click="searchForm('queryCondition')">搜索</el-button>
+              <el-button class="c-button__default" @click="resetForm('queryCondition')">重置</el-button>
+            </div>
+          </el-col>
+        </el-row>-->
       </el-form>
     </header>
     <div class="c-content">
       <div class="f-left">
-        <div class="table-title-text">服务列表</div>
+        <div class="ey-tittle-level2 m25">MOCK服务列表</div>
       </div>
       <div class="f-right">
         <el-button type="primary" @click="addService">新增服务</el-button>
       </div>
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column align='center' label="ID" min-width="30" prop="serviceId"></el-table-column>
-        <el-table-column align='center' label="服务简称" min-width="120" prop="simpleName"></el-table-column>
-        <el-table-column align='center' label="服务全称" min-width="120" prop="service"></el-table-column>
-        <el-table-column align='center' label="版本信息" min-width="60" prop="version"></el-table-column>
-        <el-table-column align='center' label="元数据信息" min-width="120">
+        <el-table-column align='center' label="序号" min-width="50" type="index"></el-table-column>
+        <!--<el-table-column align='center' label="ID" min-width="30" prop="serviceId"></el-table-column>-->
+        <el-table-column align='left' label="服务简称" min-width="120" prop="simpleName"></el-table-column>
+        <el-table-column align='center' label="服务全称" min-width="250" prop="service"></el-table-column>
+        <el-table-column align='center' label="版本信息" min-width="100" prop="version"></el-table-column>
+        <el-table-column align='center' label="元数据信息" min-width="100">
           <template slot-scope="scope">
-            <el-button type="text" @click="lookMetadata(scope.row.serviceId)">点击查看</el-button>
+                <span>
+                  <template v-if="scope.row.metadataId === 0">
+                    <el-button type="text" @click="createMetadata(scope.row.metadataId,true)">
+                      <span class="dms-need-add">点击新增</span>
+                    </el-button>
+                  </template>
+
+                  <template v-else>
+                    <el-button type="text" @click="lookMetadata(scope.row.metadataId)">
+                      <span>点击查看</span></el-button>
+                  </template>
+                </span>
           </template>
         </el-table-column>
-        <el-table-column align='center' label="Mock接口数量" min-width="120" prop="mockMethodSize"></el-table-column>
-        <el-table-column align='center' label="操作" width="250">
+        <el-table-column align='center' label="接口数量" min-width="80" prop="mockMethodSize"></el-table-column>
+        <el-table-column align='center' label="创建时间" min-width="100" prop="createAt"></el-table-column>
+        <el-table-column align='center' label="操作" width="200">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="jumpToInterface(scope.row.serviceId)">查看接口</el-button>
             <el-button type="text" size="small" @click="modifyService(scope.row)">修改</el-button>
@@ -73,6 +93,7 @@
       </div>
 
     </div>
+
     <!--弹出框-->
     <!--:title和 title 的区别-->
     <el-dialog :title="serviceForm.title" :visible.sync="dialogVisible" class="s-dialog" width="40%"
@@ -105,7 +126,7 @@
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="saveService('serviceForm')">保存</el-button>
+        <el-button type="primary" @click="saveOrUpdateService('serviceForm')">保存</el-button>
       </span>
     </el-dialog>
   </div>
@@ -164,8 +185,20 @@
         this.dialogVisible = true
         // this.$router.push({ name: 'SModify' })
       },
+
       lookMetadata (id) {
-        this.$router.push({ name: 'm-d-list',params:{id} })
+        this.$router.push({
+          name: 'm-d-list',
+          params: { id }
+        })
+      },
+
+      createMetadata (id, addFlag) {
+        this.$router.push({
+          name: 'm-d-list',
+          params: { id },
+          query: { addFlag }
+        })
       },
 
       getServiceList () {
@@ -198,52 +231,51 @@
             })
           })
       },
-
-      saveService (serviceForm) {
+      /**
+       * 新增或者修改，取决于 type
+       */
+      saveOrUpdateService (serviceForm) {
         this.$refs[serviceForm].validate(valid => {
           if (valid) {
-            let service = JSON.parse(JSON.stringify(this.serviceForm))
+            let { title, type, simpleName, service, version, serviceId } = this.serviceForm
+            let request = {
+              simpleName: simpleName,
+              service: service,
+              version: version,
+              serviceId
+            }
             //删除不需要的key
-            this.deleteKey.forEach(ele => {
-              delete service[ele]
+            util.dealNullQueryCondition(request)
+            let requestUrl = type === 'add' ? 'admin/createService' : 'admin/updateService'
+            let message = type === 'add' ? '新增成功' : '修改成功'
+            crud.post({
+              service: requestUrl,
+              dealException: true,
+              data: request
             })
-            util.dealNullQueryCondition(service)
-            if (this.serviceForm.type === 'add') {
-              crud.post({
-                service: 'admin/createService',
-                dealException: true,
-                data: service
-              })
-                .then(res => {
-                  let { status, responseMsg } = res.data
-                  const data = res.data
-                  if (data.status === 1) {
-                    util.message({
-                      type: 'success',
-                      message: '创建服务成功'
-                    })
-                    this.dialogVisible = false
-                    this.getServiceList()
-                  } else {
-                    util.message({
-                      message: responseMsg,
-                      type: 'error'
-                    })
-                  }
-                })
-                .catch(error => {
-                  console.log('request admin/createService error:', error)
+              .then(res => {
+                let { status, responseMsg } = res.data
+                if (status === 1) {
                   util.message({
-                    message: error,
+                    type: 'success',
+                    message: message
+                  })
+                  this.dialogVisible = false
+                  this.getServiceList()
+                } else {
+                  util.message({
+                    message: responseMsg,
                     type: 'error'
                   })
+                }
+              })
+              .catch(error => {
+                console.log('request admin/createService error:', error)
+                util.message({
+                  message: error,
+                  type: 'error'
                 })
-
-            } else if (this.serviceForm.type === 'modify') {
-
-            }
-
-
+              })
           } else {
             console.log('error submit!!')
             return false
@@ -351,9 +383,6 @@
       float: right;
     }
 
-    .f-right {
-      float: right;
-    }
     .s-dialog {
       .el-row {
         margin-bottom: 20px;

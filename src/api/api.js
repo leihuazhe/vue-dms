@@ -86,7 +86,7 @@ export const getQueryCondition = (obj) => {
   obj = obj || {}
   const page = {
     start: obj.start || 0,
-    limit: obj.limit || 5,
+    limit: obj.limit || 10,
     results: obj.results || 0
   }
   page.pageIndex = obj.pageIndex || Math.floor(page.start / page.limit) + 1
