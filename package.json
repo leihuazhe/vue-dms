@@ -10,11 +10,9 @@
   "dependencies": {
     "axios": "^0.18.0",
     "element-ui": "^2.4.5",
-    "jsoneditor": "^5.26.0",
     "marked": "^0.5.1",
     "v-jsoneditor": "^1.1.2",
     "vue": "^2.5.17",
-    "vue-json-viewer": "^2.0.6",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
