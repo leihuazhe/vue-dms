@@ -1,5 +1,5 @@
-window.ImgCollapsed = '/js/json/Collapsed.gif'
-window.ImgExpanded = '../image/Expanded.gif'
+window.ImgCollapsed = './Collapsed.gif'
+window.ImgExpanded = './Expanded.gif'
 window.QuoteKeys = true
 
 
@@ -14,7 +14,7 @@ function IsArray (obj) {
     !(obj.propertyIsEnumerable('length'))
 }
 
-function Process (domId, obj) {
+export function Process (domId, obj) {
   SetTab()
   window.IsCollapsible = true
   try {
@@ -263,6 +263,3 @@ function MultiplyString (num, str) {
 
 }
 
-export  {
-  Process
-}

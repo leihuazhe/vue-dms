@@ -43,7 +43,7 @@ export default new Router({
     {
       path: '/s-list',
       name: 's-list',
-      component: () => import('@/components/serve/s-list'),
+      component: () => import('@/components/service/s-list'),
       meta: {
         keepAlive: true,
         pageName: '服务管理'
@@ -52,7 +52,7 @@ export default new Router({
     {
       path: '/s-add',
       name: 's-add',
-      component: () => import('@/components/serve/s-add'),
+      component: () => import('@/components/service/s-add'),
       meta: {
         keepAlive: true,
         pageName: '新增服务'
@@ -61,7 +61,7 @@ export default new Router({
     {
       path: '/s-modify',
       name: 's-modify',
-      component: () => import('@/components/serve/s-modify'),
+      component: () => import('@/components/service/s-modify'),
       meta: {
         keepAlive: true,
         pageName: '修改服务'
@@ -86,9 +86,27 @@ export default new Router({
       }
     },
     {
+      path: '/t-api-site',
+      name: 't-api-site',
+      component: () => import('@/components/online/t-api-site'),
+      meta: {
+        keepAlive: true,
+        pageName: '在线测试'
+      }
+    },
+    {
       path: '/test',
       name: 'test',
       component: () => import('@/components/test')
+    },
+    {
+      path: '/t-test',
+      name: 't-test',
+      component: () => import('@/components/online/t-test'),
+      meta: {
+        keepAlive: true,
+        pageName: '测试'
+      }
     }
   ]
 })

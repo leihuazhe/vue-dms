@@ -7,12 +7,12 @@
           class="el-menu-vertical-demo"
           @open="handleOpen"
           @close="handleClose" :collapse="isCollapse"
-          router>
+          router active-text-color="#1FAAEF">
           <el-menu-item id="bglogo" index="/" class="bglogo" @click="isCollapse=!isCollapse">
             <i v-if="isCollapse" class="el-icon-d-arrow-right"></i>
             <template slot="title">
               <span>
-                {{isCollapse ? '今天DMS系统' : ''}}
+                {{isCollapse ? '大鹏DMS系统' : ''}}
               </span>
             </template>
           </el-menu-item>
@@ -27,7 +27,7 @@
           </el-submenu>
           <el-submenu index="2">
             <template slot="title">
-              <i class="el-icon-document"></i>
+              <i class="el-icon-time"></i>
               <span>接口管理</span>
             </template>
             <el-menu-item-group>
@@ -42,6 +42,16 @@
             <el-menu-item-group>
               <el-menu-item index="/m-d-list">元数据管理</el-menu-item>
               <!-- <el-menu-item index="3-2">添加thrift</el-menu-item> -->
+            </el-menu-item-group>
+          </el-submenu>
+          <!--4-->
+          <el-submenu index="4">
+            <template slot="title">
+              <i class="el-icon-location-outline"></i>
+              <span>在线测试</span>
+            </template>
+            <el-menu-item-group>
+              <el-menu-item index="/t-api-site">在线测试平台</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>

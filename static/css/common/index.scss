@@ -74,8 +74,6 @@
     color: #19bf4f;
   }
 
-
-
   // 侧边菜单icon
   // .el-submenu.is-opened {
   //   &>.el-submenu__title>.iconfont {
@@ -504,7 +502,6 @@
 
 /* json编辑器样式 */
 .ace_editor {
-
   body,
   button,
   input,
@@ -515,7 +512,34 @@
   textarea {
     font-size: inherit;
   }
+  .ace_gutter {
+
+  }
+
+  .ace_scroller.style {
+    left: 0px
+  }
 }
+
+.ace_gutter {
+  .ace_gutter-layer {
+    display: none;
+  }
+}
+.jsoneditor-container {
+  height: 500px !important;
+}
+.jsoneditor {
+  border: 1px solid #1D96FF !important;
+  .jsoneditor-menu {
+    //background-color: #f4a460;
+    background-color: #1D96FF;
+  }
+  .jsoneditor-poweredBy {
+    display: none;
+  }
+}
+
 //重置按钮颜色
 .c-button__default {
   border-color: #1D96FF;
@@ -533,8 +557,6 @@
   font-family: "微软雅黑regular";
   color: #e6a23c;
 }
-
-
 
 // 待审核
 .dms-pending {
