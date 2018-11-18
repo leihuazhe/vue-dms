@@ -101,7 +101,7 @@
       <!--:rules="rules"-->
       <el-form ref="serviceForm" :model="serviceForm" class="s-dialog" :inline="true"
                label-width="80px" label-position="right">
-        <el-row type="flex" align="middle" justify="start">
+        <el-row type="flex" align="middle" justify="start" v-if="serviceForm.type==='modify'">
           <el-col :span="24">
             <el-form-item label="服务简称" class="dialog-form-item" prop="simpleName">
               <el-input v-model.trim="serviceForm.simpleName" placeholder="请输入服务简称"></el-input>
