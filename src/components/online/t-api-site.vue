@@ -1,5 +1,34 @@
 <template>
   <div class="t-api-site c-container">
+    <div class="c-header">
+      <el-form :inline="true" class="request-form-inline">
+        <el-row type="flex" align="middle" justify="start">
+          <el-col :span="8">
+            <el-form-item label="服务名称" class="dialog-form-item" prop="serviceName">
+              <el-autocomplete class="inline-input" v-model.trim="request.serviceName"
+                               :fetch-suggestions="querySearch"
+                               placeholder="请输入内容" @select="handleSelect">
+                <template slot-scope="{ item }">
+                  <div class="name">{{ item }}</div>
+                </template>
+              </el-autocomplete>
+              <!--<el-input v-model.trim="methodForm.simpleService" placeholder="请输入内容"></el-input>-->
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="接口名称" class="dialog-form-item" prop="method">
+              <el-input v-model.trim="request.method" placeholder="请输入内容"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8" class="c-query-input">
+            <div class="f-right">
+              <el-button type="primary">确定</el-button>
+            </div>
+          </el-col>
+        </el-row>
+      </el-form>
+    </div>
+
     <div class="left-table c-content">
       <el-tabs v-model.trim="activeTab" type="border-card">
         <!-- 第一个tab栏 -->
@@ -7,35 +36,24 @@
           <span slot="label"><i class="el-icon-date"></i>示范报文</span>
           <div class="essential-information">
             <div class="ey-tittle-level2 m25">示范报文</div>
-            <!--文本框-->
-            <!--<json-viewer class="json-viewer"
-              :value="samplesMessage"
-                         :expand-depth=5
-                         copyable
-                         boxed
-                         sort></json-viewer>-->
 
             <v-jsoneditor v-model="samplesMessage" :options="options" :plus="false" height="400px"
                           mode="code" ref="mockExpressEditor"
-                          @error="onError"></v-jsoneditor>
-            <!-- <div class="api-input">
-               <el-input
-                 type="textarea"
-                 :rows="20"
-                 v-model="samplesMessage">
-               </el-input>
-             </div>-->
+                          @error="onError">
+            </v-jsoneditor>
+
           </div>
         </el-tab-pane>
         <!-- 第二个tab栏 -->
         <el-tab-pane label="JSON请求" name="second">
           <span slot="label"><i class="el-icon-menu"></i>JSON请求</span>
           <div class="essential-information">
-            <div class="ey-tittle-level2 m25">JSON请求</div>
-            <div class="api-input">
-              <el-input size="large" v-model="samplesMessage">
-              </el-input>
-            </div>
+            <!--<div class="ey-tittle-level2 m25">JSON请求</div>-->
+            <!--request -->
+            <v-jsoneditor v-model="request.parameter" :options="requestOpts" :plus="false" height="400px"
+                          mode="code" ref="mockExpressEditor">
+            </v-jsoneditor>
+
           </div>
         </el-tab-pane>
         <!-- 第三个tab栏 -->
@@ -86,6 +104,9 @@
     data () {
       return {
         activeTab: 'first',
+        request: {
+          parameter: null
+        },
         samplesMessage: JSON.parse(`{
                            "body": {
                               "request": {
@@ -252,10 +273,35 @@
           onModeChange: function (newMode, oldMode) {
             console.log('Mode switched from', oldMode, 'to', newMode)
           }
-        }
+        },
+        requestOpts: {
+          mode: 'code'
+          // modes: ['text', 'code']
+        },
+        //及时数据搜索
+        restaurants:[]
       }
     },
-    methods: {},
+    methods: {
+      onError: function (err) {
+        alert(err.toString())
+      },
+      querySearch (queryString, cb) {
+        var restaurants = this.restaurants
+        var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants
+        // 调用 callback 返回建议列表的数据
+        cb(results)
+      },
+      createFilter (queryString) {
+        return (restaurant) => {
+          return (restaurant.toLowerCase()
+            .indexOf(queryString.toLowerCase()) > -1)
+        }
+      },
+      handleSelect (item) {
+        this.methodForm.serviceName = item
+      }
+    },
     created () {
     }
   }
@@ -277,6 +323,26 @@
     .json-viewer {
       overflow: scroll;
     }
+    .request-form-inline {
+      .el-row {
+        margin-bottom: 20px;
+        .dialog-form-item {
+          width: 100%;
+          .el-form-item__content {
+            width: 100%;
+            .el-autocomplete,
+            .el-date-editor.el-input,
+            .el-select {
+              width: 100%;
+            }
+          }
+        }
+        .el-form-item {
+          margin-bottom: 0;
+        }
+      }
+    }
+
   }
 
 </style>
