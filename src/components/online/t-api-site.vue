@@ -17,7 +17,13 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="接口名称" class="dialog-form-item" prop="method">
-              <el-input v-model.trim="request.method" placeholder="请输入内容"></el-input>
+              <el-autocomplete class="inline-input" v-model.trim="request.methodName"
+                               :fetch-suggestions="querySearchMethod"
+                               placeholder="请输入内容" @select="handleSelectMethod">
+                <template slot-scope="{ item }">
+                  <div class="name">{{ item }}</div>
+                </template>
+              </el-autocomplete>
             </el-form-item>
           </el-col>
           <el-col :span="8" class="c-query-input">
@@ -95,6 +101,8 @@
 
 <script>
   import VJsoneditor from 'v-jsoneditor/src/index'
+  import * as crud from '../../api/api'
+  import util from '../../assets/js/co-util'
 
   export default {
     components: {
@@ -279,7 +287,8 @@
           // modes: ['text', 'code']
         },
         //及时数据搜索
-        restaurants:[]
+        restaurants: [],
+        restaurantMethods: []
       }
     },
     methods: {
@@ -292,17 +301,84 @@
         // 调用 callback 返回建议列表的数据
         cb(results)
       },
+
+      handleSelect (item) {
+        this.request.serviceName = item
+        this.getMethodList(item)
+      },
+      querySearchMethod (queryString, cb) {
+        var restaurants = this.restaurantMethods
+        var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants
+        // 调用 callback 返回建议列表的数据
+        cb(results)
+      },
+
+      handleSelectMethod (item) {
+        this.request.methodName = item
+      },
       createFilter (queryString) {
         return (restaurant) => {
           return (restaurant.toLowerCase()
             .indexOf(queryString.toLowerCase()) > -1)
         }
       },
-      handleSelect (item) {
-        this.methodForm.serviceName = item
+      //查询service信息
+      getServiceNameList () {
+        const id = ''
+        let request = { id }
+        util.dealNullQueryCondition(request)
+        crud.post({
+          service: 'admin/listServicesName',
+          dealException: true,
+          data: request
+        })
+          .then(res => {
+            const data = res.data
+            if (data.status === 1) {
+              this.restaurants = data.success
+              /*if (id) {
+                this.searchName = this.restaurants[0]
+                this.queryCondition.serviceName = this.searchName
+              } else {
+                this.queryCondition.serviceName = null
+              }*/
+            }
+          })
+          .catch(error => {
+            console.error('request admin/listServicesName error:', error)
+            util.message({
+              message: error,
+              type: 'error'
+            })
+          })
+
+      },
+      //查询接口信息
+      getMethodList (serviceName) {
+        let request = { serviceName }
+        util.dealNullQueryCondition(request)
+        crud.post({
+          service: 'admin/listInterfacesName',
+          dealException: true,
+          data: request
+        })
+          .then(res => {
+            const data = res.data
+            if (data.status === 1) {
+              this.restaurantMethods = data.success
+            }
+          })
+          .catch(error => {
+            console.error('request admin/listInterfacesName error:', error)
+            util.message({
+              message: error,
+              type: 'error'
+            })
+          })
       }
     },
-    created () {
+    activated () {
+      this.getServiceNameList()
     }
   }
 </script>

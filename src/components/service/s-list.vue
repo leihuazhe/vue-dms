@@ -51,7 +51,7 @@
         <el-table-column align='center' label="序号" min-width="50" type="index"></el-table-column>
         <!--<el-table-column align='center' label="ID" min-width="30" prop="serviceId"></el-table-column>-->
         <el-table-column align='left' label="服务简称" min-width="120" prop="simpleName"></el-table-column>
-        <el-table-column align='center' label="服务全称" min-width="250" prop="service"></el-table-column>
+        <el-table-column align='center' label="服务全称" min-width="250" prop="serviceName"></el-table-column>
         <el-table-column align='center' label="版本信息" min-width="100" prop="version"></el-table-column>
         <el-table-column align='center' label="元数据信息" min-width="100">
           <template slot-scope="scope">
@@ -73,7 +73,7 @@
         <el-table-column align='center' label="创建时间" min-width="100" prop="createAt"></el-table-column>
         <el-table-column align='center' label="操作" width="200">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="jumpToInterface(scope.row.serviceId)">查看接口</el-button>
+            <el-button type="text" size="small" @click="jumpToInterface(scope.row.id)">查看接口</el-button>
             <el-button type="text" size="small" @click="modifyService(scope.row)">修改</el-button>
             <el-button type="text" size="small" @click="deleteService(scope.row)">删除</el-button>
           </template>
@@ -111,8 +111,8 @@
 
         <el-row type="flex" align="middle" justify="start">
           <el-col :span="24">
-            <el-form-item label="服务全称" class="dialog-form-item" prop="service">
-              <el-input v-model.trim="serviceForm.service" placeholder="请输入服务全称"></el-input>
+            <el-form-item label="服务全称" class="dialog-form-item" prop="serviceName">
+              <el-input v-model.trim="serviceForm.serviceName" placeholder="请输入服务全称"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -237,12 +237,12 @@
       saveOrUpdateService (serviceForm) {
         this.$refs[serviceForm].validate(valid => {
           if (valid) {
-            let { title, type, simpleName, service, version, serviceId } = this.serviceForm
+            let { title, type, simpleName, serviceName, version, id } = this.serviceForm
             let request = {
               simpleName: simpleName,
-              service: service,
+              serviceName: serviceName,
               version: version,
-              serviceId
+              id
             }
             //删除不需要的key
             util.dealNullQueryCondition(request)
