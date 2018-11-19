@@ -307,7 +307,7 @@
       ,
 
       deleteService (row) {
-        util.confirm('是否删除该条服务记录？', this.del, row.serviceId)
+        util.confirm('是否删除该条服务记录？', this.del, row.id)
       }
       ,
       del (id) {

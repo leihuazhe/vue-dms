@@ -65,7 +65,7 @@
     <el-dialog
       :title="mockType === 'view' ? '查看': '编辑'"
       :visible.sync="MockDialogVisible"
-      width="90%"
+      width="80%"
       custom-class="mock-dialog">
       <el-form :inline="true" class="demo-form-inline" label-width="120px" label-position="top" :rules="rules"
                ref="editMockForm" :model="editMockForm">
@@ -73,16 +73,16 @@
           <el-col :span="12">
             <el-form-item label="Mock表达式:" class="dialog-form-item" prop="mockExpress">
               <!--<span v-if="mockType === 'view'">{{ editMockForm.mockExpress }}</span>-->
-              <v-jsoneditor v-model="editMockForm.mockExpress" :options="options" :plus="false" height="400px"
+              <v-jsoneditor v-model="editMockForm.mockExpress" :options="options" :plus="false" height="150px"
                             mode="code" ref="mockExpressEditor"
-                            @error="onError"></v-jsoneditor>
+                            @error="onError" class="mockEditor"></v-jsoneditor>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="返回数据:" class="dialog-form-item" prop="data">
-              <v-jsoneditor v-model="editMockForm.data" :options="options" :plus="false" height="400px"
+              <v-jsoneditor v-model="editMockForm.data" :options="options" :plus="false" height="150px"
                             mode="code" ref="dataEditor"
-                            @error="onError"></v-jsoneditor>
+                            @error="onError" class="mockEditor"></v-jsoneditor>
             </el-form-item>
           </el-col>
         </el-row>
@@ -239,6 +239,7 @@ export default {
       let mockExpress = ""
       let data = ""
       try {
+        // mockExpress  = JSON.stringify(this.$refs.mockExpressEditor.editor.content.innerText.trim())
         mockExpress = this.$refs.mockExpressEditor.editor.get()
         data = this.$refs.dataEditor.editor.get()
       } catch (e) {
@@ -377,7 +378,10 @@ export default {
   }
   .mock-dialog {
     .el-row {
-      margin-bottom: 20px;
+      .mockEditor{
+        height: 400px !important;
+      }
+      margin-bottom: 5px;
       .dialog-form-item {
         width: 100%;
         .el-form-item__content {

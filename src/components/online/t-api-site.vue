@@ -394,6 +394,7 @@
       requestForTest () {
         let parameter = ''
         try {
+
           parameter = this.$refs.parameterEditor.editor.get()
         } catch (e) {
           util.message('JSON格式错误')
