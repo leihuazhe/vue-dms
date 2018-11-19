@@ -51,7 +51,7 @@
           </div>
         </el-tab-pane>
         <!-- 第二个tab栏 -->
-        <el-tab-pane label="JSON请求" name="second">
+        <el-tab-pane label="返回结果" name="second">
           <span slot="label"><i class="el-icon-menu"></i>JSON请求</span>
           <div class="essential-information">
             <!--<div class="ey-tittle-level2 m25">JSON请求</div>-->
@@ -89,10 +89,11 @@
         </el-tab-pane>
         <!-- 第二个tab栏 -->
         <el-tab-pane label="JSON请求" name="second">
-          <span slot="label"><i class="el-icon-menu"></i>JSON请求</span>
-          <div class="essential-information">
-            <div class="ey-tittle-level2 m25">JSON请求</div>
-          </div>
+          <span slot="label"><i class="el-icon-menu"></i>返回结果</span>
+          <!--response -->
+          <v-jsoneditor v-model="response" :options="responseOpts" :plus="false" height="400px"
+                        mode="code" ref="responseEditor">
+          </v-jsoneditor>
         </el-tab-pane>
         <!-- 第三个tab栏 -->
         <el-tab-pane label="MOCK请求" name="third">
@@ -118,10 +119,11 @@
     name: 't-api-site',
     data () {
       return {
-        activeTab: 'first',
+        activeTab: 'second',
         request: {
           parameter: null
         },
+        response: null,
         samplesMessage: JSON.parse(`{
                            "body": {
                               "request": {
@@ -293,6 +295,10 @@
           mode: 'code'
           // modes: ['text', 'code']
         },
+        responseOpts: {
+          mode: 'code'
+          // modes: ['text', 'code']
+        },
         //及时数据搜索
         restaurants: [],
         restaurantMethods: []
@@ -410,10 +416,7 @@
             let result = success.result
             let responseType = success.responseType
             if (status === 1) {
-              util.message({
-                message: result + ':' + responseType,
-                type: 'success'
-              })
+              this.response = JSON.parse(success.result)
             } else {
               util.message({
                 message: responseMsg,
