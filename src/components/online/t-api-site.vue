@@ -57,8 +57,15 @@
             <!--<div class="ey-tittle-level2 m25">JSON请求</div>-->
             <!--request -->
             <v-jsoneditor v-model="request.parameter" :options="requestOpts" :plus="false" height="400px"
-                          mode="code" ref="mockExpressEditor">
+                          mode="code" ref="parameterEditor">
             </v-jsoneditor>
+
+            <span slot="footer" class="request-footer">
+               <div class="f-right">
+                <el-button type="primary" @click="requestForTest">确定</el-button>
+              </div>
+            </span>
+
 
           </div>
         </el-tab-pane>
@@ -375,6 +382,54 @@
               type: 'error'
             })
           })
+      },
+
+      //request for api test
+      requestForTest () {
+        let parameter = ''
+        try {
+          parameter = this.$refs.parameterEditor.editor.get()
+        } catch (e) {
+          util.message('JSON格式错误')
+          return
+        }
+        let { serviceName, methodName } = this.request
+        let request = {
+          serviceName: serviceName,
+          methodName: methodName,
+          version: '1.0.0',
+          parameter: JSON.stringify(parameter)
+        }
+        crud.post({
+          service: 'api/requestForApi',
+          dealException: true,
+          data: request
+        })
+          .then(res => {
+            let { status, success, responseMsg } = res.data
+            let result = success.result
+            let responseType = success.responseType
+            if (status === 1) {
+              util.message({
+                message: result + ':' + responseType,
+                type: 'success'
+              })
+            } else {
+              util.message({
+                message: responseMsg,
+                type: 'error'
+              })
+            }
+          })
+          .catch(error => {
+            console.error('request api/requestForApi error:', error)
+            util.message({
+              message: error,
+              type: 'error'
+            })
+          })
+
+
       }
     },
     activated () {
@@ -416,6 +471,13 @@
         .el-form-item {
           margin-bottom: 0;
         }
+      }
+    }
+
+    .request-footer {
+      .f-right {
+        float: right;
+        margin-top: 10px;
       }
     }
 
