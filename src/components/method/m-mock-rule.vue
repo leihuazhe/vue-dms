@@ -11,7 +11,7 @@
               <span>{{ methodForm.serviceName }}</span>
             </el-form-item>
           </el-col>
-          <el-col :span="4" class="wrap">
+          <el-col :span="8" class="wrap">
             <el-form-item label="接口名称">
               <span>{{ methodForm.methodName }}</span>
             </el-form-item>

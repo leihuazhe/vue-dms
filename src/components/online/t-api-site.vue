@@ -38,8 +38,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="8" class="c-query-input">
+
             <div class="f-right">
               <el-button type="primary" @click="resetInput">清空</el-button>
+              <el-button class="c-button__default" @click="oneKeyForMock">一键创建规则</el-button>
+
             </div>
           </el-col>
         </el-row>
@@ -71,7 +74,9 @@
                           mode="code" ref="parameterEditor">
             </v-jsoneditor>
 
+
             <span slot="footer" class="request-footer">
+
                <div class="f-right">
                 <el-button type="primary" @click="requestForTest">确定</el-button>
               </div>
@@ -307,7 +312,51 @@
             })
           })
       },
+      //一键创建规则
+      oneKeyForMock () {
+        if (!this.request.serviceName && !this.request.methodName) {
+          util.message({
+            message: '请先填写服务和接口信息',
+            type: 'warning'
+          })
+          return
+        }
+        let { serviceName, methodName } = this.request
+        let request = {
+          serviceName: serviceName,
+          methodName: methodName
+        }
+        util.dealNullQueryCondition(request)
+        crud.post({
+          service: 'admin/createMockOnce',
+          dealException: true,
+          data: request
+        })
+          .then(res => {
+            let { status, success, responseMsg } = res.data
+            if (status === 1) {
+              const id = success
+              this.$router.push({
+                name: 'm-mock-rule',
+                params: { id }
+              })
+            } else {
+              util.message({
+                message: responseMsg,
+                type: 'error'
+              })
+            }
+          })
+          .catch(error => {
+            console.error('request api/createMockOnce error:', error)
+            util.message({
+              message: error,
+              type: 'error'
+            })
+          })
 
+
+      },
       //request for api test
       requestForTest () {
         if (!this.request.serviceName && !this.request.methodName) {
@@ -364,7 +413,7 @@
         if (serviceName && methodName) {
           this.request.serviceName = serviceName
           this.request.methodName = methodName
-        }else{
+        } else {
           this.request.serviceName = null
           this.request.methodName = null
         }
@@ -415,6 +464,10 @@
     }
 
     .request-footer {
+      .f-left {
+        float: left;
+        margin-top: 10px;
+      }
       .f-right {
         float: right;
         margin-top: 10px;
