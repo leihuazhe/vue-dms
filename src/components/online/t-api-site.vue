@@ -17,9 +17,19 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="接口名称" class="dialog-form-item" prop="method">
+              <!--<el-select v-model.trim="request.methodName" clearable placeholder="请选择方法名">
+                <el-option
+                  v-for="item in request.methodName"
+                  :key="item"
+                  :label="item"
+                  :value="item">
+                </el-option>
+              </el-select>-->
+
+
               <el-autocomplete class="inline-input" v-model.trim="request.methodName"
                                :fetch-suggestions="querySearchMethod"
-                               placeholder="请输入内容" @select="handleSelectMethod">
+                               placeholder="请输入内容" @select="handleSelectMethod" @blur="methodBlur" :disabled="!request.serviceName">
                 <template slot-scope="{ item }">
                   <div class="name">{{ item }}</div>
                 </template>
@@ -28,7 +38,7 @@
           </el-col>
           <el-col :span="8" class="c-query-input">
             <div class="f-right">
-              <el-button type="primary">确定</el-button>
+              <el-button type="primary" @click="resetInput">清空</el-button>
             </div>
           </el-col>
         </el-row>
@@ -36,14 +46,14 @@
     </div>
 
     <div class="left-table c-content">
-      <el-tabs v-model.trim="activeTab" type="border-card">
+      <el-tabs v-model.trim="activeTab" type="border-card" @tab-click="tabClick">
         <!-- 第一个tab栏 -->
         <el-tab-pane label="示范报文" name="first">
           <span slot="label"><i class="el-icon-date"></i>示范报文</span>
           <div class="essential-information">
-            <div class="ey-tittle-level2 m25">示范报文</div>
+            <!--<div class="ey-tittle-level2 m25">示范报文</div>-->
 
-            <v-jsoneditor v-model="samplesMessage" :options="options" :plus="false" height="400px"
+            <v-jsoneditor v-model="requestSamples" :options="options" :plus="false" height="400px"
                           mode="code" ref="mockExpressEditor"
                           @error="onError">
             </v-jsoneditor>
@@ -79,16 +89,9 @@
       </el-tabs>
     </div>
     <div class="right-table c-content">
-      <el-tabs v-model.trim="activeTab" type="card">
-        <!-- 第一个tab栏 -->
-        <el-tab-pane label="示范报文" name="first">
-          <span slot="label"><i class="el-icon-date"></i>示范报文</span>
-          <div class="essential-information">
-            <div class="ey-tittle-level2 m25">示范报文</div>
-          </div>
-        </el-tab-pane>
+      <el-tabs v-model.trim="activeRigthTab" type="card">
         <!-- 第二个tab栏 -->
-        <el-tab-pane label="JSON请求" name="second">
+        <el-tab-pane label="JSON请求" name="four">
           <span slot="label"><i class="el-icon-menu"></i>返回结果</span>
           <!--response -->
           <v-jsoneditor v-model="response" :options="responseOpts" :plus="false" height="400px"
@@ -96,7 +99,7 @@
           </v-jsoneditor>
         </el-tab-pane>
         <!-- 第三个tab栏 -->
-        <el-tab-pane label="MOCK请求" name="third">
+        <el-tab-pane label="MOCK请求" name="five">
           <span slot="label"><i class="el-icon-setting"></i>MOCK请求</span>
           <div class="essential-information">
             <div class="ey-tittle-level2 m25">MOCK请求</div>
@@ -120,157 +123,14 @@
     data () {
       return {
         activeTab: 'second',
+        activeRigthTab: 'four',
         request: {
+          serviceName: null,
+          methodName: null,
           parameter: null
         },
         response: null,
-        samplesMessage: JSON.parse(`{
-                           "body": {
-                              "request": {
-                                 "categoryId": 579,
-                                 "skuName": "sampleDataString",
-                                 "skuNameEn": "sampleDataString",
-                                 "posname": "sampleDataString",
-                                 "type": "NORMAL_SKU",
-                                 "financeType": "EQUIPMENT_SKU",
-                                 "primaryAttributes": "sampleDataString",
-                                 "sellAttributes": "sampleDataString",
-                                 "normalAttributes": "sampleDataString",
-                                 "supplierRelateList": [
-                                    {
-                                       "id": 670,
-                                       "supplierNo": "sampleDataString",
-                                       "isPrimarySupplier": "true",
-                                       "flag": 673,
-                                       "modifyType": "DELETE",
-                                       "sellingPrice": 27.500414521805872,
-                                       "buyingPrice": 20.707692224902765,
-                                       "supplierInputTax": 41.77495843137648,
-                                       "districtValue": "sampleDataString",
-                                       "districtName": "sampleDataString",
-                                       "minOrderNum": 392,
-                                       "minOrderTimes": 681,
-                                       "maxOrderTimes": 13,
-                                       "logisticsRelateList": [
-                                          {
-                                             "id": 629,
-                                             "supplierLogisticsId": 963,
-                                             "modifyType": "DELETE"
-                                          },
-                                          {
-                                             "id": 975,
-                                             "supplierLogisticsId": 730,
-                                             "modifyType": "ADD"
-                                          }
-                                       ]
-                                    },
-                                    {
-                                       "id": 463,
-                                       "supplierNo": "sampleDataString",
-                                       "isPrimarySupplier": "true",
-                                       "flag": 876,
-                                       "modifyType": "EDIT",
-                                       "sellingPrice": 84.52044481358605,
-                                       "buyingPrice": 43.095110366374676,
-                                       "supplierInputTax": 7.885521828598341,
-                                       "districtValue": "sampleDataString",
-                                       "districtName": "sampleDataString",
-                                       "minOrderNum": 42,
-                                       "minOrderTimes": 42,
-                                       "maxOrderTimes": 466,
-                                       "logisticsRelateList": [
-                                          {
-                                             "id": 312,
-                                             "supplierLogisticsId": 621,
-                                             "modifyType": "DELETE"
-                                          },
-                                          {
-                                             "id": 833,
-                                             "supplierLogisticsId": 914,
-                                             "modifyType": "DELETE"
-                                          }
-                                       ]
-                                    }
-                                 ],
-                                 "skuBarcodeItemList": [
-                                    {
-                                       "id": 667,
-                                       "skuId": 672,
-                                       "packingSize": 759,
-                                       "type": "BOX_BARCODE",
-                                       "property": "INTERNATIONAL_BARCODE",
-                                       "standard": "EAN8",
-                                       "barcode": "sampleDataString",
-                                       "length": 668,
-                                       "width": 483,
-                                       "height": 591,
-                                       "weight": 511,
-                                       "flag": 214,
-                                       "modifyType": "DELETE",
-                                       "packingSpec": "sampleDataString",
-                                       "packingMult": 514,
-                                       "remark": "sampleDataString",
-                                       "districtValues": "sampleDataString",
-                                       "districtNames": "sampleDataString"
-                                    },
-                                    {
-                                       "id": 31,
-                                       "skuId": 558,
-                                       "packingSize": 653,
-                                       "type": "BOX_BARCODE",
-                                       "property": "IN_STORE_BARCODE",
-                                       "standard": "EAN13",
-                                       "barcode": "sampleDataString",
-                                       "length": 413,
-                                       "width": 980,
-                                       "height": 239,
-                                       "weight": 983,
-                                       "flag": 487,
-                                       "modifyType": "ADD",
-                                       "packingSpec": "sampleDataString",
-                                       "packingMult": 770,
-                                       "remark": "sampleDataString",
-                                       "districtValues": "sampleDataString",
-                                       "districtNames": "sampleDataString"
-                                    }
-                                 ],
-                                 "channel": "NB",
-                                 "brand": "sampleDataString",
-                                 "spec": "sampleDataString",
-                                 "saleUnit": "sampleDataString",
-                                 "shelflife": 241,
-                                 "shelflifeUnit": "HOUR",
-                                 "inStockStandard": 352,
-                                 "outStockStandard": 870,
-                                 "stockStandardUnit": "DAY",
-                                 "shippingMethodValue": "sampleDataString",
-                                 "flag": 784,
-                                 "categoryCode": "sampleDataString",
-                                 "headquarterEffectiveDate": 800,
-                                 "storeEffectiveDate": 648,
-                                 "outputTax": 73.8869176595779,
-                                 "logisticsOutputTax": 82.87580427031236,
-                                 "machineMaterials": [
-                                    {
-                                       "id": 553,
-                                       "materialSkuId": 695,
-                                       "materialSkuNo": "sampleDataString",
-                                       "useCount": 1.5486193412313387,
-                                       "useUnit": "sampleDataString",
-                                       "operateTypeEnum": "EDIT"
-                                    },
-                                    {
-                                       "id": 895,
-                                       "materialSkuId": 874,
-                                       "materialSkuNo": "sampleDataString",
-                                       "useCount": 12.730524970606872,
-                                       "useUnit": "sampleDataString",
-                                       "operateTypeEnum": "EDIT"
-                                    }
-                                 ]
-                              }
-                           }
-                        }`),
+        requestSamples: JSON.parse(`{}`),
         queryCondition: {},
         tableData: [],
         metaDataForm: {},
@@ -335,6 +195,63 @@
             .indexOf(queryString.toLowerCase()) > -1)
         }
       },
+      methodBlur () {
+        if (this.request.serviceName && this.request.methodName) {
+          this.fetchRequestSamples()
+        }
+      },
+      //tab event
+      tabClick (tab) {
+        let tabName = tab.name
+        if (tabName === 'first') {
+          this.fetchRequestSamples()
+        }
+      },
+      fetchRequestSamples () {
+        if (!this.request.serviceName && !this.request.methodName) {
+          util.message({
+            message: '请先填写服务和接口信息',
+            type: 'warning'
+          })
+          return
+        }
+        let request = {
+          serviceName: this.request.serviceName,
+          methodName: this.request.methodName,
+          version: '1.0.0'
+        }
+        crud.post({
+          service: 'api/getRequestSamples',
+          dealException: true,
+          data: request
+        })
+          .then(res => {
+            const data = res.data
+            if (data.status === 1) {
+              this.requestSamples = JSON.parse(data.success)
+            } else {
+              util.message({
+                message: data.responseMsg,
+                type: 'error'
+              })
+            }
+          })
+          .catch(error => {
+            console.error('request admin/listServicesName error:', error)
+            util.message({
+              message: error,
+              type: 'error'
+            })
+          })
+      },
+
+
+      resetInput () {
+        this.request.serviceName = null
+        this.request.methodName = null
+        this.restaurantMethods = null
+      },
+
       //查询service信息
       getServiceNameList () {
         const id = ''
@@ -392,6 +309,14 @@
 
       //request for api test
       requestForTest () {
+        if (!this.request.serviceName && !this.request.methodName) {
+          util.message({
+            message: '请先填写服务和接口信息',
+            type: 'warning'
+          })
+          return
+        }
+
         let parameter = ''
         try {
 
