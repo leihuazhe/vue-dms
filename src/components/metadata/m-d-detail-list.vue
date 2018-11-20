@@ -23,7 +23,7 @@
       </el-form>
     </div>
     <div class="c-content">
-      <el-tabs v-model.trim="activeName" type="card" >
+      <el-tabs v-model.trim="activeName" type="card">
         <!-- 第一个tab栏 -->
         <el-tab-pane label="接口信息" name="first">
           <span slot="label"><i class="el-icon-date"></i> 接口信息</span>
@@ -39,12 +39,12 @@
                                show-overflow-tooltip></el-table-column>
               <el-table-column align='center' label="简述" min-width="300" prop="describe">
                 <template slot-scope="scope">
-                  <pre><code v-html="scope.row.describe" v-highlight></code></pre>
+                  <pre><code v-html="scope.row.describe"></code></pre>
                 </template>
               </el-table-column>
               <el-table-column align='center' label="测试" width="100">
                 <template slot-scope="scope">
-                  <el-button type="text" size="small" @click="updateMetadata(scope.row)"><i class="el-icon-star-on"/>
+                  <el-button type="text" size="small" @click="testMetaDetail(scope.row)"><i class="el-icon-star-on"/>
                   </el-button>
                 </template>
               </el-table-column>
@@ -226,7 +226,7 @@
           .then(res => {
             const data = res.data
             if (JSON.stringify(data.success.metaMethodList) !== 'undefined') {
-              let {metaMethodList,pageResponse} = data.success
+              let { metaMethodList, pageResponse } = data.success
               this.methodData = metaMethodList
               this.queryCondition.pageRequest = crud.getCurrentPage(pageResponse)
               // this.highlightCode()
@@ -268,6 +268,16 @@
         }
         console.log(request)
       },
+      testMetaDetail (row) {
+        let { serviceName, methodName } = row
+        this.$router.push({
+          path: '/t-api-site',
+          query: {
+            serviceName,
+            methodName
+          }
+        })
+      },
       // 导入成功回调
       uploadSuccess () {
       },
@@ -307,11 +317,11 @@
     }
     .el-tab-pane {
       font-size: 20px;
-      .methodTable{
-        tbody{
-          .cell{
+      .methodTable {
+        tbody {
+          .cell {
             /*height: 300px;*/
-            code{
+            code {
             }
           }
         }

@@ -29,7 +29,8 @@
 
               <el-autocomplete class="inline-input" v-model.trim="request.methodName"
                                :fetch-suggestions="querySearchMethod"
-                               placeholder="请输入内容" @select="handleSelectMethod" @blur="methodBlur" :disabled="!request.serviceName">
+                               placeholder="请输入内容" @select="handleSelectMethod" @blur="methodBlur"
+                               :disabled="!request.serviceName">
                 <template slot-scope="{ item }">
                   <div class="name">{{ item }}</div>
                 </template>
@@ -357,12 +358,22 @@
               type: 'error'
             })
           })
-
+      },
+      fillInput () {
+        let { serviceName, methodName } = this.$route.query
+        if (serviceName && methodName) {
+          this.request.serviceName = serviceName
+          this.request.methodName = methodName
+        }else{
+          this.request.serviceName = null
+          this.request.methodName = null
+        }
 
       }
     },
     activated () {
       this.getServiceNameList()
+      this.fillInput()
     }
   }
 </script>
